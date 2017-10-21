@@ -1,4 +1,4 @@
-package com.mikebull94.result
+package com.github.michaelbull.result
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo

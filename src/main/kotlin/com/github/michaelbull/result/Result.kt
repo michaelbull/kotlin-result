@@ -1,4 +1,4 @@
-package com.mikebull94.result
+package com.github.michaelbull.result
 
 /**
  * [Result] is a type that represents either success ([Ok]) or failure ([Error]).

@@ -1,5 +1,7 @@
 # kotlin-result
 
+[![Release](https://jitpack.io/v/com.github.michaelbull/kotlin-result.svg)](https://jitpack.io/#com.github.michaelbull/kotlin-result) [![Build Status](https://travis-ci.org/michaelbull/kotlin-result.svg?branch=master)](https://travis-ci.org/michaelbull/kotlin-result) [![License](https://img.shields.io/github/license/michaelbull/kotlin-result.svg)](https://github.com/michaelbull/kotlin-result/blob/master/LICENSE)
+
 [`Result<V, E>`][result] is a monad for modelling success ([`Ok`][result-ok]) or
 failure ([`Error`][result-error]) operations.
 
@@ -36,16 +38,13 @@ Improvements on the existing solutions include:
 
 ## Installation
 
-This project is available in the [Maven Central Repository][maven-central]
-repository. The artifacts are signed with my personal [GPG key][gpg].
-
 ```groovy
 repositories {
-    mavenCentral()
+    maven { url "https://jitpack.io" }
 }
 
 dependencies {
-    compile 'com.mikebull94.kotlin-result:kotlin-result:1.0.0'
+    compile 'com.github.michaelbull:kotlin-result:1.0.0'
 }
 ```
 
@@ -72,8 +71,6 @@ This project is available under the terms of the ISC license. See the
 [result]: https://github.com/michaelbull/kotlin-result/blob/master/src/main/kotlin/com/mikebull94/result/Result.kt#L10
 [result-ok]: https://github.com/michaelbull/kotlin-result/blob/master/src/main/kotlin/com/mikebull94/result/Result.kt#L15
 [result-error]: https://github.com/michaelbull/kotlin-result/blob/master/src/main/kotlin/com/mikebull94/result/Result.kt#L31
-[maven-central]: http://search.maven.org/
-[gpg]:https://www.michael-bull.com/gpg.asc
 [unit-tests]: https://github.com/michaelbull/kotlin-result/tree/master/src/test/kotlin/com/mikebull94/result
 [wiki]: https://github.com/michaelbull/kotlin-result/wiki
 [wiki-elm]: https://github.com/michaelbull/kotlin-result/wiki/Elm

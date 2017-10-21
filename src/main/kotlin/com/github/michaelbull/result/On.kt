@@ -1,4 +1,4 @@
-package com.mikebull94.result
+package com.github.michaelbull.result
 
 /**
  * Calls a [callback] if the [Result] is [Ok].

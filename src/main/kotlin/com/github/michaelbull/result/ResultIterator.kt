@@ -1,4 +1,4 @@
-package com.mikebull94.result
+package com.github.michaelbull.result
 
 /**
  * Creates an [Iterator] over the possibly contained [value][Ok.value].

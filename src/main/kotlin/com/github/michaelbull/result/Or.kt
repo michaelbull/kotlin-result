@@ -1,4 +1,4 @@
-package com.mikebull94.result
+package com.github.michaelbull.result
 
 /**
  * - Rust: [Result.or](https://doc.rust-lang.org/std/result/enum.Result.html#method.or)

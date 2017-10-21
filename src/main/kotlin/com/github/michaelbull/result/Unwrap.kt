@@ -1,4 +1,4 @@
-package com.mikebull94.result
+package com.github.michaelbull.result
 
 class UnwrapException(message: String) : Exception(message)
 

@@ -1,4 +1,4 @@
-package com.mikebull94.result
+package com.github.michaelbull.result
 
 /**
  * Maps a [Result<V, E>][Result] to [Result<U, E>][Result] by applying a function to a contained

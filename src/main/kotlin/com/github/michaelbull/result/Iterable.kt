@@ -1,4 +1,4 @@
-package com.mikebull94.result
+package com.github.michaelbull.result
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from left to right to

@@ -6,6 +6,9 @@ package com.mikebull94.result
  */
 sealed class Result<out V, out E>
 
+fun <V> ok(value: V) = Ok<V, Nothing>(value)
+fun <E> error(error: E) = Error<Nothing, E>(error)
+
 class Ok<out V, out E> internal constructor(val value: V) : Result<V, E>() {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

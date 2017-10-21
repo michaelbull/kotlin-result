@@ -15,8 +15,8 @@ internal class OrTest {
 
     @Test
     internal fun `or should return the default value if not ok`() {
-        val error = err(OrError).or(ok(5000)).get()
-        assertThat(error, equalTo(5000))
+        val value = err(OrError).or(ok(5000)).get()
+        assertThat(value, equalTo(5000))
     }
 
     @Test
@@ -27,7 +27,7 @@ internal class OrTest {
 
     @Test
     internal fun `orElse should return the transformed value if not ok`() {
-        val error = err(4000).orElse { ok(2000) }.get()
-        assertThat(error, equalTo(2000))
+        val value = err(4000).orElse { ok(2000) }.get()
+        assertThat(value, equalTo(2000))
     }
 }

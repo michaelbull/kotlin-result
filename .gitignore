@@ -1,0 +1,24 @@
+# Hidden files
+.*
+
+# Temporary files
+*~
+
+# Git
+!.git*
+
+# EditorConfig
+!.editorconfig
+
+# IntelliJ Idea
+out/
+*.iml
+*.ipr
+*.iws
+
+# Gradle
+build/
+
+# JVM error logs
+hs_err_pid*.log
+replay_pid*.log

@@ -17,7 +17,7 @@ infix inline fun <V, E, U> Result<V, E>.map(transform: (V) -> U): Result<U, E> {
  * - Haskell: [Data.Bifunctor.right](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Bifunctor.html#v:second)
  * - Rust: [Result.map_err](https://doc.rust-lang.org/std/result/enum.Result.html#method.map_err)
  */
-infix inline fun <V, E, U> Result<V, E>.mapError(transform: (E) -> U): Result<V, U> {
+infix inline fun <V, E, F> Result<V, E>.mapError(transform: (E) -> F): Result<V, F> {
     return when (this) {
         is Ok -> ok(value)
         is Error -> err(transform(error))

@@ -22,7 +22,8 @@ Improvements on the existing solutions include:
 - Complete feature parity with Result types from other languages including Elm,
     Haskell, & Rust
 - Lax constraints on `value`/`error` nullability
-- Lax constraints on the `error` type's (does not inherit from `Exception`)
+- Lax constraints on the `error` type's inheritance (does not inherit from
+-   `Exception`)
 - Top level `Ok` and `Error` classes avoids qualifying usages with
     `Result.Ok`/`Result.Error` respectively
 - Higher-order functions marked with the `inline` keyword for reduced runtime

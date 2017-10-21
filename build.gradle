@@ -8,13 +8,21 @@ buildscript {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
         classpath "org.jetbrains.dokka:dokka-gradle-plugin:$dokkaVersion"
         classpath "org.junit.platform:junit-platform-gradle-plugin:$junitPlatformVersion"
+        classpath "net.researchgate:gradle-release:$gradleReleaseVersion"
     }
 }
 
+ext {
+    gradleDir = "$rootDir/gradle"
+}
+
 apply plugin: 'kotlin'
-apply plugin: 'maven-publish'
 apply plugin: 'org.jetbrains.dokka'
 apply plugin: 'org.junit.platform.gradle.plugin'
+apply plugin: 'net.researchgate.release'
+apply from: "$gradleDir/publish.gradle"
+
+description = 'A Result monad for modelling success or failure operations.'
 
 repositories {
     mavenCentral()
@@ -53,14 +61,4 @@ task sourcesJar(type: Jar) {
     description = 'Assembles a jar archive containing the main classes with sources.'
     classifier = 'sources'
     from sourceSets.main.allSource
-}
-
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            from components.java
-            artifact javadocJar
-            artifact sourcesJar
-        }
-    }
 }

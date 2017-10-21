@@ -1,0 +1,67 @@
+apply plugin: 'maven'
+apply plugin: 'signing'
+
+ext.isSnapshot = version.endsWith('-SNAPSHOT')
+ext.isCI = System.getenv('CI') != null
+
+if (!isCI) {
+    signing {
+        sign configurations.archives
+    }
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            if (isSnapshot || isCI) {
+                repository(url: "file://~/.m2/repository")
+            } else {
+                beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+                repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                    authentication(userName: ossrhUsername, password: ossrhPassword)
+                }
+
+                snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+                    authentication(userName: ossrhUsername, password: ossrhPassword)
+                }
+            }
+        }
+    }
+}
+
+rootProject.tasks.afterReleaseBuild.dependsOn tasks.uploadArchives
+
+afterEvaluate {
+    tasks.uploadArchives.repositories.mavenDeployer.pom.project {
+        groupId = project.group
+        artifactId = project.name
+        version = project.version
+        packaging = 'jar'
+
+        name = project.name
+        description = project.description
+        inceptionYear = 2017
+        url = 'https://github.com/michaelbull/kotlin-result'
+
+        scm {
+            connection = 'scm:git:https://github.com/michaelbull/kotlin-result'
+            developerConnection = 'scm:git:git@github.com:michaelbull/kotlin-result.git'
+            url = 'https://github.com/michaelbull/kotlin-result'
+        }
+
+        licenses {
+            license {
+                name = 'ISC License'
+                url = 'http://opensource.org/licenses/isc-license.txt'
+            }
+        }
+
+        developers {
+            developer {
+                name = 'Michael Bull'
+                url = 'https://www.michael-bull.com'
+            }
+        }
+    }
+}

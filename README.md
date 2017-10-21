@@ -19,8 +19,8 @@ It also iterates on other Result libraries written in Kotlin, namely:
 
 Improvements on the existing solutions include:
 
-- Complete feature parity with Result types from other languages including Elm,
-    Haskell, & Rust
+- Feature parity with Result types from other languages including Elm, Haskell,
+     & Rust
 - Lax constraints on `value`/`error` nullability
 - Lax constraints on the `error` type's inheritance (does not inherit from
     `Exception`)

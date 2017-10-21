@@ -7,7 +7,7 @@ package com.mikebull94.result
 inline fun <V, E, U> Result<V, E>.map(transform: (V) -> U): Result<U, E> {
     return when (this) {
         is Ok -> ok(transform(value))
-        is Error -> error(error)
+        is Error -> err(error)
     }
 }
 
@@ -18,7 +18,7 @@ inline fun <V, E, U> Result<V, E>.map(transform: (V) -> U): Result<U, E> {
 inline fun <V, E, U> Result<V, E>.mapError(transform: (E) -> U): Result<V, U> {
     return when (this) {
         is Ok -> ok(value)
-        is Error -> error(transform(error))
+        is Error -> err(transform(error))
     }
 }
 
@@ -46,6 +46,6 @@ inline fun <V1, V2, E1, E2> Result<V1, E1>.mapEither(
 ): Result<V2, E2> {
     return when (this) {
         is Ok -> ok(success(value))
-        is Error -> error(failure(error))
+        is Error -> err(failure(error))
     }
 }

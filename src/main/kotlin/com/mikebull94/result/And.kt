@@ -6,6 +6,6 @@ package com.mikebull94.result
 inline fun <V, E, U> Result<V, E>.andThen(transform: (V) -> Result<U, E>): Result<U, E> {
     return when (this) {
         is Ok -> transform(value)
-        is Error -> error(error)
+        is Error -> err(error)
     }
 }

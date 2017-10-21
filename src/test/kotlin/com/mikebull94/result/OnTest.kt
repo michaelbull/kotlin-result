@@ -18,14 +18,14 @@ internal class OnTest {
     @Test
     internal fun `onSuccess should not invoke the callback when result is not ok`() {
         val counter = Counter(200)
-        error(CounterError).onSuccess { counter.count -= 50 }
+        err(CounterError).onSuccess { counter.count -= 50 }
         assertThat(counter.count, equalTo(200))
     }
 
     @Test
     internal fun `onFailure should invoke the callback when result is not ok`() {
         val counter = Counter(555)
-        error(CounterError).onFailure { counter.count += 100 }
+        err(CounterError).onFailure { counter.count += 100 }
         assertThat(counter.count, equalTo(655))
     }
 

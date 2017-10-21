@@ -15,7 +15,7 @@ internal class GetTest {
 
     @Test
     internal fun `get should return null if not ok`() {
-        val value = error(GetError).get()
+        val value = err(GetError).get()
         assertThat(value, equalTo(null))
     }
 
@@ -27,7 +27,7 @@ internal class GetTest {
 
     @Test
     internal fun `getOrElse should return default value if not ok`() {
-        val value = error(GetError).getOrElse("default")
+        val value = err(GetError).getOrElse("default")
         assertThat(value, equalTo("default"))
     }
 }

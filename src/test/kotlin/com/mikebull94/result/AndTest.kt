@@ -16,7 +16,7 @@ internal class AndTest {
 
     @Test
     internal fun `andThen should return the result error if not ok`() {
-        val result = ok(20).andThen { ok(it + 43) }.andThen { error(AndError) }
+        val result = ok(20).andThen { ok(it + 43) }.andThen { err(AndError) }
 
         result as Error
 

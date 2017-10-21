@@ -13,7 +13,7 @@ inline fun <T, R, E> Iterable<T>.fold(
             is Ok -> {
                 accumulator = operationResult.value
             }
-            is Error -> return error(operationResult.error)
+            is Error -> return err(operationResult.error)
         }
     }
 
@@ -35,7 +35,7 @@ inline fun <T, R, E> List<T>.foldRight(
                 is Ok -> {
                     accumulator = operationResult.value
                 }
-                is Error -> return error(operationResult.error)
+                is Error -> return err(operationResult.error)
             }
         }
     }
@@ -55,7 +55,7 @@ fun <V, E> Iterable<Result<V, E>>.combine(): Result<List<V>, E> {
     return ok(map {
         when (it) {
             is Ok -> it.value
-            is Error -> return error(it.error)
+            is Error -> return err(it.error)
         }
     })
 }

@@ -5,8 +5,6 @@ import com.natpryce.hamkrest.equalTo
 import org.junit.jupiter.api.Test
 
 internal class GetTest {
-    private object GetError
-
     @Test
     internal fun `get should return the result value if ok`() {
         val value = ok(12).get()
@@ -15,7 +13,7 @@ internal class GetTest {
 
     @Test
     internal fun `get should return null if not ok`() {
-        val value = err(GetError).get()
+        val value = err("error").get()
         assertThat(value, equalTo(null))
     }
 
@@ -39,7 +37,7 @@ internal class GetTest {
 
     @Test
     internal fun `getOr should return default value if not ok`() {
-        val value = err(GetError).getOr("default")
+        val value = err("error").getOr("default")
         assertThat(value, equalTo("default"))
     }
 

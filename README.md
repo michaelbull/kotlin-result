@@ -1,7 +1,7 @@
 # kotlin-result
 
-[`Result<V, E>`][Result] is a monad for modelling success ([`Ok`][Result.Ok]) or
-failure ([`Error`][Result.Error]) operations.
+[`Result<V, E>`][result] is a monad for modelling success ([`Ok`][result-ok]) or
+failure ([`Error`][result-error]) operations.
 
 ## Inspiration
 
@@ -52,7 +52,7 @@ dependencies {
 ## Getting Started
 
 The [unit tests][unit-tests] are a good source of examples for using the library
-as they cover every avaiable method.
+as they cover every available method.
 
 Mappings from common Result libraries are available on the [wiki][wiki]:
 
@@ -69,9 +69,9 @@ Bug reports and pull requests are welcome on [GitHub][github].
 This project is available under the terms of the ISC license. See the
 [`LICENSE`](LICENSE) file for the copyright information and licensing terms.
 
-[Result]: https://github.com/michaelbull/kotlin-result/blob/master/src/main/kotlin/com/mikebull94/result/Result.kt#L8
-[Result.Ok]: https://github.com/michaelbull/kotlin-result/blob/master/src/main/kotlin/com/mikebull94/result/Result.kt#L13
-[Result.Error]: https://github.com/michaelbull/kotlin-result/blob/master/src/main/kotlin/com/mikebull94/result/Result.kt#L29a
+[result]: https://github.com/michaelbull/kotlin-result/blob/master/src/main/kotlin/com/mikebull94/result/Result.kt#L10
+[result-ok]: https://github.com/michaelbull/kotlin-result/blob/master/src/main/kotlin/com/mikebull94/result/Result.kt#L15
+[result-error]: https://github.com/michaelbull/kotlin-result/blob/master/src/main/kotlin/com/mikebull94/result/Result.kt#L31
 [maven-central]: http://search.maven.org/
 [gpg]:https://www.michael-bull.com/gpg.asc
 [unit-tests]: https://github.com/michaelbull/kotlin-result/tree/master/src/test/kotlin/com/mikebull94/result

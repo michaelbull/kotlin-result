@@ -60,6 +60,15 @@ Mappings from common Result libraries are available on the [wiki][wiki]:
 - [Haskell][wiki-haskell]
 - [Rust][wiki-rust]
 
+## Contributing
+
+Bug reports and pull requests are welcome on [GitHub][github].
+
+## License
+
+This project is available under the terms of the ISC license. See the
+[`LICENSE`](LICENSE) file for the copyright information and licensing terms.
+
 [Result]: https://github.com/michaelbull/kotlin-result/blob/master/src/main/kotlin/com/mikebull94/result/Result.kt#L8
 [Result.Ok]: https://github.com/michaelbull/kotlin-result/blob/master/src/main/kotlin/com/mikebull94/result/Result.kt#L13
 [Result.Error]: https://github.com/michaelbull/kotlin-result/blob/master/src/main/kotlin/com/mikebull94/result/Result.kt#L29a
@@ -70,3 +79,4 @@ Mappings from common Result libraries are available on the [wiki][wiki]:
 [wiki-elm]: https://github.com/michaelbull/kotlin-result/wiki/Elm
 [wiki-haskell]: https://github.com/michaelbull/kotlin-result/wiki/Haskell
 [wiki-rust]: https://github.com/michaelbull/kotlin-result/wiki/Rust
+[github]: https://github.com/michaelbull/kotlin-result

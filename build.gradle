@@ -37,26 +37,30 @@ compileTestKotlin {
 }
 
 dokka {
-    outputFormat = 'html'
+    outputFormat = 'javadoc'
     outputDirectory = "$buildDir/docs"
 }
 
-task sourcesJar(type: Jar) {
-    from sourceSets.main.allSource
-    classifier = 'sources'
+task javadocJar(type: Jar, dependsOn: dokka) {
+    group = LifecycleBasePlugin.BUILD_GROUP
+    description = 'Assembles a jar archive containing the Javadoc API documentation.'
+    classifier = 'javadoc'
+    from dokka.outputDirectory
 }
 
-task kdocJar(type: Jar, dependsOn: dokka) {
-    from dokka.outputDirectory
-    classifier = 'docs'
+task sourcesJar(type: Jar) {
+    group = LifecycleBasePlugin.BUILD_GROUP
+    description = 'Assembles a jar archive containing the main classes with sources.'
+    classifier = 'sources'
+    from sourceSets.main.allSource
 }
 
 publishing {
     publications {
         mavenJava(MavenPublication) {
             from components.java
+            artifact javadocJar
             artifact sourcesJar
-            artifact kdocJar
         }
     }
 }

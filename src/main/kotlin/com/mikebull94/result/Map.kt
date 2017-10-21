@@ -26,7 +26,10 @@ inline fun <V, E, U> Result<V, E>.mapError(transform: (E) -> U): Result<V, U> {
  * - Elm: [Result.Extra.mapBoth](http://package.elm-lang.org/packages/circuithub/elm-result-extra/1.4.0/Result-Extra#mapBoth)
  * - Haskell: [Data.Either.either](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Either.html#v:either)
  */
-inline fun <V, E, U> Result<V, E>.mapBoth(success: (V) -> U, failure: (E) -> U): U {
+inline fun <V, E, U> Result<V, E>.mapBoth(
+    success: (V) -> U,
+    failure: (E) -> U
+): U {
     return when (this) {
         is Ok -> success(value)
         is Error -> failure(error)
@@ -38,11 +41,11 @@ inline fun <V, E, U> Result<V, E>.mapBoth(success: (V) -> U, failure: (E) -> U):
  * - Haskell: [Data.Bifunctor.Bimap](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Bifunctor.html#v:bimap)
  */
 inline fun <V1, V2, E1, E2> Result<V1, E1>.mapEither(
-    okTransform: (V1) -> V2,
-    errorTransform: (E1) -> E2
+    success: (V1) -> V2,
+    failure: (E1) -> E2
 ): Result<V2, E2> {
     return when (this) {
-        is Ok -> ok(okTransform(value))
-        is Error -> error(errorTransform(error))
+        is Ok -> ok(success(value))
+        is Error -> error(failure(error))
     }
 }

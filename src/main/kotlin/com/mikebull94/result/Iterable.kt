@@ -20,7 +20,10 @@ inline fun <T, R, E> Iterable<T>.fold(
     return ok(accumulator)
 }
 
-inline fun <T, R, E> List<T>.foldRight(initial: R, operation: (T, acc: R) -> Result<R, E>): Result<R, E> {
+inline fun <T, R, E> List<T>.foldRight(
+    initial: R,
+    operation: (T, acc: R) -> Result<R, E>
+): Result<R, E> {
     var accumulator = initial
 
     if (!isEmpty()) {

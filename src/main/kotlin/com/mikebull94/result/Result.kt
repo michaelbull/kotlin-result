@@ -3,6 +3,7 @@ package com.mikebull94.result
 /**
  * - Elm: [Result](http://package.elm-lang.org/packages/elm-lang/core/5.1.1/Result)
  * - Haskell: [Data.Either](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Either.html)
+ * - Rust: [Result](https://doc.rust-lang.org/std/result/enum.Result.html)
  */
 sealed class Result<out V, out E>
 

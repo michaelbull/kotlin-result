@@ -9,25 +9,25 @@ internal class OrTest {
 
     @Test
     internal fun `or should return the result value if ok`() {
-        val value = ok(500).or(1000).get()
+        val value = ok(500).or(ok(1000)).get()
         assertThat(value, equalTo(500))
     }
 
     @Test
     internal fun `or should return the default value if not ok`() {
-        val error = err(OrError).or(5000).get()
+        val error = err(OrError).or(ok(5000)).get()
         assertThat(error, equalTo(5000))
     }
 
     @Test
-    internal fun `extract should return the result value if ok`() {
-        val value = ok("hello").extract { OrError } as String
-        assertThat(value, equalTo("hello"))
+    internal fun `orElse should return the result value if ok`() {
+        val value = ok(3000).orElse { ok(4000) }.get()
+        assertThat(value, equalTo(3000))
     }
 
     @Test
-    internal fun `extract should return the transformed result error if not ok`() {
-        val error = err("hello").extract { "$it darkness" }
-        assertThat(error, equalTo("hello darkness"))
+    internal fun `orElse should return the transformed value if not ok`() {
+        val error = err(4000).orElse { ok(2000) }.get()
+        assertThat(error, equalTo(2000))
     }
 }

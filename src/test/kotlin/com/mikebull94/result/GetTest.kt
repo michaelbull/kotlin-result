@@ -20,14 +20,38 @@ internal class GetTest {
     }
 
     @Test
-    internal fun `getOrElse should return the result value if ok`() {
-        val value = ok("hello").getOrElse("world")
+    internal fun `getError should return null if ok`() {
+        val error = ok("example").getError()
+        assertThat(error, equalTo(null))
+    }
+
+    @Test
+    internal fun `getError should return the result error if not ok`() {
+        val error = err("example").getError()
+        assertThat(error, equalTo("example"))
+    }
+
+    @Test
+    internal fun `getOr should return the result value if ok`() {
+        val value = ok("hello").getOr("world")
         assertThat(value, equalTo("hello"))
     }
 
     @Test
-    internal fun `getOrElse should return default value if not ok`() {
-        val value = err(GetError).getOrElse("default")
+    internal fun `getOr should return default value if not ok`() {
+        val value = err(GetError).getOr("default")
         assertThat(value, equalTo("default"))
+    }
+
+    @Test
+    internal fun `getOrElse should return the result value if ok`() {
+        val value = ok("hello").getOrElse { "world" }
+        assertThat(value, equalTo("hello"))
+    }
+
+    @Test
+    internal fun `getOrElse should return the transformed result error if ok`() {
+        val value = err("hello").getOrElse { "world" }
+        assertThat(value, equalTo("world"))
     }
 }

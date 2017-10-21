@@ -1,18 +1,21 @@
 package com.mikebull94.result
 
-infix fun <V, E> Result<V, E>.or(default: V): Result<V, E> {
-    return when (this) {
-        is Ok -> this
-        is Error -> ok(default)
+/**
+ * - Rust: [Result.or](https://doc.rust-lang.org/std/result/enum.Result.html#method.or)
+ */
+infix fun <V, E> Result<V, E>.or(result: Result<V, E>): Result<V, E> {
+    return when(this) {
+        is Ok -> ok(value)
+        is Error -> result
     }
 }
 
 /**
- * - Elm: [Result.extract](http://package.elm-lang.org/packages/circuithub/elm-result-extra/1.4.0/Result-Extra#extract)
+ * - Rust: [Result.or_else](https://doc.rust-lang.org/std/result/enum.Result.html#method.or_else)
  */
-inline fun <V, E> Result<V, E>.extract(transform: (E) -> V): V {
+infix inline fun <V, E> Result<V, E>.orElse(transform: (E) -> Result<V, E>): Result<V, E> {
     return when (this) {
-        is Ok -> value
+        is Ok -> ok(this.value)
         is Error -> transform(error)
     }
 }

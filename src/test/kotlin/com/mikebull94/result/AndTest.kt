@@ -9,6 +9,18 @@ internal class AndTest {
     private object AndError
 
     @Test
+    internal fun `and should return the result value if ok`() {
+        val value = ok(230).and(ok(500)).get()
+        assertThat(value, equalTo(500))
+    }
+
+    @Test
+    internal fun `and should return the result value if not ok`() {
+        val error = ok(300).and(err("hello world")).getError()
+        assertThat(error, equalTo("hello world"))
+    }
+
+    @Test
     internal fun `andThen should return the transformed result value if ok`() {
         val value = ok(5).andThen { ok(it + 7) }.get()
         assertThat(value, equalTo(12))
@@ -16,10 +28,7 @@ internal class AndTest {
 
     @Test
     internal fun `andThen should return the result error if not ok`() {
-        val result = ok(20).andThen { ok(it + 43) }.andThen { err(AndError) }
-
-        result as Error
-
-        assertThat(result.error, sameInstance(AndError))
+        val error = ok(20).andThen { ok(it + 43) }.andThen { err(AndError) }.getError()!!
+        assertThat(error, sameInstance(AndError))
     }
 }

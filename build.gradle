@@ -37,14 +37,14 @@ compileTestKotlin {
 }
 
 dokka {
-    outputFormat = 'javadoc'
+    outputFormat = 'html'
     outputDirectory = "$buildDir/docs"
 }
 
-task javadocJar(type: Jar, dependsOn: dokka) {
+task kdocJar(type: Jar, dependsOn: dokka) {
     group = LifecycleBasePlugin.BUILD_GROUP
-    description = 'Assembles a jar archive containing the Javadoc API documentation.'
-    classifier = 'javadoc'
+    description = 'Assembles a jar archive containing the KDoc API documentation.'
+    classifier = 'kdoc'
     from dokka.outputDirectory
 }
 
@@ -59,7 +59,7 @@ publishing {
     publications {
         mavenJava(MavenPublication) {
             from components.java
-            artifact javadocJar
+            artifact kdocJar
             artifact sourcesJar
         }
     }

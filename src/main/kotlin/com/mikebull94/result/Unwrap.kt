@@ -1,6 +1,6 @@
 package com.mikebull94.result
 
-class UnwrapException(message: String): Exception(message)
+class UnwrapException(message: String) : Exception(message)
 
 /**
  * - Rust: [Result.unwrap](https://doc.rust-lang.org/std/result/enum.Result.html#method.unwrap)

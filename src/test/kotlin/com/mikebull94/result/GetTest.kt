@@ -44,6 +44,18 @@ internal class GetTest {
     }
 
     @Test
+    internal fun `getErrorOr should return the default value if ok`() {
+        val error = ok("hello").getErrorOr("world")
+        assertThat(error, equalTo("world"))
+    }
+
+    @Test
+    internal fun `getErrorOr should return the result error if not ok`() {
+        val error = err("hello").getErrorOr("world")
+        assertThat(error, equalTo("hello"))
+    }
+
+    @Test
     internal fun `getOrElse should return the result value if ok`() {
         val value = ok("hello").getOrElse { "world" }
         assertThat(value, equalTo("hello"))

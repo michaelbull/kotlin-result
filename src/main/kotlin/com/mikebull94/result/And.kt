@@ -4,7 +4,7 @@ package com.mikebull94.result
  * Rust: [Result.and](https://doc.rust-lang.org/std/result/enum.Result.html#method.and)
  */
 infix fun <V, E> Result<V, E>.and(result: Result<V, E>): Result<V, E> {
-    return when(this) {
+    return when (this) {
         is Ok -> result
         is Error -> err(error)
     }

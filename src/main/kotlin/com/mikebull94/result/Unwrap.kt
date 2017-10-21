@@ -18,7 +18,7 @@ fun <V, E> Result<V, E>.unwrap(): V {
 infix fun <V, E> Result<V, E>.expect(message: String): V {
     return when (this) {
         is Ok -> value
-        is Error -> throw UnwrapException(message)
+        is Error -> throw UnwrapException("$message $error")
     }
 }
 
@@ -37,7 +37,7 @@ fun <V, E> Result<V, E>.unwrapError(): E {
  */
 infix fun <V, E> Result<V, E>.expectError(message: String): E {
     return when (this) {
-        is Ok -> throw UnwrapException(message)
+        is Ok -> throw UnwrapException("$message $value")
         is Error -> error
     }
 }

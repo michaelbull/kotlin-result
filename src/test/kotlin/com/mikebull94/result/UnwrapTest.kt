@@ -14,29 +14,35 @@ internal class UnwrapTest {
 
     @Test
     internal fun `unwrap should throw an UnwrapException if not ok`() {
-        assertThrows(UnwrapException::class.java, {
+        val throwable = assertThrows(UnwrapException::class.java, {
             err(5000).unwrap()
-        }, "called Result.wrap on an Error value 5000")
+        })
+
+        assertThat(throwable.message, equalTo("called Result.wrap on an Error value 5000"))
     }
 
     @Test
     internal fun `expect should return the result value if ok`() {
-        val value = ok(1994).expect("the year should be 1994")
+        val value = ok(1994).expect("the year should be")
         assertThat(value, equalTo(1994))
     }
 
     @Test
     internal fun `expect should throw an UnwrapException with a specified message if not ok`() {
-        assertThrows(UnwrapException::class.java, {
-            err(1994).expect("the year should be 1994")
-        }, "the year should be 1994")
+        val throwable = assertThrows(UnwrapException::class.java, {
+            err(1994).expect("the year should be")
+        })
+
+        assertThat(throwable.message, equalTo("the year should be 1994"))
     }
 
     @Test
     internal fun `unwrapError should throw an UnwrapException if ok`() {
-        assertThrows(UnwrapException::class.java, {
+        val throwable = assertThrows(UnwrapException::class.java, {
             ok("example").unwrapError()
-        }, "called Result.unwrapError on an Ok value example")
+        })
+
+        assertThat(throwable.message, equalTo("called Result.unwrapError on an Ok value example"))
     }
 
     @Test
@@ -47,14 +53,16 @@ internal class UnwrapTest {
 
     @Test
     internal fun `expectError should throw an UnwrapException with a specified message if ok`() {
-        assertThrows(UnwrapException::class.java, {
-            ok(2010).expectError("the year should be 2010")
-        }, "the year should be 2010")
+        val throwable = assertThrows(UnwrapException::class.java, {
+            ok(2010).expectError("the year should be")
+        })
+
+        assertThat(throwable.message, equalTo("the year should be 2010"))
     }
 
     @Test
     internal fun `expectError should return the result error if not ok`() {
-        val error = err(2010).expectError("the year should be 2010")
+        val error = err(2010).expectError("the year should be")
         assertThat(error, equalTo(2010))
     }
 }

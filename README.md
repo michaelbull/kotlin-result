@@ -1,6 +1,6 @@
 # kotlin-result
 
-[![Release](https://jitpack.io/v/com.github.michaelbull/kotlin-result.svg)](https://jitpack.io/#com.github.michaelbull/kotlin-result) [![Build Status](https://travis-ci.org/michaelbull/kotlin-result.svg?branch=master)](https://travis-ci.org/michaelbull/kotlin-result) [![License](https://img.shields.io/github/license/michaelbull/kotlin-result.svg)](https://github.com/michaelbull/kotlin-result/blob/master/LICENSE)
+[![Release](https://jitpack.io/v/michaelbull/kotlin-result.svg)](https://jitpack.io/#michaelbull/kotlin-result) [![Build Status](https://travis-ci.org/michaelbull/kotlin-result.svg?branch=master)](https://travis-ci.org/michaelbull/kotlin-result) [![License](https://img.shields.io/github/license/michaelbull/kotlin-result.svg)](https://github.com/michaelbull/kotlin-result/blob/master/LICENSE)
 
 [`Result<V, E>`][result] is a monad for modelling success ([`Ok`][result-ok]) or
 failure ([`Error`][result-error]) operations.

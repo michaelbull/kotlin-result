@@ -18,6 +18,7 @@ It also iterates on other Result libraries written in Kotlin, namely:
 
 - [danneu/kotlin-result](https://github.com/danneu/kotlin-result)
 - [kittinunf/Result](https://github.com/kittinunf/Result)
+- [npryce/result4k](https://github.com/npryce/result4k)
 
 Improvements on the existing solutions include:
 

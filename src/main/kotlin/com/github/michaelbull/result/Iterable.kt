@@ -103,7 +103,7 @@ fun <V, E> getAll(vararg results: Result<V, E>) = results.asIterable().getAll()
  * @return The extracted [Ok] elements.
  */
 fun <V, E> Iterable<Result<V, E>>.getAll(): List<V> {
-    return filter { it is Ok }.map { (it as Ok).value }
+    return filterIsInstance<Ok<V>>().map { it.value }
 }
 
 /**
@@ -126,7 +126,7 @@ fun <V, E> getAllErrors(vararg results: Result<V, E>) = results.asIterable().get
  * @return The extracted [Error] elements.
  */
 fun <V, E> Iterable<Result<V, E>>.getAllErrors(): List<E> {
-    return filter { it is Error }.map { (it as Error).error }
+    return filterIsInstance<Error<E>>().map { it.error }
 }
 
 /**

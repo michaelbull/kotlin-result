@@ -16,6 +16,9 @@ out/
 *.ipr
 *.iws
 
+# Travis CI
+!.travis.yml
+
 # Gradle
 build/
 

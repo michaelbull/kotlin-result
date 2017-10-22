@@ -9,12 +9,12 @@ package com.github.michaelbull.result
  * - Rust: [Result.map](https://doc.rust-lang.org/std/result/enum.Result.html#method.map)
  *
  * @param transform The transformation to apply to the [value][Ok.value]
- * @return The [transformed][transform] [Result] if [Ok], otherwise [err].
+ * @return The [transformed][transform] [Result] if [Ok], otherwise [Error].
  */
 infix inline fun <V, E, U> Result<V, E>.map(transform: (V) -> U): Result<U, E> {
     return when (this) {
-        is Ok -> ok(transform(value))
-        is Error -> err(error)
+        is Ok -> Ok(transform(value))
+        is Error -> this
     }
 }
 
@@ -31,8 +31,8 @@ infix inline fun <V, E, U> Result<V, E>.map(transform: (V) -> U): Result<U, E> {
  */
 infix inline fun <V, E, F> Result<V, E>.mapError(transform: (E) -> F): Result<V, F> {
     return when (this) {
-        is Ok -> ok(value)
-        is Error -> err(transform(error))
+        is Ok -> this
+        is Error -> Error(transform(error))
     }
 }
 
@@ -74,7 +74,7 @@ inline fun <V, E, U, F> Result<V, E>.mapEither(
     failure: (E) -> F
 ): Result<U, F> {
     return when (this) {
-        is Ok -> ok(success(value))
-        is Error -> err(failure(error))
+        is Ok -> Ok(success(value))
+        is Error -> Error(failure(error))
     }
 }

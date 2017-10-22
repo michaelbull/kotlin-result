@@ -19,13 +19,15 @@ internal class MapTest {
 
     @Test
     internal fun `map should return the transformed result value if ok`() {
-        val value = ok(10).map { it + 20 }.get()
+        val test: Result<Int, Nothing> = Ok(500).map { 50 }
+
+        val value = Ok(10).map { it + 20 }.get()
         assertThat(value, equalTo(30))
     }
 
     @Test
     internal fun `map should return the result error if not ok`() {
-        val result = err(MapError.HelloError).map { "hello $it" }
+        val result = Error(MapError.HelloError).map { "hello $it" }
 
         result as Error
 
@@ -34,18 +36,18 @@ internal class MapTest {
 
     @Test
     internal fun `mapError should return the result value if ok`() {
-        val value = ok(55).map { it + 15 }.mapError { MapError.WorldError }.get()
+        val value = Ok(55).map { it + 15 }.mapError { MapError.WorldError }.get()
         assertThat(value, equalTo(70))
     }
 
     @Test
     internal fun `mapError should return the transformed result error if not ok`() {
-        val result: Result<String, MapError> = ok("let")
+        val result: Result<String, MapError> = Ok("let")
             .map { "$it me" }
             .andThen {
                 when (it) {
-                    "let me" -> err(MapError.CustomError("$it $it"))
-                    else -> ok("$it get")
+                    "let me" -> Error(MapError.CustomError("$it $it"))
+                    else -> Ok("$it get")
                 }
             }
             .mapError { MapError.CustomError("${it.reason} get what i want") }
@@ -57,7 +59,7 @@ internal class MapTest {
 
     @Test
     internal fun `mapBoth should return the transformed result value if ok`() {
-        val value = ok("there is").mapBoth(
+        val value = Ok("there is").mapBoth(
             success = { "$it a light" },
             failure = { "$it that never" }
         )
@@ -67,7 +69,7 @@ internal class MapTest {
 
     @Test
     internal fun `mapBoth should return the transformed result error if not ok`() {
-        val error = err(MapError.CustomError("this")).mapBoth(
+        val error = Error(MapError.CustomError("this")).mapBoth(
             success = { "$it charming" },
             failure = { "${it.reason} man" }
         )
@@ -77,7 +79,7 @@ internal class MapTest {
 
     @Test
     internal fun `mapEither should return the transformed result value if ok`() {
-        val result = ok(500).mapEither(
+        val result = Ok(500).mapEither(
             success = { it + 500 },
             failure = { MapError.CustomError("$it") }
         )
@@ -89,7 +91,7 @@ internal class MapTest {
 
     @Test
     internal fun `mapEither should return the transformed result error if not ok`() {
-        val result = err("the reckless").mapEither(
+        val result = Error("the reckless").mapEither(
             success = { "the wild youth" },
             failure = { MapError.CustomError("the truth") }
         )

@@ -8,14 +8,14 @@ import org.junit.jupiter.api.Test
 internal class UnwrapTest {
     @Test
     internal fun `unwrap should return the result value if ok`() {
-        val value = ok(5000).unwrap()
+        val value = Ok(5000).unwrap()
         assertThat(value, equalTo(5000))
     }
 
     @Test
     internal fun `unwrap should throw an UnwrapException if not ok`() {
         val throwable = assertThrows(UnwrapException::class.java, {
-            err(5000).unwrap()
+            Error(5000).unwrap()
         })
 
         assertThat(throwable.message, equalTo("called Result.wrap on an Error value 5000"))
@@ -23,14 +23,14 @@ internal class UnwrapTest {
 
     @Test
     internal fun `expect should return the result value if ok`() {
-        val value = ok(1994).expect("the year should be")
+        val value = Ok(1994).expect("the year should be")
         assertThat(value, equalTo(1994))
     }
 
     @Test
     internal fun `expect should throw an UnwrapException with a specified message if not ok`() {
         val throwable = assertThrows(UnwrapException::class.java, {
-            err(1994).expect("the year should be")
+            Error(1994).expect("the year should be")
         })
 
         assertThat(throwable.message, equalTo("the year should be 1994"))
@@ -39,7 +39,7 @@ internal class UnwrapTest {
     @Test
     internal fun `unwrapError should throw an UnwrapException if ok`() {
         val throwable = assertThrows(UnwrapException::class.java, {
-            ok("example").unwrapError()
+            Ok("example").unwrapError()
         })
 
         assertThat(throwable.message, equalTo("called Result.unwrapError on an Ok value example"))
@@ -47,14 +47,14 @@ internal class UnwrapTest {
 
     @Test
     internal fun `unwrapError should return the result error if not ok`() {
-        val error = err("example").unwrapError()
+        val error = Error("example").unwrapError()
         assertThat(error, equalTo("example"))
     }
 
     @Test
     internal fun `expectError should throw an UnwrapException with a specified message if ok`() {
         val throwable = assertThrows(UnwrapException::class.java, {
-            ok(2010).expectError("the year should be")
+            Ok(2010).expectError("the year should be")
         })
 
         assertThat(throwable.message, equalTo("the year should be 2010"))
@@ -62,7 +62,7 @@ internal class UnwrapTest {
 
     @Test
     internal fun `expectError should return the result error if not ok`() {
-        val error = err(2010).expectError("the year should be")
+        val error = Error(2010).expectError("the year should be")
         assertThat(error, equalTo(2010))
     }
 }

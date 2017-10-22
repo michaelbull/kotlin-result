@@ -20,7 +20,7 @@ internal class IterableTest {
     internal fun `fold should return the accumulated value if ok`() {
         val result = listOf(20, 30, 40, 50).fold(
             initial = 10,
-            operation = { a, b -> ok(a + b) }
+            operation = { a, b -> Ok(a + b) }
         )
 
         result as Ok
@@ -34,9 +34,9 @@ internal class IterableTest {
             initial = 1,
             operation = { a, b ->
                 when (b) {
-                    (5 + 10) -> err(IterableError.IterableError1)
-                    (5 + 10 + 15 + 20) -> err(IterableError.IterableError2)
-                    else -> ok(a * b)
+                    (5 + 10) -> Error(IterableError.IterableError1)
+                    (5 + 10 + 15 + 20) -> Error(IterableError.IterableError2)
+                    else -> Ok(a * b)
                 }
             }
         )
@@ -51,7 +51,7 @@ internal class IterableTest {
     internal fun `foldRight should return the accumulated value if ok`() {
         val result = listOf(2, 5, 10, 20).foldRight(
             initial = 100,
-            operation = { a, b -> ok(b - a) }
+            operation = { a, b -> Ok(b - a) }
         )
 
         result as Ok
@@ -65,9 +65,9 @@ internal class IterableTest {
             initial = 38500,
             operation = { a, b ->
                 when (b) {
-                    (((38500 / 40) / 20) / 10) -> err(IterableError.IterableError1)
-                    ((38500 / 40) / 20) -> err(IterableError.IterableError2)
-                    else -> ok(b / a)
+                    (((38500 / 40) / 20) / 10) -> Error(IterableError.IterableError1)
+                    ((38500 / 40) / 20) -> Error(IterableError.IterableError2)
+                    else -> Ok(b / a)
                 }
             }
         )
@@ -80,9 +80,9 @@ internal class IterableTest {
     @Test
     internal fun `combine should return the combined list of values if results are ok`() {
         val values = combine(
-            ok(10),
-            ok(20),
-            ok(30)
+            Ok(10),
+            Ok(20),
+            Ok(30)
         ).get()!!
 
         assertThat(values.size, equalTo(3))
@@ -94,12 +94,12 @@ internal class IterableTest {
     @Test
     internal fun `combine should return the first error if results are not ok`() {
         val result = combine(
-            ok(20),
-            ok(40),
-            err(IterableError.IterableError1),
-            ok(60),
-            err(IterableError.IterableError2),
-            ok(80)
+            Ok(20),
+            Ok(40),
+            Error(IterableError.IterableError1),
+            Ok(60),
+            Error(IterableError.IterableError2),
+            Ok(80)
         )
 
         result as Error
@@ -110,12 +110,12 @@ internal class IterableTest {
     @Test
     internal fun `getAll should return all of the result values`() {
         val values = getAll(
-            ok("hello"),
-            ok("big"),
-            err(IterableError.IterableError2),
-            ok("wide"),
-            err(IterableError.IterableError1),
-            ok("world")
+            Ok("hello"),
+            Ok("big"),
+            Error(IterableError.IterableError2),
+            Ok("wide"),
+            Error(IterableError.IterableError1),
+            Ok("world")
         )
 
         assertThat(values.size, equalTo(4))
@@ -128,15 +128,15 @@ internal class IterableTest {
     @Test
     internal fun `getAllErrors should return all of the result errors`() {
         val errors = getAllErrors(
-            err(IterableError.IterableError2),
-            ok("haskell"),
-            err(IterableError.IterableError2),
-            ok("f#"),
-            err(IterableError.IterableError1),
-            ok("elm"),
-            err(IterableError.IterableError1),
-            ok("clojure"),
-            err(IterableError.IterableError2)
+            Error(IterableError.IterableError2),
+            Ok("haskell"),
+            Error(IterableError.IterableError2),
+            Ok("f#"),
+            Error(IterableError.IterableError1),
+            Ok("elm"),
+            Error(IterableError.IterableError1),
+            Ok("clojure"),
+            Error(IterableError.IterableError2)
         )
 
         assertThat(errors.size, equalTo(5))
@@ -150,15 +150,15 @@ internal class IterableTest {
     @Test
     internal fun `partition should return a pair of all the result values and errors`() {
         val pairs = partition(
-            err(IterableError.IterableError2),
-            ok("haskell"),
-            err(IterableError.IterableError2),
-            ok("f#"),
-            err(IterableError.IterableError1),
-            ok("elm"),
-            err(IterableError.IterableError1),
-            ok("clojure"),
-            err(IterableError.IterableError2)
+            Error(IterableError.IterableError2),
+            Ok("haskell"),
+            Error(IterableError.IterableError2),
+            Ok("f#"),
+            Error(IterableError.IterableError1),
+            Ok("elm"),
+            Error(IterableError.IterableError1),
+            Ok("clojure"),
+            Error(IterableError.IterableError2)
         )
 
         val values = pairs.first

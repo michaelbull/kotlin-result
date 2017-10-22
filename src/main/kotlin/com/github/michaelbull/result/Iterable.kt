@@ -20,11 +20,11 @@ inline fun <T, R, E> Iterable<T>.fold(
             is Ok -> {
                 accumulator = operationResult.value
             }
-            is Error -> return err(operationResult.error)
+            is Error -> return Error(operationResult.error)
         }
     }
 
-    return ok(accumulator)
+    return Ok(accumulator)
 }
 
 /**
@@ -49,12 +49,12 @@ inline fun <T, R, E> List<T>.foldRight(
                 is Ok -> {
                     accumulator = operationResult.value
                 }
-                is Error -> return err(operationResult.error)
+                is Error -> return Error(operationResult.error)
             }
         }
     }
 
-    return ok(accumulator)
+    return Ok(accumulator)
 }
 
 /**
@@ -75,10 +75,10 @@ fun <V, E> combine(vararg results: Result<V, E>) = results.asIterable().combine(
  * @return The combined [Result].
  */
 fun <V, E> Iterable<Result<V, E>>.combine(): Result<List<V>, E> {
-    return ok(map {
+    return Ok(map {
         when (it) {
             is Ok -> it.value
-            is Error -> return err(it.error)
+            is Error -> return it
         }
     })
 }

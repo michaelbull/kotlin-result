@@ -27,8 +27,8 @@ Improvements on the existing solutions include:
 - Lax constraints on `value`/`error` nullability
 - Lax constraints on the `error` type's inheritance (does not inherit from
     `Exception`)
-- Top level `Ok` and `Error` classes avoids qualifying usages with
-    `Result.Ok`/`Result.Error` respectively
+- Top level `Ok` and `Err` classes avoids qualifying usages with
+    `Result.Ok`/`Result.Err` respectively
 - Higher-order functions marked with the `inline` keyword for reduced runtime
     overhead
 - Extension functions on `Iterable` & `List` for folding, combining, partitioning

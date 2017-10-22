@@ -45,7 +45,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.michaelbull:kotlin-result:1.0.0'
+    compile 'com.github.michaelbull:kotlin-result:1.1.0'
 }
 ```
 
@@ -70,8 +70,8 @@ This project is available under the terms of the ISC license. See the
 [`LICENSE`](LICENSE) file for the copyright information and licensing terms.
 
 [result]: https://github.com/michaelbull/kotlin-result/blob/master/src/main/kotlin/com/github/michaelbull/result/Result.kt#L10
-[result-ok]: https://github.com/michaelbull/kotlin-result/blob/master/src/main/kotlin/com/github/michaelbull/result/Result.kt#L15
-[result-error]: https://github.com/michaelbull/kotlin-result/blob/master/src/main/kotlin/com/github/michaelbull/result/Result.kt#L31
+[result-ok]: https://github.com/michaelbull/kotlin-result/blob/master/src/main/kotlin/com/github/michaelbull/result/Result.kt#L27
+[result-error]: https://github.com/michaelbull/kotlin-result/blob/master/src/main/kotlin/com/github/michaelbull/result/Result.kt#L28
 [unit-tests]: https://github.com/michaelbull/kotlin-result/tree/master/src/test/kotlin/com/github/michaelbull/result
 [wiki]: https://github.com/michaelbull/kotlin-result/wiki
 [wiki-elm]: https://github.com/michaelbull/kotlin-result/wiki/Elm

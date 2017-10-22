@@ -7,12 +7,12 @@ class UnwrapException(message: String) : Exception(message)
  *
  * - Rust: [Result.unwrap](https://doc.rust-lang.org/std/result/enum.Result.html#method.unwrap)
  *
- * @throws UnwrapException if the [Result] is an [Error], with a message containing the [error][Error.error].
+ * @throws UnwrapException if the [Result] is an [Err], with a message containing the [error][Err.error].
  */
 fun <V, E> Result<V, E>.unwrap(): V {
     return when (this) {
         is Ok -> value
-        is Error -> throw UnwrapException("called Result.wrap on an Error value $error")
+        is Err -> throw UnwrapException("called Result.wrap on an Err value $error")
     }
 }
 
@@ -21,18 +21,18 @@ fun <V, E> Result<V, E>.unwrap(): V {
  *
  * - Rust: [Result.expect](https://doc.rust-lang.org/std/result/enum.Result.html#method.expect)
  *
- * @param message The message to include in the [UnwrapException] if the [Result] is an [Error].
- * @throws UnwrapException if the [Result] is an [Error], with the specified [message].
+ * @param message The message to include in the [UnwrapException] if the [Result] is an [Err].
+ * @throws UnwrapException if the [Result] is an [Err], with the specified [message].
  */
 infix fun <V, E> Result<V, E>.expect(message: String): V {
     return when (this) {
         is Ok -> value
-        is Error -> throw UnwrapException("$message $error")
+        is Err -> throw UnwrapException("$message $error")
     }
 }
 
 /**
- * Unwraps a [Result], yielding the [error][Error.error].
+ * Unwraps a [Result], yielding the [error][Err.error].
  *
  * - Rust: [Result.unwrap_err](https://doc.rust-lang.org/std/result/enum.Result.html#method.unwrap_err)
  *
@@ -41,12 +41,12 @@ infix fun <V, E> Result<V, E>.expect(message: String): V {
 fun <V, E> Result<V, E>.unwrapError(): E {
     return when (this) {
         is Ok -> throw UnwrapException("called Result.unwrapError on an Ok value $value")
-        is Error -> error
+        is Err -> error
     }
 }
 
 /**
- * Unwraps a [Result], yielding the [error][Error.error].
+ * Unwraps a [Result], yielding the [error][Err.error].
  *
  * - Rust: [Result.expect_err](https://doc.rust-lang.org/std/result/enum.Result.html#method.expect_err)
  *
@@ -56,6 +56,6 @@ fun <V, E> Result<V, E>.unwrapError(): E {
 infix fun <V, E> Result<V, E>.expectError(message: String): E {
     return when (this) {
         is Ok -> throw UnwrapException("$message $value")
-        is Error -> error
+        is Err -> error
     }
 }

@@ -16,7 +16,7 @@ internal class AndTest {
 
     @Test
     internal fun `and should return the result value if not ok`() {
-        val error = Ok(300).and(Error("hello world")).getError()
+        val error = Ok(300).and(Err("hello world")).getError()
         assertThat(error, equalTo("hello world"))
     }
 
@@ -28,7 +28,7 @@ internal class AndTest {
 
     @Test
     internal fun `andThen should return the result error if not ok`() {
-        val error = Ok(20).andThen { Ok(it + 43) }.andThen { Error(AndError) }.getError()!!
+        val error = Ok(20).andThen { Ok(it + 43) }.andThen { Err(AndError) }.getError()!!
         assertThat(error, sameInstance(AndError))
     }
 }

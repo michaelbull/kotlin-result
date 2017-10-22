@@ -15,10 +15,10 @@ internal class UnwrapTest {
     @Test
     internal fun `unwrap should throw an UnwrapException if not ok`() {
         val throwable = assertThrows(UnwrapException::class.java, {
-            Error(5000).unwrap()
+            Err(5000).unwrap()
         })
 
-        assertThat(throwable.message, equalTo("called Result.wrap on an Error value 5000"))
+        assertThat(throwable.message, equalTo("called Result.wrap on an Err value 5000"))
     }
 
     @Test
@@ -30,7 +30,7 @@ internal class UnwrapTest {
     @Test
     internal fun `expect should throw an UnwrapException with a specified message if not ok`() {
         val throwable = assertThrows(UnwrapException::class.java, {
-            Error(1994).expect("the year should be")
+            Err(1994).expect("the year should be")
         })
 
         assertThat(throwable.message, equalTo("the year should be 1994"))
@@ -47,7 +47,7 @@ internal class UnwrapTest {
 
     @Test
     internal fun `unwrapError should return the result error if not ok`() {
-        val error = Error("example").unwrapError()
+        val error = Err("example").unwrapError()
         assertThat(error, equalTo("example"))
     }
 
@@ -62,7 +62,7 @@ internal class UnwrapTest {
 
     @Test
     internal fun `expectError should return the result error if not ok`() {
-        val error = Error(2010).expectError("the year should be")
+        val error = Err(2010).expectError("the year should be")
         assertThat(error, equalTo(2010))
     }
 }

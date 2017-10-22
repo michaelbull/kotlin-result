@@ -14,7 +14,7 @@ internal class ResultIteratorTest {
 
     @Test
     internal fun `hasNext should return false if result is not ok`() {
-        val iterator = Error("hello").iterator()
+        val iterator = Err("hello").iterator()
         assertThat(iterator.hasNext(), equalTo(false))
     }
 
@@ -33,7 +33,7 @@ internal class ResultIteratorTest {
 
     @Test
     internal fun `next should throw NoSuchElementException if unyielded and result is not ok`() {
-        val iterator = Error("hello").iterator()
+        val iterator = Err("hello").iterator()
 
         assertThrows(NoSuchElementException::class.java) {
             iterator.next()

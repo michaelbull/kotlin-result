@@ -34,14 +34,14 @@ internal class IterableTest {
             initial = 1,
             operation = { a, b ->
                 when (b) {
-                    (5 + 10) -> Error(IterableError.IterableError1)
-                    (5 + 10 + 15 + 20) -> Error(IterableError.IterableError2)
+                    (5 + 10) -> Err(IterableError.IterableError1)
+                    (5 + 10 + 15 + 20) -> Err(IterableError.IterableError2)
                     else -> Ok(a * b)
                 }
             }
         )
 
-        result as Error
+        result as Err
 
         val matcher: Matcher<IterableError> = sameInstance(IterableError.IterableError1)
         assertThat(result.error, matcher)
@@ -65,14 +65,14 @@ internal class IterableTest {
             initial = 38500,
             operation = { a, b ->
                 when (b) {
-                    (((38500 / 40) / 20) / 10) -> Error(IterableError.IterableError1)
-                    ((38500 / 40) / 20) -> Error(IterableError.IterableError2)
+                    (((38500 / 40) / 20) / 10) -> Err(IterableError.IterableError1)
+                    ((38500 / 40) / 20) -> Err(IterableError.IterableError2)
                     else -> Ok(b / a)
                 }
             }
         )
 
-        result as Error
+        result as Err
 
         assertThat(result.error, sameError(IterableError.IterableError2))
     }
@@ -96,13 +96,13 @@ internal class IterableTest {
         val result = combine(
             Ok(20),
             Ok(40),
-            Error(IterableError.IterableError1),
+            Err(IterableError.IterableError1),
             Ok(60),
-            Error(IterableError.IterableError2),
+            Err(IterableError.IterableError2),
             Ok(80)
         )
 
-        result as Error
+        result as Err
 
         assertThat(result.error, sameError(IterableError.IterableError1))
     }
@@ -112,9 +112,9 @@ internal class IterableTest {
         val values = getAll(
             Ok("hello"),
             Ok("big"),
-            Error(IterableError.IterableError2),
+            Err(IterableError.IterableError2),
             Ok("wide"),
-            Error(IterableError.IterableError1),
+            Err(IterableError.IterableError1),
             Ok("world")
         )
 
@@ -128,15 +128,15 @@ internal class IterableTest {
     @Test
     internal fun `getAllErrors should return all of the result errors`() {
         val errors = getAllErrors(
-            Error(IterableError.IterableError2),
+            Err(IterableError.IterableError2),
             Ok("haskell"),
-            Error(IterableError.IterableError2),
+            Err(IterableError.IterableError2),
             Ok("f#"),
-            Error(IterableError.IterableError1),
+            Err(IterableError.IterableError1),
             Ok("elm"),
-            Error(IterableError.IterableError1),
+            Err(IterableError.IterableError1),
             Ok("clojure"),
-            Error(IterableError.IterableError2)
+            Err(IterableError.IterableError2)
         )
 
         assertThat(errors.size, equalTo(5))
@@ -150,15 +150,15 @@ internal class IterableTest {
     @Test
     internal fun `partition should return a pair of all the result values and errors`() {
         val pairs = partition(
-            Error(IterableError.IterableError2),
+            Err(IterableError.IterableError2),
             Ok("haskell"),
-            Error(IterableError.IterableError2),
+            Err(IterableError.IterableError2),
             Ok("f#"),
-            Error(IterableError.IterableError1),
+            Err(IterableError.IterableError1),
             Ok("elm"),
-            Error(IterableError.IterableError1),
+            Err(IterableError.IterableError1),
             Ok("clojure"),
-            Error(IterableError.IterableError2)
+            Err(IterableError.IterableError2)
         )
 
         val values = pairs.first

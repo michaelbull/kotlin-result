@@ -20,7 +20,7 @@ inline fun <T, R, E> Iterable<T>.fold(
             is Ok -> {
                 accumulator = operationResult.value
             }
-            is Error -> return Error(operationResult.error)
+            is Err -> return Err(operationResult.error)
         }
     }
 
@@ -49,7 +49,7 @@ inline fun <T, R, E> List<T>.foldRight(
                 is Ok -> {
                     accumulator = operationResult.value
                 }
-                is Error -> return Error(operationResult.error)
+                is Err -> return Err(operationResult.error)
             }
         }
     }
@@ -78,7 +78,7 @@ fun <V, E> Iterable<Result<V, E>>.combine(): Result<List<V>, E> {
     return Ok(map {
         when (it) {
             is Ok -> it.value
-            is Error -> return it
+            is Err -> return it
         }
     })
 }
@@ -107,50 +107,50 @@ fun <V, E> Iterable<Result<V, E>>.getAll(): List<V> {
 }
 
 /**
- * Extracts from a vararg of [Results][Result] all the [Error] elements. All the [Error] elements
+ * Extracts from a vararg of [Results][Result] all the [Err] elements. All the [Err] elements
  * are extracted in order.
  *
  * - Haskell: [Data.Either.rights](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Either.html#v:rights)
  *
- * @param results The [Results][Result] from which to extract [Error] elements.
- * @return The extracted [Error] elements.
+ * @param results The [Results][Result] from which to extract [Err] elements.
+ * @return The extracted [Err] elements.
  */
 fun <V, E> getAllErrors(vararg results: Result<V, E>) = results.asIterable().getAllErrors()
 
 /**
- * Extracts from an [Iterable] of [Results][Result] all the [Error] elements. All the [Error]
+ * Extracts from an [Iterable] of [Results][Result] all the [Err] elements. All the [Err]
  * elements are extracted in order.
  *
  * - Haskell: [Data.Either.rights](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Either.html#v:rights)
  *
- * @return The extracted [Error] elements.
+ * @return The extracted [Err] elements.
  */
 fun <V, E> Iterable<Result<V, E>>.getAllErrors(): List<E> {
-    return filterIsInstance<Error<E>>().map { it.error }
+    return filterIsInstance<Err<E>>().map { it.error }
 }
 
 /**
  * Partitions a vararg of [Results][Result] into a [Pair] of [Lists][List]. All the [Ok] elements
- * are extracted, in order, to the [first][Pair.first] value. Similarly the [Error] elements are
+ * are extracted, in order, to the [first][Pair.first] value. Similarly the [Err] elements are
  * extracted to the [Pair.second] value.
  *
  * - Haskell: [Data.Either.partitionEithers](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Either.html#v:partitionEithers)
  *
  * @param results The [Results][Result] to partition.
  * @return A [Pair] of [Lists][List] where the [first][Pair.first] value
- * contains the [Ok] elements and the [second][Pair.second] value contains the [Error] elements.
+ * contains the [Ok] elements and the [second][Pair.second] value contains the [Err] elements.
  */
 fun <V, E> partition(vararg results: Result<V, E>) = results.asIterable().partition()
 
 /**
  * Partitions an [Iterable] of [Results][Result] into a [Pair] of  [Lists][List]. All the [Ok]
- * elements are extracted, in order, to the [first][Pair.first] value. Similarly the [Error]
+ * elements are extracted, in order, to the [first][Pair.first] value. Similarly the [Err]
  * elements are extracted to the [Pair.second] value.
  *
  * - Haskell: [Data.Either.partitionEithers](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Either.html#v:partitionEithers)
  *
  * @return A [Pair] of [Lists][List] where the [first][Pair.first] value
- * contains the [Ok] elements and the [second][Pair.second] value contains the [Error] elements.
+ * contains the [Ok] elements and the [second][Pair.second] value contains the [Err] elements.
  */
 fun <V, E> Iterable<Result<V, E>>.partition(): Pair<List<V>, List<E>> {
     val values = mutableListOf<V>()
@@ -159,7 +159,7 @@ fun <V, E> Iterable<Result<V, E>>.partition(): Pair<List<V>, List<E>> {
     forEach { result ->
         when (result) {
             is Ok -> values.add(result.value)
-            is Error -> errors.add(result.error)
+            is Err -> errors.add(result.error)
         }
     }
 

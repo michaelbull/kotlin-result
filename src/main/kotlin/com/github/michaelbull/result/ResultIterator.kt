@@ -41,7 +41,7 @@ private class ResultIterator<out V, out E>(private val result: Result<V, E>) : M
 
         return when (result) {
             is Ok -> true
-            is Error -> false
+            is Err -> false
         }
     }
 

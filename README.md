@@ -3,7 +3,7 @@
 [![Release](https://jitpack.io/v/michaelbull/kotlin-result.svg)](https://jitpack.io/#michaelbull/kotlin-result) [![Build Status](https://travis-ci.org/michaelbull/kotlin-result.svg?branch=master)](https://travis-ci.org/michaelbull/kotlin-result) [![License](https://img.shields.io/github/license/michaelbull/kotlin-result.svg)](https://github.com/michaelbull/kotlin-result/blob/master/LICENSE)
 
 [`Result<V, E>`][result] is a monad for modelling success ([`Ok`][result-ok]) or
-failure ([`Error`][result-error]) operations.
+failure ([`Err`][result-err]) operations.
 
 ## Inspiration
 
@@ -71,7 +71,7 @@ This project is available under the terms of the ISC license. See the
 
 [result]: https://github.com/michaelbull/kotlin-result/blob/master/src/main/kotlin/com/github/michaelbull/result/Result.kt#L10
 [result-ok]: https://github.com/michaelbull/kotlin-result/blob/master/src/main/kotlin/com/github/michaelbull/result/Result.kt#L27
-[result-error]: https://github.com/michaelbull/kotlin-result/blob/master/src/main/kotlin/com/github/michaelbull/result/Result.kt#L28
+[result-err]: https://github.com/michaelbull/kotlin-result/blob/master/src/main/kotlin/com/github/michaelbull/result/Result.kt#L28
 [unit-tests]: https://github.com/michaelbull/kotlin-result/tree/master/src/test/kotlin/com/github/michaelbull/result
 [wiki]: https://github.com/michaelbull/kotlin-result/wiki
 [wiki-elm]: https://github.com/michaelbull/kotlin-result/wiki/Elm

@@ -13,7 +13,7 @@ internal class GetTest {
 
     @Test
     internal fun `get should return null if not ok`() {
-        val value = Error("error").get()
+        val value = Err("error").get()
         assertThat(value, equalTo(null))
     }
 
@@ -25,7 +25,7 @@ internal class GetTest {
 
     @Test
     internal fun `getError should return the result error if not ok`() {
-        val error = Error("example").getError()
+        val error = Err("example").getError()
         assertThat(error, equalTo("example"))
     }
 
@@ -37,7 +37,7 @@ internal class GetTest {
 
     @Test
     internal fun `getOr should return default value if not ok`() {
-        val value = Error("error").getOr("default")
+        val value = Err("error").getOr("default")
         assertThat(value, equalTo("default"))
     }
 
@@ -49,7 +49,7 @@ internal class GetTest {
 
     @Test
     internal fun `getErrorOr should return the result error if not ok`() {
-        val error = Error("hello").getErrorOr("world")
+        val error = Err("hello").getErrorOr("world")
         assertThat(error, equalTo("hello"))
     }
 
@@ -61,7 +61,7 @@ internal class GetTest {
 
     @Test
     internal fun `getOrElse should return the transformed result error if ok`() {
-        val value = Error("hello").getOrElse { "world" }
+        val value = Err("hello").getOrElse { "world" }
         assertThat(value, equalTo("world"))
     }
 }

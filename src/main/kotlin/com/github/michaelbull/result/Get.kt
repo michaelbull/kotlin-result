@@ -66,3 +66,14 @@ infix inline fun <V, E> Result<V, E>.getOrElse(transform: (E) -> V): V {
         is Err -> transform(error)
     }
 }
+
+/**
+ * @param transform The transformation to apply to the [value][Ok.value].
+ * @return The [error][Err.error] if [Err], otherwise the [transformed][transform] [value][Ok.value].
+ */
+infix inline fun <V, E> Result<V, E>.getErrorOrElse(transform: (V) -> E): E {
+    return when (this) {
+        is Ok -> transform(value)
+        is Err -> error
+    }
+}

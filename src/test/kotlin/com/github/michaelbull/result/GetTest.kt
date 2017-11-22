@@ -64,4 +64,16 @@ internal class GetTest {
         val value = Err("hello").getOrElse { "world" }
         assertThat(value, equalTo("world"))
     }
+
+    @Test
+    internal fun `getErrorOrElse should return the transformed result value if ok`() {
+        val error = Ok("hello").getErrorOrElse { "world" }
+        assertThat(error, equalTo("world"))
+    }
+
+    @Test
+    internal fun `getErrorOrElse should return the result error if not ok`() {
+        val error = Err("hello").getErrorOrElse { "world" }
+        assertThat(error, equalTo("hello"))
+    }
 }

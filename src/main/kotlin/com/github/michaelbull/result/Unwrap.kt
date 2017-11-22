@@ -16,6 +16,11 @@ fun <V, E> Result<V, E>.unwrap(): V {
     }
 }
 
+@Deprecated("Use lazy evaluation.", ReplaceWith("expect { message }"))
+infix fun <V, E> Result<V, E>.expect(message: String): V {
+    return expect { message }
+}
+
 /**
  * Unwraps a [Result], yielding the [value][Ok.value].
  *
@@ -24,10 +29,10 @@ fun <V, E> Result<V, E>.unwrap(): V {
  * @param message The message to include in the [UnwrapException] if the [Result] is an [Err].
  * @throws UnwrapException if the [Result] is an [Err], with the specified [message].
  */
-infix fun <V, E> Result<V, E>.expect(message: String): V {
+infix inline fun <V, E> Result<V, E>.expect(message: () -> String): V {
     return when (this) {
         is Ok -> value
-        is Err -> throw UnwrapException("$message $error")
+        is Err -> throw UnwrapException("${message()} $error")
     }
 }
 
@@ -45,6 +50,11 @@ fun <V, E> Result<V, E>.unwrapError(): E {
     }
 }
 
+@Deprecated("Use lazy evaluation.", ReplaceWith("expectError { message }"))
+infix fun <V, E> Result<V, E>.expectError(message: String): E {
+    return expectError { message }
+}
+
 /**
  * Unwraps a [Result], yielding the [error][Err.error].
  *
@@ -53,9 +63,9 @@ fun <V, E> Result<V, E>.unwrapError(): E {
  * @param message The message to include in the [UnwrapException] if the [Result] is [Ok].
  * @throws UnwrapException if the [Result] is [Ok], with the specified [message].
  */
-infix fun <V, E> Result<V, E>.expectError(message: String): E {
+infix inline fun <V, E> Result<V, E>.expectError(message: () -> String): E {
     return when (this) {
-        is Ok -> throw UnwrapException("$message $value")
+        is Ok -> throw UnwrapException("${message()} $value")
         is Err -> error
     }
 }

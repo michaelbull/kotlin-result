@@ -19,13 +19,12 @@ internal class MapTest {
 
     @Test
     internal fun `map should return the transformed result value if ok`() {
-        val test: Result<Int, Nothing> = Ok(500).map { 50 }
-
         val value = Ok(10).map { it + 20 }.get()
         assertThat(value, equalTo(30))
     }
 
     @Test
+    @Suppress("UNREACHABLE_CODE")
     internal fun `map should return the result error if not ok`() {
         val result = Err(MapError.HelloError).map { "hello $it" }
 
@@ -58,6 +57,7 @@ internal class MapTest {
     }
 
     @Test
+    @Suppress("UNREACHABLE_CODE")
     internal fun `mapBoth should return the transformed result value if ok`() {
         val value = Ok("there is").mapBoth(
             success = { "$it a light" },
@@ -68,6 +68,7 @@ internal class MapTest {
     }
 
     @Test
+    @Suppress("UNREACHABLE_CODE")
     internal fun `mapBoth should return the transformed result error if not ok`() {
         val error = Err(MapError.CustomError("this")).mapBoth(
             success = { "$it charming" },
@@ -78,6 +79,7 @@ internal class MapTest {
     }
 
     @Test
+    @Suppress("UNREACHABLE_CODE")
     internal fun `mapEither should return the transformed result value if ok`() {
         val result = Ok(500).mapEither(
             success = { it + 500 },

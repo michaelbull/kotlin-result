@@ -29,7 +29,7 @@ infix fun <V, E> Result<V, E>.expect(message: String): V {
  * @param message The message to include in the [UnwrapException] if the [Result] is an [Err].
  * @throws UnwrapException if the [Result] is an [Err], with the specified [message].
  */
-infix inline fun <V, E> Result<V, E>.expect(message: () -> String): V {
+infix inline fun <V, E> Result<V, E>.expect(message: () -> Any): V {
     return when (this) {
         is Ok -> value
         is Err -> throw UnwrapException("${message()} $error")
@@ -63,7 +63,7 @@ infix fun <V, E> Result<V, E>.expectError(message: String): E {
  * @param message The message to include in the [UnwrapException] if the [Result] is [Ok].
  * @throws UnwrapException if the [Result] is [Ok], with the specified [message].
  */
-infix inline fun <V, E> Result<V, E>.expectError(message: () -> String): E {
+infix inline fun <V, E> Result<V, E>.expectError(message: () -> Any): E {
     return when (this) {
         is Ok -> throw UnwrapException("${message()} $value")
         is Err -> error

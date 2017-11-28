@@ -14,9 +14,9 @@ internal class UnwrapTest {
 
     @Test
     internal fun `unwrap should throw an UnwrapException if not ok`() {
-        val throwable = assertThrows(UnwrapException::class.java, {
+        val throwable = assertThrows(UnwrapException::class.java) {
             Err(5000).unwrap()
-        })
+        }
 
         assertThat(throwable.message, equalTo("called Result.wrap on an Err value 5000"))
     }
@@ -29,18 +29,22 @@ internal class UnwrapTest {
 
     @Test
     internal fun `expect should throw an UnwrapException with a specified message if not ok`() {
-        val throwable = assertThrows(UnwrapException::class.java, {
-            Err(1994).expect { "the year should be" }
-        })
+        val message = object {
+            override fun toString() = "the year should be"
+        }
+
+        val throwable = assertThrows(UnwrapException::class.java) {
+            Err(1994).expect { message }
+        }
 
         assertThat(throwable.message, equalTo("the year should be 1994"))
     }
 
     @Test
     internal fun `unwrapError should throw an UnwrapException if ok`() {
-        val throwable = assertThrows(UnwrapException::class.java, {
+        val throwable = assertThrows(UnwrapException::class.java) {
             Ok("example").unwrapError()
-        })
+        }
 
         assertThat(throwable.message, equalTo("called Result.unwrapError on an Ok value example"))
     }
@@ -53,9 +57,13 @@ internal class UnwrapTest {
 
     @Test
     internal fun `expectError should throw an UnwrapException with a specified message if ok`() {
-        val throwable = assertThrows(UnwrapException::class.java, {
-            Ok(2010).expectError { "the year should be" }
-        })
+        val message = object {
+            override fun toString() = "the year should be"
+        }
+
+        val throwable = assertThrows(UnwrapException::class.java) {
+            Ok(2010).expectError { message }
+        }
 
         assertThat(throwable.message, equalTo("the year should be 2010"))
     }

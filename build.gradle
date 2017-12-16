@@ -18,6 +18,7 @@ plugins {
 apply plugin: 'kotlin-platform-common'
 apply plugin: 'maven-publish'
 apply plugin: 'net.researchgate.release'
+apply plugin: 'org.jetbrains.dokka'
 
 description = 'A Result monad for modelling success or failure operations.'
 
@@ -31,6 +32,18 @@ dependencies {
     testCompile "org.jetbrains.kotlin:kotlin-test-common:$kotlinVersion"
 }
 
+dokka {
+    outputFormat = 'javadoc'
+    outputDirectory = "$buildDir/docs"
+}
+
+task javadocJar(type: Jar, dependsOn: dokka) {
+    group = LifecycleBasePlugin.BUILD_GROUP
+    description = 'Assembles a jar archive containing the Javadoc API documentation.'
+    classifier = 'javadoc'
+    from dokka.outputDirectory
+}
+
 task sourcesJar(type: Jar) {
     group = LifecycleBasePlugin.BUILD_GROUP
     description = 'Assembles a jar archive containing the main classes with sources.'
@@ -41,6 +54,7 @@ task sourcesJar(type: Jar) {
 publishing {
     publications {
         mavenJava(MavenPublication) {
+            artifact javadocJar
             artifact sourcesJar
         }
     }

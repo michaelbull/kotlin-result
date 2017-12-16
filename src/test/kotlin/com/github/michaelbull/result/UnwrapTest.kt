@@ -1,76 +1,83 @@
 package com.github.michaelbull.result
 
-import com.natpryce.hamkrest.assertion.assertThat
-import com.natpryce.hamkrest.equalTo
-import org.junit.jupiter.api.Assertions.assertThrows
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
 internal class UnwrapTest {
-    @Test
-    internal fun `unwrap should return the result value if ok`() {
-        val value = Ok(5000).unwrap()
-        assertThat(value, equalTo(5000))
-    }
-
-    @Test
-    internal fun `unwrap should throw an UnwrapException if not ok`() {
-        val throwable = assertThrows(UnwrapException::class.java) {
-            Err(5000).unwrap()
+    internal class `unwrap` {
+        @Test
+        internal fun returnsValueIfOk() {
+            assertEquals(
+                expected = 5000,
+                actual = Ok(5000).unwrap()
+            )
         }
 
-        assertThat(throwable.message, equalTo("called Result.wrap on an Err value 5000"))
+        @Test
+        internal fun throwsExceptionIfErr() {
+            assertFailsWith<UnwrapException>("called Result.wrap on an Err value 5000") {
+                Err(5000).unwrap()
+            }
+        }
     }
 
-    @Test
-    internal fun `expect should return the result value if ok`() {
-        val value = Ok(1994).expect { "the year should be" }
-        assertThat(value, equalTo(1994))
-    }
-
-    @Test
-    internal fun `expect should throw an UnwrapException with a specified message if not ok`() {
-        val message = object {
-            override fun toString() = "the year should be"
+    internal class `expect` {
+        @Test
+        internal fun returnsValueIfOk() {
+            assertEquals(
+                expected = 1994,
+                actual = Ok(1994).expect { "the year should be" }
+            )
         }
 
-        val throwable = assertThrows(UnwrapException::class.java) {
-            Err(1994).expect { message }
-        }
+        @Test
+        internal fun throwsExceptionIfErr() {
+            val message = object {
+                override fun toString() = "the year should be"
+            }
 
-        assertThat(throwable.message, equalTo("the year should be 1994"))
+            assertFailsWith<UnwrapException>("the year should be 1994") {
+                Err(1994).expect { message }
+            }
+        }
     }
 
-    @Test
-    internal fun `unwrapError should throw an UnwrapException if ok`() {
-        val throwable = assertThrows(UnwrapException::class.java) {
-            Ok("example").unwrapError()
+    internal class `unwrapError` {
+        @Test
+        internal fun throwsExceptionIfOk() {
+            assertFailsWith<UnwrapException>("called Result.unwrapError on an Ok value example") {
+                Ok("example").unwrapError()
+            }
         }
 
-        assertThat(throwable.message, equalTo("called Result.unwrapError on an Ok value example"))
+        @Test
+        internal fun returnsErrorIfErr() {
+            assertEquals(
+                expected = "example",
+                actual = Err("example").unwrapError()
+            )
+        }
     }
 
-    @Test
-    internal fun `unwrapError should return the result error if not ok`() {
-        val error = Err("example").unwrapError()
-        assertThat(error, equalTo("example"))
-    }
+    internal class `expectError` {
+        @Test
+        internal fun throwsExceptionIfOk() {
+            val message = object {
+                override fun toString() = "the year should be"
+            }
 
-    @Test
-    internal fun `expectError should throw an UnwrapException with a specified message if ok`() {
-        val message = object {
-            override fun toString() = "the year should be"
+            assertFailsWith<UnwrapException>("the year should be 2010") {
+                Ok(2010).expectError { message }
+            }
         }
 
-        val throwable = assertThrows(UnwrapException::class.java) {
-            Ok(2010).expectError { message }
+        @Test
+        internal fun returnsErrorIfErr() {
+            assertEquals(
+                expected = 2010,
+                actual = Err(2010).expectError { "the year should be" }
+            )
         }
-
-        assertThat(throwable.message, equalTo("the year should be 2010"))
-    }
-
-    @Test
-    internal fun `expectError should return the result error if not ok`() {
-        val error = Err(2010).expectError { "the year should be" }
-        assertThat(error, equalTo(2010))
     }
 }

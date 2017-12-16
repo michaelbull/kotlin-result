@@ -7,15 +7,16 @@ buildscript {
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
         classpath "org.jetbrains.dokka:dokka-gradle-plugin:$dokkaVersion"
-        classpath "org.junit.platform:junit-platform-gradle-plugin:$junitPlatformVersion"
         classpath "net.researchgate:gradle-release:$gradleReleaseVersion"
     }
 }
 
-apply plugin: 'kotlin'
+plugins {
+    id 'com.github.ben-manes.versions' version '0.17.0'
+}
+
+apply plugin: 'kotlin-platform-common'
 apply plugin: 'maven-publish'
-apply plugin: 'org.jetbrains.dokka'
-apply plugin: 'org.junit.platform.gradle.plugin'
 apply plugin: 'net.researchgate.release'
 
 description = 'A Result monad for modelling success or failure operations.'
@@ -25,31 +26,9 @@ repositories {
 }
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlinVersion"
-    testCompile "com.natpryce:hamkrest:$hamkrestVersion"
-    testCompile "org.junit.jupiter:junit-jupiter-params:$junitVersion"
-    testCompile "org.junit.jupiter:junit-jupiter-api:$junitVersion"
-    testRuntime "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
-}
-
-compileKotlin {
-    kotlinOptions.jvmTarget = "1.8"
-}
-
-compileTestKotlin {
-    kotlinOptions.jvmTarget = "1.8"
-}
-
-dokka {
-    outputFormat = 'javadoc'
-    outputDirectory = "$buildDir/docs"
-}
-
-task javadocJar(type: Jar, dependsOn: dokka) {
-    group = LifecycleBasePlugin.BUILD_GROUP
-    description = 'Assembles a jar archive containing the Javadoc API documentation.'
-    classifier = 'javadoc'
-    from dokka.outputDirectory
+    compile "org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinVersion"
+    testCompile "org.jetbrains.kotlin:kotlin-test-annotations-common:$kotlinVersion"
+    testCompile "org.jetbrains.kotlin:kotlin-test-common:$kotlinVersion"
 }
 
 task sourcesJar(type: Jar) {
@@ -62,8 +41,6 @@ task sourcesJar(type: Jar) {
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            from components.java
-            artifact javadocJar
             artifact sourcesJar
         }
     }

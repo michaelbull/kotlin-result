@@ -1,33 +1,44 @@
 package com.github.michaelbull.result
 
-import com.natpryce.hamkrest.assertion.assertThat
-import com.natpryce.hamkrest.equalTo
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 internal class OrTest {
     private object OrError
 
-    @Test
-    internal fun `or should return the result value if ok`() {
-        val value = Ok(500).or(Ok(1000)).get()
-        assertThat(value, equalTo(500))
+    internal class `or` {
+        @Test
+        internal fun returnsValueIfOk() {
+            assertEquals(
+                expected = 500,
+                actual = Ok(500).or(Ok(1000)).get()
+            )
+        }
+
+        @Test
+        internal fun returnsDefaultValueIfErr() {
+            assertEquals(
+                expected = 5000,
+                actual = Err(OrError).or(Ok(5000)).get()
+            )
+        }
     }
 
-    @Test
-    internal fun `or should return the default value if not ok`() {
-        val value = Err(OrError).or(Ok(5000)).get()
-        assertThat(value, equalTo(5000))
-    }
+    internal class `orElse` {
+        @Test
+        internal fun returnsValueIfOk() {
+            assertEquals(
+                expected = 3000,
+                actual = Ok(3000).orElse { Ok(4000) }.get()
+            )
+        }
 
-    @Test
-    internal fun `orElse should return the result value if ok`() {
-        val value = Ok(3000).orElse { Ok(4000) }.get()
-        assertThat(value, equalTo(3000))
-    }
-
-    @Test
-    internal fun `orElse should return the transformed value if not ok`() {
-        val value = Err(4000).orElse { Ok(2000) }.get()
-        assertThat(value, equalTo(2000))
+        @Test
+        internal fun returnsTransformedValueIfErr() {
+            assertEquals(
+                expected = 2000,
+                actual = Err(4000).orElse { Ok(2000) }.get()
+            )
+        }
     }
 }

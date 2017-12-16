@@ -1,38 +1,61 @@
 package com.github.michaelbull.result
 
-import com.natpryce.hamkrest.assertion.assertThat
-import com.natpryce.hamkrest.equalTo
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 internal class OnTest {
     object CounterError
     class Counter(var count: Int)
 
-    @Test
-    internal fun `onSuccess should invoke the callback when result is ok`() {
-        val counter = Counter(50)
-        Ok(counter).onSuccess { it.count += 50 }
-        assertThat(counter.count, equalTo(100))
+    internal class `onSuccess` {
+        @Test
+        internal fun invokesCallbackIfOk() {
+            val counter = Counter(50)
+
+            Ok(counter).onSuccess { it.count += 50 }
+
+            assertEquals(
+                expected = 100,
+                actual = counter.count
+            )
+        }
+
+        @Test
+        internal fun invokesNothingIfErr() {
+            val counter = Counter(200)
+
+            Err(CounterError).onSuccess { counter.count -= 50 }
+
+            assertEquals(
+                expected = 200,
+                actual = counter.count
+            )
+        }
     }
 
-    @Test
-    internal fun `onSuccess should not invoke the callback when result is not ok`() {
-        val counter = Counter(200)
-        Err(CounterError).onSuccess { counter.count -= 50 }
-        assertThat(counter.count, equalTo(200))
-    }
+    internal class `onFailure` {
+        @Test
+        internal fun invokesCallbackIfErr() {
+            val counter = Counter(555)
 
-    @Test
-    internal fun `onFailure should invoke the callback when result is not ok`() {
-        val counter = Counter(555)
-        Err(CounterError).onFailure { counter.count += 100 }
-        assertThat(counter.count, equalTo(655))
-    }
+            Err(CounterError).onFailure { counter.count += 100 }
 
-    @Test
-    internal fun `onFailure should not invoke the callback when result is ok`() {
-        val counter = Counter(1020)
-        Ok("hello").onFailure { counter.count = 1030 }
-        assertThat(counter.count, equalTo(1020))
+            assertEquals(
+                expected = 655,
+                actual = counter.count
+            )
+        }
+
+        @Test
+        internal fun invokesNothingIfOk() {
+            val counter = Counter(1020)
+
+            Ok("hello").onFailure { counter.count = 1030 }
+
+            assertEquals(
+                expected = 1020,
+                actual = counter.count
+            )
+        }
     }
 }

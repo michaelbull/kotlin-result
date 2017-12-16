@@ -1,79 +1,109 @@
 package com.github.michaelbull.result
 
-import com.natpryce.hamkrest.assertion.assertThat
-import com.natpryce.hamkrest.equalTo
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertNull
 
 internal class GetTest {
-    @Test
-    internal fun `get should return the result value if ok`() {
-        val value = Ok(12).get()
-        assertThat(value, equalTo(12))
+    internal class `get` {
+        @Test
+        internal fun returnsValueIfOk() {
+            assertEquals(
+                expected = 12,
+                actual = Ok(12).get()
+            )
+        }
+
+        @Test
+        internal fun returnsNullIfErr() {
+            assertNull(Err("error").get())
+        }
     }
 
-    @Test
-    internal fun `get should return null if not ok`() {
-        val value = Err("error").get()
-        assertThat(value, equalTo(null))
+    internal class `getError` {
+        @Test
+        internal fun returnsNullIfOk() {
+            assertNull(Ok("example").getError())
+        }
+
+        @Test
+        internal fun returnsErrorIfErr() {
+            assertEquals(
+                expected = "example",
+                actual = Err("example").getError()
+            )
+        }
     }
 
-    @Test
-    internal fun `getError should return null if ok`() {
-        val error = Ok("example").getError()
-        assertThat(error, equalTo(null))
+    internal class `getOr` {
+        @Test
+        internal fun returnsValueIfOk() {
+            assertEquals(
+                expected = "hello",
+                actual = Ok("hello").getOr("world")
+            )
+        }
+
+        @Test
+        internal fun returnsDefaultValueIfErr() {
+            assertEquals(
+                expected = "default",
+                actual = Err("error").getOr("default")
+            )
+        }
     }
 
-    @Test
-    internal fun `getError should return the result error if not ok`() {
-        val error = Err("example").getError()
-        assertThat(error, equalTo("example"))
+    internal class `getErrorOr` {
+        @Test
+        internal fun returnsDefaultValueIfOk() {
+            assertEquals(
+                expected = "world",
+                actual = Ok("hello").getErrorOr("world")
+            )
+        }
+
+        @Test
+        internal fun returnsErrorIfErr() {
+            assertEquals(
+                expected = "hello",
+                actual = Err("hello").getErrorOr("world")
+            )
+        }
     }
 
-    @Test
-    internal fun `getOr should return the result value if ok`() {
-        val value = Ok("hello").getOr("world")
-        assertThat(value, equalTo("hello"))
+    internal class `getOrElse` {
+        @Test
+        internal fun returnsValueIfOk() {
+            assertEquals(
+                expected = "hello",
+                actual = Ok("hello").getOrElse { "world" }
+            )
+        }
+
+        @Test
+        internal fun returnsTransformedErrorIfErr() {
+            assertEquals(
+                expected = "world",
+                actual = Err("hello").getOrElse { "world" }
+            )
+        }
     }
 
-    @Test
-    internal fun `getOr should return default value if not ok`() {
-        val value = Err("error").getOr("default")
-        assertThat(value, equalTo("default"))
-    }
+    internal class `getErrorOrElse` {
+        @Test
+        internal fun returnsTransformedValueIfOk() {
+            assertEquals(
+                expected = "world",
+                actual = Ok("hello").getErrorOrElse { "world" }
+            )
+        }
 
-    @Test
-    internal fun `getErrorOr should return the default value if ok`() {
-        val error = Ok("hello").getErrorOr("world")
-        assertThat(error, equalTo("world"))
-    }
-
-    @Test
-    internal fun `getErrorOr should return the result error if not ok`() {
-        val error = Err("hello").getErrorOr("world")
-        assertThat(error, equalTo("hello"))
-    }
-
-    @Test
-    internal fun `getOrElse should return the result value if ok`() {
-        val value = Ok("hello").getOrElse { "world" }
-        assertThat(value, equalTo("hello"))
-    }
-
-    @Test
-    internal fun `getOrElse should return the transformed result error if ok`() {
-        val value = Err("hello").getOrElse { "world" }
-        assertThat(value, equalTo("world"))
-    }
-
-    @Test
-    internal fun `getErrorOrElse should return the transformed result value if ok`() {
-        val error = Ok("hello").getErrorOrElse { "world" }
-        assertThat(error, equalTo("world"))
-    }
-
-    @Test
-    internal fun `getErrorOrElse should return the result error if not ok`() {
-        val error = Err("hello").getErrorOrElse { "world" }
-        assertThat(error, equalTo("hello"))
+        @Test
+        internal fun returnsErrorIfErr() {
+            assertEquals(
+                expected = "hello",
+                actual = Err("hello").getErrorOrElse { "world" }
+            )
+        }
     }
 }

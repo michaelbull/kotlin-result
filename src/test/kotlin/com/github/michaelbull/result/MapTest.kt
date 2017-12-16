@@ -1,10 +1,8 @@
 package com.github.michaelbull.result
 
-import com.natpryce.hamkrest.Matcher
-import com.natpryce.hamkrest.assertion.assertThat
-import com.natpryce.hamkrest.equalTo
-import com.natpryce.hamkrest.sameInstance
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertSame
 
 internal class MapTest {
     private sealed class MapError(val reason: String) {
@@ -13,93 +11,121 @@ internal class MapTest {
         class CustomError(reason: String) : MapError(reason)
     }
 
-    private fun sameError(error: MapError): Matcher<MapError> {
-        return sameInstance(error)
+    internal class `map` {
+        @Test
+        internal fun returnsTransformedValueIfOk() {
+            assertEquals(
+                expected = 30,
+                actual = Ok(10).map { it + 20 }.get()
+            )
+        }
+
+        @Test
+        @Suppress("UNREACHABLE_CODE")
+        internal fun returnsErrorIfErr() {
+            val result = Err(MapError.HelloError).map { "hello $it" }
+
+            result as Err
+
+            assertSame(
+                expected = MapError.HelloError,
+                actual = result.error
+            )
+        }
     }
 
-    @Test
-    internal fun `map should return the transformed result value if ok`() {
-        val value = Ok(10).map { it + 20 }.get()
-        assertThat(value, equalTo(30))
-    }
+    internal class `mapError` {
+        @Test
+        internal fun returnsValueIfOk() {
+            val value = Ok(55).map { it + 15 }.mapError { MapError.WorldError }.get()
 
-    @Test
-    @Suppress("UNREACHABLE_CODE")
-    internal fun `map should return the result error if not ok`() {
-        val result = Err(MapError.HelloError).map { "hello $it" }
+            assertEquals(
+                expected = 70,
+                actual = value
+            )
+        }
 
-        result as Err
-
-        assertThat(result.error, sameError(MapError.HelloError))
-    }
-
-    @Test
-    internal fun `mapError should return the result value if ok`() {
-        val value = Ok(55).map { it + 15 }.mapError { MapError.WorldError }.get()
-        assertThat(value, equalTo(70))
-    }
-
-    @Test
-    internal fun `mapError should return the transformed result error if not ok`() {
-        val result: Result<String, MapError> = Ok("let")
-            .map { "$it me" }
-            .andThen {
-                when (it) {
-                    "let me" -> Err(MapError.CustomError("$it $it"))
-                    else -> Ok("$it get")
+        @Test
+        internal fun returnsErrorIfErr() {
+            val result: Result<String, MapError> = Ok("let")
+                .map { "$it me" }
+                .andThen {
+                    when (it) {
+                        "let me" -> Err(MapError.CustomError("$it $it"))
+                        else -> Ok("$it get")
+                    }
                 }
-            }
-            .mapError { MapError.CustomError("${it.reason} get what i want") }
+                .mapError { MapError.CustomError("${it.reason} get what i want") }
 
-        result as Err
+            result as Err
 
-        assertThat(result.error.reason, equalTo("let me let me get what i want"))
+            assertEquals(
+                expected = "let me let me get what i want",
+                actual = result.error.reason
+            )
+        }
     }
 
-    @Test
-    @Suppress("UNREACHABLE_CODE")
-    internal fun `mapBoth should return the transformed result value if ok`() {
-        val value = Ok("there is").mapBoth(
-            success = { "$it a light" },
-            failure = { "$it that never" }
-        )
+    internal class `mapBoth` {
+        @Test
+        @Suppress("UNREACHABLE_CODE")
+        internal fun returnsTransformedValueIfOk() {
+            val value = Ok("there is").mapBoth(
+                success = { "$it a light" },
+                failure = { "$it that never" }
+            )
 
-        assertThat(value, equalTo("there is a light"))
+            assertEquals(
+                expected = "there is a light",
+                actual = value
+            )
+        }
+
+        @Test
+        @Suppress("UNREACHABLE_CODE")
+        internal fun returnsTransformedErrorIfErr() {
+            val error = Err(MapError.CustomError("this")).mapBoth(
+                success = { "$it charming" },
+                failure = { "${it.reason} man" }
+            )
+
+            assertEquals(
+                expected = "this man",
+                actual = error
+            )
+        }
     }
 
-    @Test
-    @Suppress("UNREACHABLE_CODE")
-    internal fun `mapBoth should return the transformed result error if not ok`() {
-        val error = Err(MapError.CustomError("this")).mapBoth(
-            success = { "$it charming" },
-            failure = { "${it.reason} man" }
-        )
+    internal class `mapEither` {
+        @Test
+        @Suppress("UNREACHABLE_CODE")
+        internal fun returnsTransformedValueIfOk() {
+            val result = Ok(500).mapEither(
+                success = { it + 500 },
+                failure = { MapError.CustomError("$it") }
+            )
 
-        assertThat(error, equalTo("this man"))
-    }
+            result as Ok
 
-    @Test
-    @Suppress("UNREACHABLE_CODE")
-    internal fun `mapEither should return the transformed result value if ok`() {
-        val result = Ok(500).mapEither(
-            success = { it + 500 },
-            failure = { MapError.CustomError("$it") }
-        )
+            assertEquals(
+                expected = 1000,
+                actual = result.value
+            )
+        }
 
-        result as Ok
+        @Test
+        internal fun returnsTransformedErrorIfErr() {
+            val result = Err("the reckless").mapEither(
+                success = { "the wild youth" },
+                failure = { MapError.CustomError("the truth") }
+            )
 
-        assertThat(result.value, equalTo(1000))
-    }
+            result as Err
 
-    @Test
-    internal fun `mapEither should return the transformed result error if not ok`() {
-        val result = Err("the reckless").mapEither(
-            success = { "the wild youth" },
-            failure = { MapError.CustomError("the truth") }
-        )
-
-        result as Err
-
-        assertThat(result.error.reason, equalTo("the truth"))
+            assertEquals(
+                expected = "the truth",
+                actual = result.error.reason
+            )
+        }
     }
 }

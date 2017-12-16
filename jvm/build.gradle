@@ -1,0 +1,35 @@
+apply plugin: 'kotlin-platform-jvm'
+apply plugin: 'org.jetbrains.dokka'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+    expectedBy project(":")
+    testCompile "junit:junit:$junitVersion"
+    testCompile "org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion"
+    testCompile "org.jetbrains.kotlin:kotlin-test:$kotlinVersion"
+}
+
+dokka {
+    outputFormat = 'javadoc'
+    outputDirectory = "$buildDir/docs"
+}
+
+task javadocJar(type: Jar, dependsOn: dokka) {
+    group = LifecycleBasePlugin.BUILD_GROUP
+    description = 'Assembles a jar archive containing the Javadoc API documentation.'
+    classifier = 'javadoc'
+    from dokka.outputDirectory
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            artifact javadocJar
+        }
+    }
+}

@@ -1,34 +1,45 @@
 package com.github.michaelbull.result
 
-import com.natpryce.hamkrest.assertion.assertThat
-import com.natpryce.hamkrest.equalTo
-import com.natpryce.hamkrest.sameInstance
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertSame
 
 internal class AndTest {
     private object AndError
 
-    @Test
-    internal fun `and should return the result value if ok`() {
-        val value = Ok(230).and(Ok(500)).get()
-        assertThat(value, equalTo(500))
+    internal class `and` {
+        @Test
+        internal fun returnsValueIfOk() {
+            assertEquals(
+                expected = 500,
+                actual = Ok(230).and(Ok(500)).get()
+            )
+        }
+
+        @Test
+        internal fun returnsValueIfErr() {
+            assertEquals(
+                expected = "hello world",
+                actual = Ok(300).and(Err("hello world")).getError()
+            )
+        }
     }
 
-    @Test
-    internal fun `and should return the result value if not ok`() {
-        val error = Ok(300).and(Err("hello world")).getError()
-        assertThat(error, equalTo("hello world"))
-    }
+    internal class `andThen` {
+        @Test
+        internal fun returnsTransformedValueIfOk() {
+            assertEquals(
+                expected = 12,
+                actual = Ok(5).andThen { Ok(it + 7) }.get()
+            )
+        }
 
-    @Test
-    internal fun `andThen should return the transformed result value if ok`() {
-        val value = Ok(5).andThen { Ok(it + 7) }.get()
-        assertThat(value, equalTo(12))
-    }
-
-    @Test
-    internal fun `andThen should return the result error if not ok`() {
-        val error = Ok(20).andThen { Ok(it + 43) }.andThen { Err(AndError) }.getError()!!
-        assertThat(error, sameInstance(AndError))
+        @Test
+        internal fun returnsErrorIfErr() {
+            assertSame(
+                expected = AndError,
+                actual = Ok(20).andThen { Ok(it + 43) }.andThen { Err(AndError) }.getError()!!
+            )
+        }
     }
 }

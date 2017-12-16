@@ -24,6 +24,7 @@ Improvements on the existing solutions include:
 
 - Feature parity with Result types from other languages including Elm, Haskell,
      & Rust
+- [Multiplatform][multiplatform] project support
 - Lax constraints on `value`/`error` nullability
 - Lax constraints on the `error` type's inheritance (does not inherit from
     `Exception`)
@@ -45,7 +46,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.michaelbull:kotlin-result:1.0.3'
+    compile 'com.github.michaelbull:kotlin-result:1.0.4'
 }
 ```
 
@@ -72,6 +73,7 @@ This project is available under the terms of the ISC license. See the
 [result]: https://github.com/michaelbull/kotlin-result/blob/master/src/main/kotlin/com/github/michaelbull/result/Result.kt#L10
 [result-ok]: https://github.com/michaelbull/kotlin-result/blob/master/src/main/kotlin/com/github/michaelbull/result/Result.kt#L27
 [result-err]: https://github.com/michaelbull/kotlin-result/blob/master/src/main/kotlin/com/github/michaelbull/result/Result.kt#L28
+[multiplatform]: https://kotlinlang.org/docs/reference/multiplatform.html
 [unit-tests]: https://github.com/michaelbull/kotlin-result/tree/master/src/test/kotlin/com/github/michaelbull/result
 [wiki]: https://github.com/michaelbull/kotlin-result/wiki
 [wiki-elm]: https://github.com/michaelbull/kotlin-result/wiki/Elm

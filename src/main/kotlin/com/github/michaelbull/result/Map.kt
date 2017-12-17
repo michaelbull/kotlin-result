@@ -1,8 +1,8 @@
 package com.github.michaelbull.result
 
 /**
- * Maps a [Result<V, E>][Result] to [Result<U, E>][Result] by applying a function to a contained
- * [Ok] value, leaving an [Err] value untouched.
+ * Maps this [Result<V, E>][Result] to [Result<U, E>][Result] by either applying the [transform] function
+ * to the [value][Ok.value] if this [Result] is [Ok], or returning this [Err].
  *
  * - Elm: [Result.map](http://package.elm-lang.org/packages/elm-lang/core/latest/Result#map)
  * - Haskell: [Data.Bifunctor.first](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Bifunctor.html#v:first)
@@ -19,8 +19,8 @@ infix inline fun <V, E, U> Result<V, E>.map(transform: (V) -> U): Result<U, E> {
 }
 
 /**
- * Maps a [Result<V, E>][Result] to [Result<V, F>][Result] by applying a function to a contained
- * [Err] value, leaving an [Ok] value untouched.
+ * Maps this [Result<V, E>][Result] to [Result<V, F>][Result] by either applying the [transform] function
+ * to the [error][Err.error] if this [Result] is [Err], or returning this [Ok].
  *
  * - Elm: [Result.mapError](http://package.elm-lang.org/packages/elm-lang/core/latest/Result#mapError)
  * - Haskell: [Data.Bifunctor.right](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Bifunctor.html#v:second)
@@ -37,8 +37,8 @@ infix inline fun <V, E, F> Result<V, E>.mapError(transform: (E) -> F): Result<V,
 }
 
 /**
- * Map a [Result<V, E>][Result] to `U` by applying either the [success] function if the [Result]
- * is [Ok] or the [failure] function if the [Result] is an [Err]. Both of these functions must
+ * Maps this [Result<V, E>][Result] to `U` by applying either the [success] function if this [Result]
+ * is [Ok], or the [failure] function if this [Result] is an [Err]. Both of these functions must
  * return the same type (`U`).
  *
  * - Elm: [Result.Extra.mapBoth](http://package.elm-lang.org/packages/circuithub/elm-result-extra/1.4.0/Result-Extra#mapBoth)
@@ -60,8 +60,8 @@ inline fun <V, E, U> Result<V, E>.mapBoth(
 
 // TODO: better name?
 /**
- * Map a [Result<V, E>][Result] to [Result<U, F>][Result] by applying either the [success] function
- * if the [Result] is [Ok] or the [failure] function if the [Result] is an [Err].
+ * Maps this [Result<V, E>][Result] to [Result<U, F>][Result] by applying either the [success] function
+ * if this [Result] is [Ok], or the [failure] function if this [Result] is an [Err].
  *
  * - Haskell: [Data.Bifunctor.Bimap](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Bifunctor.html#v:bimap)
  *

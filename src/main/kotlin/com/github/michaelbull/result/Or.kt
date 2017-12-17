@@ -1,6 +1,8 @@
 package com.github.michaelbull.result
 
 /**
+ * Returns [result] if this [Result] is [Err], otherwise this [Ok].
+ *
  * - Rust: [Result.or](https://doc.rust-lang.org/std/result/enum.Result.html#method.or)
  *
  * @param result The [Result] to return if [Err].
@@ -14,6 +16,9 @@ infix fun <V, E> Result<V, E>.or(result: Result<V, E>): Result<V, E> {
 }
 
 /**
+ * Returns the [transformation][transform] of the [error][Err.error] if this [Result] is [Err],
+ * otherwise this [Ok].
+ *
  * - Rust: [Result.or_else](https://doc.rust-lang.org/std/result/enum.Result.html#method.or_else)
  *
  * @param transform The transformation to apply to the [error][Err.error].

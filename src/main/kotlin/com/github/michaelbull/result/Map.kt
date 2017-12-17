@@ -78,3 +78,18 @@ inline fun <V, E, U, F> Result<V, E>.mapEither(
         is Err -> Err(failure(error))
     }
 }
+
+/**
+ * Maps this [Result<V, E>][Result] to [Result<U, E>][Result] by either applying the [transform] function
+ * if this [Result] is [Ok], or returning this [Err].
+ *
+ * This is functionally equivalent to [andThen].
+ *
+ * - Scala: [Either.flatMap](http://www.scala-lang.org/api/2.12.0/scala/util/Either.html#flatMap[AA>:A,Y](f:B=>scala.util.Either[AA,Y]):scala.util.Either[AA,Y])
+ *
+ * @param transform The transformation to apply to the [value][Ok.value].
+ * @return The [transformed][transform] [Result] if [Ok], otherwise [Err].
+ */
+infix inline fun <V, E, U> Result<V, E>.flatMap(transform: (V) -> Result<U, E>): Result<U, E> {
+    return andThen(transform)
+}

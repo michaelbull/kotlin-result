@@ -5,8 +5,6 @@ package com.github.michaelbull.result
  *
  * - Elm: [Result.toMaybe](http://package.elm-lang.org/packages/elm-lang/core/latest/Result#toMaybe)
  * - Rust: [Result.ok](https://doc.rust-lang.org/std/result/enum.Result.html#method.ok)
- *
- * @return The [value][Ok.value] if [Ok], otherwise `null`.
  */
 fun <V, E> Result<V, E>.get(): V? {
     return when (this) {
@@ -19,8 +17,6 @@ fun <V, E> Result<V, E>.get(): V? {
  * Returns the [error][Err.error] if this [Result] is [Err], otherwise `null`.
  *
  * - Rust: [Result.err](https://doc.rust-lang.org/std/result/enum.Result.html#method.err)
- *
- * @return The [error][Err.error] if [Err], otherwise `null`.
  */
 fun <V, E> Result<V, E>.getError(): E? {
     return when (this) {
@@ -77,9 +73,6 @@ infix inline fun <V, E> Result<V, E>.getErrorOr(default: () -> E): E {
  *
  * - Elm: [Result.extract](http://package.elm-lang.org/packages/circuithub/elm-result-extra/1.4.0/Result-Extra#extract)
  * - Rust: [Result.unwrap_or_else](https://doc.rust-lang.org/src/core/result.rs.html#735-740)
- *
- * @param transform The transformation to apply to the [error][Err.error].
- * @return The [value][Ok.value] if [Ok], otherwise the [transformed][transform] [error][Err.error].
  */
 infix inline fun <V, E> Result<V, E>.getOrElse(transform: (E) -> V): V {
     return when (this) {
@@ -91,9 +84,6 @@ infix inline fun <V, E> Result<V, E>.getOrElse(transform: (E) -> V): V {
 /**
  * Returns the [error][Err.error] if this [Result] is [Err], otherwise
  * the [transformation][transform] of the [value][Ok.value].
- *
- * @param transform The transformation to apply to the [value][Ok.value].
- * @return The [error][Err.error] if [Err], otherwise the [transformed][transform] [value][Ok.value].
  */
 infix inline fun <V, E> Result<V, E>.getErrorOrElse(transform: (V) -> E): E {
     return when (this) {

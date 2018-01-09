@@ -27,9 +27,9 @@ sealed class Result<out V, out E> {
 /**
  * Represents a successful [Result], containing a [value].
  */
-data class Ok<out V> constructor(val value: V) : Result<V, Nothing>()
+data class Ok<out V>(val value: V) : Result<V, Nothing>()
 
 /**
- * Represents a failed [Result], containing an [error] value.
+ * Represents a failed [Result], containing an [error].
  */
-data class Err<out E> constructor(val error: E) : Result<Nothing, E>()
+data class Err<out E>(val error: E) : Result<Nothing, E>()

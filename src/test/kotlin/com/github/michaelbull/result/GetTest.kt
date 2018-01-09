@@ -40,7 +40,7 @@ internal class GetTest {
         internal fun returnsValueIfOk() {
             assertEquals(
                 expected = "hello",
-                actual = Ok("hello").getOr("world")
+                actual = Ok("hello").getOr { "world" }
             )
         }
 
@@ -48,7 +48,7 @@ internal class GetTest {
         internal fun returnsDefaultValueIfErr() {
             assertEquals(
                 expected = "default",
-                actual = Err("error").getOr("default")
+                actual = Err("error").getOr { "default" }
             )
         }
     }
@@ -58,7 +58,7 @@ internal class GetTest {
         internal fun returnsDefaultValueIfOk() {
             assertEquals(
                 expected = "world",
-                actual = Ok("hello").getErrorOr("world")
+                actual = Ok("hello").getErrorOr { "world" }
             )
         }
 
@@ -66,7 +66,7 @@ internal class GetTest {
         internal fun returnsErrorIfErr() {
             assertEquals(
                 expected = "hello",
-                actual = Err("hello").getErrorOr("world")
+                actual = Err("hello").getErrorOr { "world" }
             )
         }
     }

@@ -1,5 +1,10 @@
 package com.github.michaelbull.result
 
+@Deprecated("Use lazy-evaluating variant instead", ReplaceWith("or { result }"))
+infix fun <V, E> Result<V, E>.or(result: Result<V, E>): Result<V, E> {
+    return or { result }
+}
+
 /**
  * Returns [result] if this [Result] is [Err], otherwise this [Ok].
  *
@@ -8,10 +13,10 @@ package com.github.michaelbull.result
  * @param result The [Result] to return if [Err].
  * @return The [result] if [Err], otherwise [Ok].
  */
-infix fun <V, E> Result<V, E>.or(result: Result<V, E>): Result<V, E> {
+infix inline fun <V, E> Result<V, E>.or(result: () -> Result<V, E>): Result<V, E> {
     return when (this) {
         is Ok -> this
-        is Err -> result
+        is Err -> result()
     }
 }
 

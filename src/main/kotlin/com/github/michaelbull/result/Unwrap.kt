@@ -16,7 +16,7 @@ fun <V, E> Result<V, E>.unwrap(): V {
     }
 }
 
-@Deprecated("Use lazy evaluation.", ReplaceWith("expect { message }"))
+@Deprecated("Use lazy-evaluating variant instead", ReplaceWith("expect { message }"))
 infix fun <V, E> Result<V, E>.expect(message: String): V {
     return expect { message }
 }
@@ -50,7 +50,7 @@ fun <V, E> Result<V, E>.unwrapError(): E {
     }
 }
 
-@Deprecated("Use lazy evaluation.", ReplaceWith("expectError { message }"))
+@Deprecated("Use lazy-evaluating variant instead", ReplaceWith("expectError { message }"))
 infix fun <V, E> Result<V, E>.expectError(message: String): E {
     return expectError { message }
 }

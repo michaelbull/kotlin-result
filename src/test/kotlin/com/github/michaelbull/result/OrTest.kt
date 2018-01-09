@@ -11,7 +11,7 @@ internal class OrTest {
         internal fun returnsValueIfOk() {
             assertEquals(
                 expected = 500,
-                actual = Ok(500).or(Ok(1000)).get()
+                actual = Ok(500).or { Ok(1000) }.get()
             )
         }
 
@@ -19,7 +19,7 @@ internal class OrTest {
         internal fun returnsDefaultValueIfErr() {
             assertEquals(
                 expected = 5000,
-                actual = Err(OrError).or(Ok(5000)).get()
+                actual = Err(OrError).or { Ok(5000) }.get()
             )
         }
     }

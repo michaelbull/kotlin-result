@@ -12,7 +12,7 @@ internal class AndTest {
         internal fun returnsValueIfOk() {
             assertEquals(
                 expected = 500,
-                actual = Ok(230).and(Ok(500)).get()
+                actual = Ok(230).and { Ok(500) }.get()
             )
         }
 
@@ -20,7 +20,7 @@ internal class AndTest {
         internal fun returnsValueIfErr() {
             assertEquals(
                 expected = "hello world",
-                actual = Ok(300).and(Err("hello world")).getError()
+                actual = Ok(300).and { Err("hello world") }.getError()
             )
         }
     }

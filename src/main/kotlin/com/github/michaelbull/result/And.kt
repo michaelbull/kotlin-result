@@ -1,5 +1,10 @@
 package com.github.michaelbull.result
 
+@Deprecated("Use lazy-evaluating variant instead", ReplaceWith("and { result }"))
+infix fun <V, E> Result<V, E>.and(result: Result<V, E>): Result<V, E> {
+    return and { result }
+}
+
 /**
  * Returns [result] if this [Result] is [Ok], otherwise this [Err].
  *
@@ -8,9 +13,9 @@ package com.github.michaelbull.result
  * @param result The [Result] to return if [Ok].
  * @return The [result] if [Ok], otherwise [Err].
  */
-infix fun <V, E> Result<V, E>.and(result: Result<V, E>): Result<V, E> {
+infix inline fun <V, E> Result<V, E>.and(result: () -> Result<V, E>): Result<V, E> {
     return when (this) {
-        is Ok -> result
+        is Ok -> result()
         is Err -> this
     }
 }

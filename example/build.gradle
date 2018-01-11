@@ -1,0 +1,33 @@
+apply plugin: 'application'
+apply plugin: 'kotlin'
+
+mainClassName = 'io.ktor.server.netty.DevelopmentEngine'
+
+repositories {
+    mavenCentral()
+    maven { url  "http://dl.bintray.com/kotlin/ktor" }
+    maven { url "https://dl.bintray.com/kotlin/kotlinx" }
+}
+
+dependencies {
+    compile project(":jvm")
+    compile "ch.qos.logback:logback-classic:$logbackVersion"
+    compile "io.ktor:ktor-server-core:$ktorVersion"
+    compile "io.ktor:ktor-server-netty:$ktorVersion"
+    compile "io.ktor:ktor-gson:$ktorVersion"
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+}
+
+compileKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+
+compileTestKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+
+kotlin {
+    experimental {
+        coroutines "enable"
+    }
+}

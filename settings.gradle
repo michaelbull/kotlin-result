@@ -1,3 +1,4 @@
 rootProject.name = 'kotlin-result'
 
-include 'js', 'jvm'
+include 'example', 'js', 'jvm'
+

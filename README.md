@@ -5,6 +5,104 @@
 [`Result<V, E>`][result] is a monad for modelling success ([`Ok`][result-ok]) or
 failure ([`Err`][result-err]) operations.
 
+## Installation
+
+```groovy
+repositories {
+    maven { url "https://jitpack.io" }
+}
+
+dependencies {
+    compile 'com.github.michaelbull:kotlin-result:1.0.7'
+}
+```
+
+## Introduction
+
+The [`Result`][result] monad has two subtypes, [`Ok<V>`][result-ok] 
+representing success and containing a `value`, and [`Err<E>`][result-err],
+representing an error and containing an `error` value. 
+
+Scott Wlaschin's article on [Railway Oriented Programming][swalschin-rop] is a great
+introduction to the benefits of modelling operations using the `Result` type.
+The [example][example] module contains an implementation of Scott's
+[example application][swalschin-example] that demonstrates the usage of `Result`
+in a real world scenario.
+
+Mappings are available on the [wiki][wiki] to assist those with experience 
+using the `Result` type in other languages:
+
+- [Elm](https://github.com/michaelbull/kotlin-result/wiki/Elm)
+- [Haskell](https://github.com/michaelbull/kotlin-result/wiki/Haskell)
+- [Rust](https://github.com/michaelbull/kotlin-result/wiki/Rust)
+- [Scala](https://github.com/michaelbull/kotlin-result/wiki/Scala)
+
+### Creating Results
+
+To begin incorporating the `Result` type into an existing codebase, you can 
+wrap functions that may fail (i.e. throw an `Exception`) with
+[`Result.of`][result-of]. This will execute the block of code and `catch` any
+`Exception`, returning a `Result<T, Exception>`.
+
+```kotlin
+val result: Result<Customer, Exception> = Result.of { 
+    customerDb.findById(id = 50) // could throw SQLException or similar 
+}
+```
+
+The idiomatic approach to modelling operations that may fail in Railway
+Oriented Programming is to avoid throwing an exception and instead make the 
+return type of your function a `Result`.
+
+```kotlin
+fun findById(id: Int): Result<Customer, DatabaseError> {
+    val customer = getAllCustomers().find { it.id == id }
+    return if (customer != null) Ok(customer) else Err(DatabaseError.CustomerNotFound)
+}
+```
+
+### Transforming Results
+
+Both success and failure results can be transformed within a stage of the
+railway track. The example below demonstrates how to transform an internal
+program error (`UnlockError`) into an exposed client error 
+(`IncorrectPassword`).
+
+```kotlin
+val result: Result<Treasure, UnlockResponse> = 
+    unlockVault("my-password") // returns Result<Treasure, UnlockError>
+    .mapError { UnlockResponse.IncorrectPassword } // transform UnlockError into UnlockResponse.IncorrectPassword
+```
+
+### Chaining
+
+Results can be chained to produce a "happy path" of execution. For example, the
+happy path for a user entering commands into an administrative console would 
+consist of: the command being tokenized, the command being registered, the user
+having sufficient privileges,  and the command executing the associated action.
+
+```kotlin
+tokenize(command.toLowerCase())
+    .andThen(this::findCommand)
+    .andThen { cmd -> checkPrivileges(loggedInUser, cmd) }
+    .andThen { execute(user = loggedInUser, command = cmd, timestamp = LocalDateTime.now()) }
+    .mapBoth(
+        { output -> printToConsole("returned: $output") },
+        { error  -> printToConsole("failed to execute, reason: ${error.reason}") }
+    )
+```
+
+Each of the `andThen` steps produces its own result, for example:
+
+```kotlin
+fun checkPrivileges(user: User, command: TokenizedCommand): Result<Command, CommandError> {
+    return when {
+        user.rank >= command.minRank -> Ok(command)
+        else -> Err(CommandError.InsufficientRank(command.tokens.name))
+    }
+}
+``` 
+
 ## Inspiration
 
 Inspiration for this library has been drawn from other languages in which the
@@ -13,6 +111,7 @@ Result monad is present, including:
 - [Elm](http://package.elm-lang.org/packages/elm-lang/core/latest/Result)
 - [Haskell](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Either.html)
 - [Rust](https://doc.rust-lang.org/std/result/)
+- [Scala](http://www.scala-lang.org/api/2.12.4/scala/util/Either.html)
 
 It also iterates on other Result libraries written in Kotlin, namely:
 
@@ -36,30 +135,7 @@ Improvements on the existing solutions include:
 - Consistent naming with existing Result libraries from other languages (e.g.
     `map`, `mapError`, `mapBoth`, `mapEither`, `and`, `andThen`, `or`, `orElse`,
     `unwrap`)
-- Extensive test suite with over 50 unit tests covering every library method
-
-## Installation
-
-```groovy
-repositories {
-    maven { url "https://jitpack.io" }
-}
-
-dependencies {
-    compile 'com.github.michaelbull:kotlin-result:1.0.6'
-}
-```
-
-## Getting Started
-
-The [unit tests][unit-tests] are a good source of examples for using the library
-as they cover every available method.
-
-Mappings from common Result libraries are available on the [wiki][wiki]:
-
-- [Elm][wiki-elm]
-- [Haskell][wiki-haskell]
-- [Rust][wiki-rust]
+- Extensive test suite with over 50 [unit tests][unit-tests] covering every library method
 
 ## Contributing
 
@@ -71,12 +147,13 @@ This project is available under the terms of the ISC license. See the
 [`LICENSE`](LICENSE) file for the copyright information and licensing terms.
 
 [result]: https://github.com/michaelbull/kotlin-result/blob/master/src/main/kotlin/com/github/michaelbull/result/Result.kt#L10
-[result-ok]: https://github.com/michaelbull/kotlin-result/blob/master/src/main/kotlin/com/github/michaelbull/result/Result.kt#L27
-[result-err]: https://github.com/michaelbull/kotlin-result/blob/master/src/main/kotlin/com/github/michaelbull/result/Result.kt#L28
-[multiplatform]: https://kotlinlang.org/docs/reference/multiplatform.html
-[unit-tests]: https://github.com/michaelbull/kotlin-result/tree/master/src/test/kotlin/com/github/michaelbull/result
+[result-ok]: https://github.com/michaelbull/kotlin-result/blob/master/src/main/kotlin/com/github/michaelbull/result/Result.kt#L30
+[result-err]: https://github.com/michaelbull/kotlin-result/blob/master/src/main/kotlin/com/github/michaelbull/result/Result.kt#L35
+[result-of]: https://github.com/michaelbull/kotlin-result/blob/master/src/main/kotlin/com/github/michaelbull/result/Result.kt#L17
+[example]: https://github.com/michaelbull/kotlin-result/tree/master/example/src/main/kotlin/com/github/michaelbull/result/example
+[swalschin-rop]: https://fsharpforfunandprofit.com/rop/
+[swalschin-example]: https://github.com/swlaschin/Railway-Oriented-Programming-Example
 [wiki]: https://github.com/michaelbull/kotlin-result/wiki
-[wiki-elm]: https://github.com/michaelbull/kotlin-result/wiki/Elm
-[wiki-haskell]: https://github.com/michaelbull/kotlin-result/wiki/Haskell
-[wiki-rust]: https://github.com/michaelbull/kotlin-result/wiki/Rust
+[unit-tests]: https://github.com/michaelbull/kotlin-result/tree/master/src/test/kotlin/com/github/michaelbull/result
+[multiplatform]: https://kotlinlang.org/docs/reference/multiplatform.html
 [github]: https://github.com/michaelbull/kotlin-result

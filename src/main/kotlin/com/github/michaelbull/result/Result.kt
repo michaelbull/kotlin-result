@@ -11,14 +11,14 @@ sealed class Result<out V, out E> {
     companion object {
 
         /**
-         * Invokes a [function] and wraps it in a [Result], returning an [Err] if a [Throwable]
+         * Invokes a [function] and wraps it in a [Result], returning an [Err] if an [Exception]
          * was thrown, otherwise [Ok].
          */
-        inline fun <T> of(function: () -> T): Result<T, Throwable> {
+        inline fun <T> of(function: () -> T): Result<T, Exception> {
             return try {
                 Ok(function.invoke())
-            } catch (t: Throwable) {
-                Err(t)
+            } catch (ex: Exception) {
+                Err(ex)
             }
         }
     }

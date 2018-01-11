@@ -18,12 +18,12 @@ internal class ResultTest {
 
         @Test
         internal fun returnsErrIfInvocationFails() {
-            val throwable = IllegalArgumentException("throw me")
-            val callback = { throw throwable }
+            val exception = IllegalArgumentException("throw me")
+            val callback = { throw exception }
             val error = Result.of(callback).getError()!!
 
             assertSame(
-                expected = throwable,
+                expected = exception,
                 actual = error
             )
         }

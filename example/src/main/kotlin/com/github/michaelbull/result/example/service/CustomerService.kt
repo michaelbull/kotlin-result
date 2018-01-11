@@ -25,41 +25,39 @@ object CustomerService {
     }
 
     fun getById(id: CustomerId): Result<Customer, DomainMessage> {
-        return getAll().andThen { it.findCustomer(id) }
+        return getAll().andThen { findCustomer(it, id) }
     }
 
     fun upsert(customer: Customer): Result<DomainMessage?, DomainMessage> {
         val entity = CustomerEntity.from(customer)
-
         return getById(customer.id).mapBoth(
-            success = { existing ->
-                Result.of { repository.update(entity) }
-                    .mapError(this::exceptionToDomainMessage)
-                    .map {
-                        if (customer.email != existing.email) {
-                            DomainMessage.EmailAddressChanged(existing.email.address, customer.email.address)
-                        } else {
-                            null
-                        }
-                    }
-            },
-            failure = {
-                Result.of { repository.insert(entity) }
-                    .mapError(this::exceptionToDomainMessage)
-                    .map { DomainMessage.CustomerCreated }
-            }
+            { existing -> updateCustomer(entity, existing, customer) },
+            { createCustomer(entity) }
         )
     }
 
-    private fun Collection<Customer>.findCustomer(id: CustomerId): Result<Customer, DomainMessage.CustomerNotFound> {
-        val customer = find { it.id == id }
+    private fun updateCustomer(entity: CustomerEntity, old: Customer, new: Customer) =
+        Result.of { repository.update(entity) }
+            .map { differenceBetween(old, new) }
+            .mapError(this::exceptionToDomainMessage)
+
+    private fun createCustomer(entity: CustomerEntity) =
+        Result.of { repository.insert(entity) }
+            .mapError(this::exceptionToDomainMessage)
+            .map { DomainMessage.CustomerCreated }
+
+    private fun findCustomer(customers: Collection<Customer>, id: CustomerId): Result<Customer, DomainMessage.CustomerNotFound> {
+        val customer = customers.find { it.id == id }
         return if (customer != null) Ok(customer) else Err(DomainMessage.CustomerNotFound)
     }
 
-    private fun exceptionToDomainMessage(it: Throwable): DomainMessage {
-        return when (it) {
-            is SQLTimeoutException -> DomainMessage.DatabaseTimeout
-            else -> DomainMessage.DatabaseError(it.message)
-        }
+    private fun differenceBetween(old: Customer, new: Customer) = when {
+        new.email != old.email -> DomainMessage.EmailAddressChanged(old.email.address, new.email.address)
+        else -> null
+    }
+
+    private fun exceptionToDomainMessage(t: Throwable) = when (t) {
+        is SQLTimeoutException -> DomainMessage.DatabaseTimeout
+        else -> DomainMessage.DatabaseError(t.message)
     }
 }

@@ -1,13 +1,11 @@
 package com.github.michaelbull.result.example
 
-import com.github.michaelbull.result.andThen
+import com.github.michaelbull.result.*
 import com.github.michaelbull.result.example.model.domain.Customer
 import com.github.michaelbull.result.example.model.domain.CustomerId
 import com.github.michaelbull.result.example.model.domain.DomainMessage
 import com.github.michaelbull.result.example.model.dto.CustomerDto
 import com.github.michaelbull.result.example.service.CustomerService
-import com.github.michaelbull.result.mapBoth
-import com.github.michaelbull.result.mapError
 import io.ktor.application.Application
 import io.ktor.application.call
 import io.ktor.application.install
@@ -22,6 +20,7 @@ import io.ktor.response.respond
 import io.ktor.routing.get
 import io.ktor.routing.post
 import io.ktor.routing.routing
+import io.ktor.util.ValuesMap
 
 fun Application.main() {
     install(DefaultHeaders)
@@ -35,45 +34,45 @@ fun Application.main() {
 
     routing {
         get("/customers/{id}") {
-            val id = call.parameters["id"]?.toLongOrNull()
-            if (id == null) {
-                call.respond(HttpStatusCode.BadRequest)
-            } else {
-                CustomerId.create(id)
-                    .andThen(CustomerService::getById)
-                    .mapError(::messageToResponse)
-                    .mapBoth(
-                        success = { call.respond(HttpStatusCode.OK, CustomerDto.from(it)) },
-                        failure = { call.respond(it.first, it.second) }
-                    )
-            }
+            readId(call.parameters)
+                .andThen(CustomerId.Companion::create)
+                .andThen(CustomerService::getById)
+                .mapError(::messageToResponse)
+                .mapBoth(
+                    { call.respond(HttpStatusCode.OK, CustomerDto.from(it)) },
+                    { call.respond(it.first, it.second) }
+                )
         }
 
         post("/customers/{id}") {
-            val id = call.parameters["id"]?.toLongOrNull()
-            if (id == null) {
-                call.respond(HttpStatusCode.BadRequest)
-            } else {
-                val dto = call.receive<CustomerDto>()
-                dto.id = id
-
-                Customer.from(dto)
-                    .andThen(CustomerService::upsert)
-                    .mapError(::messageToResponse)
-                    .mapBoth(
-                        success = {
-                            if (it == null) {
-                                call.respond(HttpStatusCode.NotModified)
-                            } else {
-                                val (status, message) = messageToResponse(it)
-                                call.respond(status, message)
-                            }
-                        },
-                        failure = { call.respond(it.first, it.second) }
-                    )
-            }
+            readId(call.parameters)
+                .andThen {
+                    val dto = call.receive<CustomerDto>()
+                    dto.id = it
+                    Ok(dto)
+                }
+                .andThen(Customer.Companion::from)
+                .andThen(CustomerService::upsert)
+                .mapError(::messageToResponse)
+                .mapBoth(
+                    { event ->
+                        if (event == null) {
+                            call.respond(HttpStatusCode.NotModified)
+                        } else {
+                            val (status, message) = messageToResponse(event)
+                            call.respond(status, message)
+                        }
+                    },
+                    { call.respond(it.first, it.second) }
+                )
         }
     }
+
+}
+
+private fun readId(values: ValuesMap): Result<Long, DomainMessage> {
+    val id = values["id"]?.toLongOrNull()
+    return if (id != null) Ok(id) else Err(DomainMessage.CustomerRequired)
 }
 
 private fun messageToResponse(message: DomainMessage) = when (message) {

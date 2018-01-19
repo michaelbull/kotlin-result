@@ -40,7 +40,7 @@ infix fun <V, E> Result<V, E>.getOr(default: V): V {
  * @param default The value to return if [Err].
  * @return The [value][Ok.value] if [Ok], otherwise [default].
  */
-infix inline fun <V, E> Result<V, E>.getOr(default: () -> V): V {
+inline infix fun <V, E> Result<V, E>.getOr(default: () -> V): V {
     return when (this) {
         is Ok -> value
         is Err -> default()
@@ -60,7 +60,7 @@ infix fun <V, E> Result<V, E>.getErrorOr(default: E): E {
  * @param default The error to return if [Ok].
  * @return The [error][Err.error] if [Err], otherwise [default].
  */
-infix inline fun <V, E> Result<V, E>.getErrorOr(default: () -> E): E {
+inline infix fun <V, E> Result<V, E>.getErrorOr(default: () -> E): E {
     return when (this) {
         is Ok -> default()
         is Err -> error
@@ -74,7 +74,7 @@ infix inline fun <V, E> Result<V, E>.getErrorOr(default: () -> E): E {
  * - Elm: [Result.extract](http://package.elm-lang.org/packages/circuithub/elm-result-extra/1.4.0/Result-Extra#extract)
  * - Rust: [Result.unwrap_or_else](https://doc.rust-lang.org/src/core/result.rs.html#735-740)
  */
-infix inline fun <V, E> Result<V, E>.getOrElse(transform: (E) -> V): V {
+inline infix fun <V, E> Result<V, E>.getOrElse(transform: (E) -> V): V {
     return when (this) {
         is Ok -> value
         is Err -> transform(error)
@@ -85,7 +85,7 @@ infix inline fun <V, E> Result<V, E>.getOrElse(transform: (E) -> V): V {
  * Returns the [error][Err.error] if this [Result] is [Err], otherwise
  * the [transformation][transform] of the [value][Ok.value].
  */
-infix inline fun <V, E> Result<V, E>.getErrorOrElse(transform: (V) -> E): E {
+inline infix fun <V, E> Result<V, E>.getErrorOrElse(transform: (V) -> E): E {
     return when (this) {
         is Ok -> transform(value)
         is Err -> error

@@ -10,7 +10,7 @@ infix fun <V, E> Result<V, E>.and(result: Result<V, E>): Result<V, E> {
  *
  * - Rust: [Result.and](https://doc.rust-lang.org/std/result/enum.Result.html#method.and)
  */
-infix inline fun <V, E> Result<V, E>.and(result: () -> Result<V, E>): Result<V, E> {
+inline infix fun <V, E> Result<V, E>.and(result: () -> Result<V, E>): Result<V, E> {
     return when (this) {
         is Ok -> result()
         is Err -> this
@@ -24,7 +24,7 @@ infix inline fun <V, E> Result<V, E>.and(result: () -> Result<V, E>): Result<V, 
  * - Elm: [Result.andThen](http://package.elm-lang.org/packages/elm-lang/core/latest/Result#andThen)
  * - Rust: [Result.and_then](https://doc.rust-lang.org/std/result/enum.Result.html#method.and_then)
  */
-infix inline fun <V, E, U> Result<V, E>.andThen(transform: (V) -> Result<U, E>): Result<U, E> {
+inline infix fun <V, E, U> Result<V, E>.andThen(transform: (V) -> Result<U, E>): Result<U, E> {
     return when (this) {
         is Ok -> transform(value)
         is Err -> this

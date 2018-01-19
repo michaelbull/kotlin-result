@@ -8,7 +8,7 @@ package com.github.michaelbull.result
  * - Haskell: [Data.Bifunctor.first](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Bifunctor.html#v:first)
  * - Rust: [Result.map](https://doc.rust-lang.org/std/result/enum.Result.html#method.map)
  */
-infix inline fun <V, E, U> Result<V, E>.map(transform: (V) -> U): Result<U, E> {
+inline infix fun <V, E, U> Result<V, E>.map(transform: (V) -> U): Result<U, E> {
     return when (this) {
         is Ok -> Ok(transform(value))
         is Err -> this
@@ -23,7 +23,7 @@ infix inline fun <V, E, U> Result<V, E>.map(transform: (V) -> U): Result<U, E> {
  * - Haskell: [Data.Bifunctor.right](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Bifunctor.html#v:second)
  * - Rust: [Result.map_err](https://doc.rust-lang.org/std/result/enum.Result.html#method.map_err)
  */
-infix inline fun <V, E, F> Result<V, E>.mapError(transform: (E) -> F): Result<V, F> {
+inline infix fun <V, E, F> Result<V, E>.mapError(transform: (E) -> F): Result<V, F> {
     return when (this) {
         is Ok -> this
         is Err -> Err(transform(error))
@@ -73,6 +73,6 @@ inline fun <V, E, U, F> Result<V, E>.mapEither(
  *
  * - Scala: [Either.flatMap](http://www.scala-lang.org/api/2.12.0/scala/util/Either.html#flatMap[AA>:A,Y](f:B=>scala.util.Either[AA,Y]):scala.util.Either[AA,Y])
  */
-infix inline fun <V, E, U> Result<V, E>.flatMap(transform: (V) -> Result<U, E>): Result<U, E> {
+inline infix fun <V, E, U> Result<V, E>.flatMap(transform: (V) -> Result<U, E>): Result<U, E> {
     return andThen(transform)
 }

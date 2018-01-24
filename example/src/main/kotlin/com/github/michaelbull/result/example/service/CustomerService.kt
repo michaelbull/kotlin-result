@@ -16,6 +16,7 @@ import com.github.michaelbull.result.example.model.entity.CustomerEntity
 import com.github.michaelbull.result.map
 import com.github.michaelbull.result.mapBoth
 import com.github.michaelbull.result.mapError
+import com.github.michaelbull.result.toResultOr
 import java.sql.SQLTimeoutException
 
 object CustomerService {
@@ -36,7 +37,7 @@ object CustomerService {
     }
 
     fun getById(id: CustomerId): Result<Customer, DomainMessage> {
-        return getAll().andThen { findCustomer(it, id) }
+        return getAll().andThen { it.findCustomer(id) }
     }
 
     fun upsert(customer: Customer): Result<DomainMessage?, DomainMessage> {
@@ -57,9 +58,8 @@ object CustomerService {
             .map { CustomerCreated }
             .mapError(::exceptionToDomainMessage)
 
-    private fun findCustomer(customers: Collection<Customer>, id: CustomerId): Result<Customer, CustomerNotFound> {
-        val customer = customers.find { it.id == id }
-        return if (customer != null) Ok(customer) else Err(CustomerNotFound)
+    private fun Collection<Customer>.findCustomer(id: CustomerId): Result<Customer, CustomerNotFound> {
+        return find { it.id == id }.toResultOr { CustomerNotFound }
     }
 
     private fun differenceBetween(old: Customer, new: Customer): EmailAddressChanged? {

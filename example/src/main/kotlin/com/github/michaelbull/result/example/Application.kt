@@ -1,6 +1,5 @@
 package com.github.michaelbull.result.example
 
-import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.andThen
@@ -26,6 +25,7 @@ import com.github.michaelbull.result.example.model.dto.CustomerDto
 import com.github.michaelbull.result.example.service.CustomerService
 import com.github.michaelbull.result.mapBoth
 import com.github.michaelbull.result.mapError
+import com.github.michaelbull.result.toResultOr
 import io.ktor.application.Application
 import io.ktor.application.call
 import io.ktor.application.install
@@ -91,8 +91,9 @@ fun Application.main() {
 }
 
 private fun readId(values: ValuesMap): Result<Long, DomainMessage> {
-    val id = values["id"]?.toLongOrNull()
-    return if (id != null) Ok(id) else Err(CustomerRequired)
+    return values["id"]
+        ?.toLongOrNull()
+        .toResultOr { CustomerRequired }
 }
 
 private fun messageToResponse(message: DomainMessage) = when (message) {

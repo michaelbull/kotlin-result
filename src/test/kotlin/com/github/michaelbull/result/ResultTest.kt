@@ -9,10 +9,11 @@ internal class ResultTest {
         @Test
         internal fun returnsOkIfInvocationSuccessful() {
             val callback = { "example" }
+            val result = Result.of(callback)
 
             assertEquals(
                 expected = "example",
-                actual = Result.of(callback).get()
+                actual = result.get()
             )
         }
 
@@ -20,11 +21,33 @@ internal class ResultTest {
         internal fun returnsErrIfInvocationFails() {
             val exception = IllegalArgumentException("throw me")
             val callback = { throw exception }
-            val error = Result.of(callback).getError()!!
+            val result = Result.of(callback)
 
             assertSame(
                 expected = exception,
-                actual = error
+                actual = result.getError()
+            )
+        }
+    }
+
+    internal class `toResultOr` {
+        @Test
+        internal fun returnsOkfIfNonNull() {
+            val result = "ok".toResultOr { "err" }
+
+            assertEquals(
+                expected = "ok",
+                actual = result.get()
+            )
+        }
+
+        @Test
+        internal fun returnsErrIfNull() {
+            val result = "ok".toLongOrNull().toResultOr { "err" }
+
+            assertEquals(
+                expected = "err",
+                actual = result.getError()
             )
         }
     }

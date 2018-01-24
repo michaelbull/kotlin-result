@@ -52,10 +52,22 @@ Oriented Programming is to avoid throwing an exception and instead make the
 return type of your function a `Result`.
 
 ```kotlin
-fun findById(id: Int): Result<Customer, DatabaseError> {
-    val customer = getAllCustomers().find { it.id == id }
-    return if (customer != null) Ok(customer) else Err(DatabaseError.CustomerNotFound)
+fun checkPrivileges(user: User, command: Command): Result<Command, CommandError> {
+    return if (user.rank >= command.mininimumRank) {
+        Ok(command)
+    } else {
+        Err(CommandError.InsufficientRank(command.name))
+    }
 }
+```
+
+Nullable types, such as the `find` method in the example below, can be 
+converted to a `Result` using the `toResultOr` extension function.
+
+```kotlin
+val result: Result<Customer, String> = customers
+    .find { it.id == id } // returns Customer?
+    .toResultOr { "No customer found" }
 ```
 
 ### Transforming Results
@@ -68,7 +80,7 @@ program error (`UnlockError`) into an exposed client error
 ```kotlin
 val result: Result<Treasure, UnlockResponse> = 
     unlockVault("my-password") // returns Result<Treasure, UnlockError>
-    .mapError { UnlockResponse.IncorrectPassword } // transform UnlockError into UnlockResponse.IncorrectPassword
+    .mapError { IncorrectPassword } // transform UnlockError into IncorrectPassword
 ```
 
 ### Chaining
@@ -76,7 +88,8 @@ val result: Result<Treasure, UnlockResponse> =
 Results can be chained to produce a "happy path" of execution. For example, the
 happy path for a user entering commands into an administrative console would 
 consist of: the command being tokenized, the command being registered, the user
-having sufficient privileges,  and the command executing the associated action.
+having sufficient privileges, and the command executing the associated action.
+The example below uses the `checkPrivileges` function we defined earlier.
 
 ```kotlin
 tokenize(command.toLowerCase())
@@ -88,17 +101,6 @@ tokenize(command.toLowerCase())
         { error  -> printToConsole("failed to execute, reason: ${error.reason}") }
     )
 ```
-
-Each of the `andThen` steps produces its own result, for example:
-
-```kotlin
-fun checkPrivileges(user: User, command: TokenizedCommand): Result<Command, CommandError> {
-    return when {
-        user.rank >= command.minRank -> Ok(command)
-        else -> Err(CommandError.InsufficientRank(command.tokens.name))
-    }
-}
-``` 
 
 ## Inspiration
 

@@ -83,7 +83,7 @@ having sufficient privileges,  and the command executing the associated action.
 
 ```kotlin
 tokenize(command.toLowerCase())
-    .andThen(this::findCommand)
+    .andThen(::findCommand)
     .andThen { cmd -> checkPrivileges(loggedInUser, cmd) }
     .andThen { execute(user = loggedInUser, command = cmd, timestamp = LocalDateTime.now()) }
     .mapBoth(

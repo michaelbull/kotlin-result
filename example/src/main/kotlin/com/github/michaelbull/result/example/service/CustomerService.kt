@@ -1,10 +1,16 @@
 package com.github.michaelbull.result.example.service
 
-import com.github.michaelbull.result.*
+import com.github.michaelbull.result.Err
+import com.github.michaelbull.result.Ok
+import com.github.michaelbull.result.Result
+import com.github.michaelbull.result.andThen
 import com.github.michaelbull.result.example.model.domain.Customer
 import com.github.michaelbull.result.example.model.domain.CustomerId
 import com.github.michaelbull.result.example.model.domain.DomainMessage
 import com.github.michaelbull.result.example.model.entity.CustomerEntity
+import com.github.michaelbull.result.map
+import com.github.michaelbull.result.mapBoth
+import com.github.michaelbull.result.mapError
 import java.sql.SQLTimeoutException
 
 object CustomerService {
@@ -12,7 +18,7 @@ object CustomerService {
 
     fun getAll(): Result<Collection<Customer>, DomainMessage> {
         return Result.of(repository::findAll)
-            .mapError(this::exceptionToDomainMessage)
+            .mapError(::exceptionToDomainMessage)
             .andThen { result: Collection<CustomerEntity> ->
                 Ok(result.map {
                     val customer = Customer.from(it)
@@ -39,21 +45,24 @@ object CustomerService {
     private fun updateCustomer(entity: CustomerEntity, old: Customer, new: Customer) =
         Result.of { repository.update(entity) }
             .map { differenceBetween(old, new) }
-            .mapError(this::exceptionToDomainMessage)
+            .mapError(::exceptionToDomainMessage)
 
     private fun createCustomer(entity: CustomerEntity) =
         Result.of { repository.insert(entity) }
-            .mapError(this::exceptionToDomainMessage)
             .map { DomainMessage.CustomerCreated }
+            .mapError(::exceptionToDomainMessage)
 
     private fun findCustomer(customers: Collection<Customer>, id: CustomerId): Result<Customer, DomainMessage.CustomerNotFound> {
         val customer = customers.find { it.id == id }
         return if (customer != null) Ok(customer) else Err(DomainMessage.CustomerNotFound)
     }
 
-    private fun differenceBetween(old: Customer, new: Customer) = when {
-        new.email != old.email -> DomainMessage.EmailAddressChanged(old.email.address, new.email.address)
-        else -> null
+    private fun differenceBetween(old: Customer, new: Customer): DomainMessage.EmailAddressChanged? {
+        return if (new.email != old.email) {
+            DomainMessage.EmailAddressChanged(old.email.address, new.email.address)
+        } else {
+            null
+        }
     }
 
     private fun exceptionToDomainMessage(t: Throwable) = when (t) {

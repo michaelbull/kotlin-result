@@ -149,15 +149,11 @@ user-facing errors.
 
 ### Payloads
 
-#### `GET`
-
-##### Input
+#### Fetch customer information
 
 ```
 $ curl -i -X GET  'http://localhost:9000/customers/5'
 ```
-
-##### Output
 
 ```
 HTTP/1.1 200 OK
@@ -172,9 +168,7 @@ Content-Length: 93
 }
 ```
 
-#### `POST`
-
-##### Input
+#### Add new customer
 
 ```
 $ curl -i -X POST \
@@ -187,8 +181,6 @@ $ curl -i -X POST \
 }' \
  'http://localhost:9000/customers/200'
 ```
-
-##### Output
 
 ```
 HTTP/1.1 201 Created

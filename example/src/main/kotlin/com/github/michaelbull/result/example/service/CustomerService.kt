@@ -5,8 +5,13 @@ import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.andThen
 import com.github.michaelbull.result.example.model.domain.Customer
+import com.github.michaelbull.result.example.model.domain.CustomerCreated
 import com.github.michaelbull.result.example.model.domain.CustomerId
+import com.github.michaelbull.result.example.model.domain.CustomerNotFound
+import com.github.michaelbull.result.example.model.domain.DatabaseError
+import com.github.michaelbull.result.example.model.domain.DatabaseTimeout
 import com.github.michaelbull.result.example.model.domain.DomainMessage
+import com.github.michaelbull.result.example.model.domain.EmailAddressChanged
 import com.github.michaelbull.result.example.model.entity.CustomerEntity
 import com.github.michaelbull.result.map
 import com.github.michaelbull.result.mapBoth
@@ -49,24 +54,24 @@ object CustomerService {
 
     private fun createCustomer(entity: CustomerEntity) =
         Result.of { repository.insert(entity) }
-            .map { DomainMessage.CustomerCreated }
+            .map { CustomerCreated }
             .mapError(::exceptionToDomainMessage)
 
-    private fun findCustomer(customers: Collection<Customer>, id: CustomerId): Result<Customer, DomainMessage.CustomerNotFound> {
+    private fun findCustomer(customers: Collection<Customer>, id: CustomerId): Result<Customer, CustomerNotFound> {
         val customer = customers.find { it.id == id }
-        return if (customer != null) Ok(customer) else Err(DomainMessage.CustomerNotFound)
+        return if (customer != null) Ok(customer) else Err(CustomerNotFound)
     }
 
-    private fun differenceBetween(old: Customer, new: Customer): DomainMessage.EmailAddressChanged? {
+    private fun differenceBetween(old: Customer, new: Customer): EmailAddressChanged? {
         return if (new.email != old.email) {
-            DomainMessage.EmailAddressChanged(old.email.address, new.email.address)
+            EmailAddressChanged(old.email.address, new.email.address)
         } else {
             null
         }
     }
 
     private fun exceptionToDomainMessage(t: Throwable) = when (t) {
-        is SQLTimeoutException -> DomainMessage.DatabaseTimeout
-        else -> DomainMessage.DatabaseError(t.message)
+        is SQLTimeoutException -> DatabaseTimeout
+        else -> DatabaseError(t.message)
     }
 }

@@ -1,7 +1,7 @@
 package com.github.michaelbull.result.example.service
 
-import com.github.michaelbull.result.example.model.entity.CustomerEntity
 import com.github.michaelbull.result.example.model.domain.repository.CustomerRepository
+import com.github.michaelbull.result.example.model.entity.CustomerEntity
 import java.sql.SQLException
 import java.sql.SQLTimeoutException
 

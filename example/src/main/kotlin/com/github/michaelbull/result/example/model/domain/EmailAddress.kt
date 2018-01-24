@@ -10,9 +10,9 @@ data class EmailAddress(
         private val pattern = ".+@.+\\..+".toRegex() // crude validation
 
         fun create(address: String?) = when {
-            address == null || address.isBlank() -> Err(DomainMessage.EmailRequired)
-            address.length > 20 -> Err(DomainMessage.EmailTooLong)
-            !address.matches(pattern) -> Err(DomainMessage.EmailInvalid)
+            address == null || address.isBlank() -> Err(EmailRequired)
+            address.length > 20 -> Err(EmailTooLong)
+            !address.matches(pattern) -> Err(EmailInvalid)
             else -> Ok(EmailAddress(address))
         }
     }

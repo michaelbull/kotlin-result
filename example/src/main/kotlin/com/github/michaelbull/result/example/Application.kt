@@ -1,11 +1,31 @@
 package com.github.michaelbull.result.example
 
-import com.github.michaelbull.result.*
+import com.github.michaelbull.result.Err
+import com.github.michaelbull.result.Ok
+import com.github.michaelbull.result.Result
+import com.github.michaelbull.result.andThen
 import com.github.michaelbull.result.example.model.domain.Customer
+import com.github.michaelbull.result.example.model.domain.CustomerCreated
 import com.github.michaelbull.result.example.model.domain.CustomerId
+import com.github.michaelbull.result.example.model.domain.CustomerIdMustBePositive
+import com.github.michaelbull.result.example.model.domain.CustomerNotFound
+import com.github.michaelbull.result.example.model.domain.CustomerRequired
+import com.github.michaelbull.result.example.model.domain.DatabaseError
+import com.github.michaelbull.result.example.model.domain.DatabaseTimeout
 import com.github.michaelbull.result.example.model.domain.DomainMessage
+import com.github.michaelbull.result.example.model.domain.EmailAddressChanged
+import com.github.michaelbull.result.example.model.domain.EmailInvalid
+import com.github.michaelbull.result.example.model.domain.EmailRequired
+import com.github.michaelbull.result.example.model.domain.EmailTooLong
+import com.github.michaelbull.result.example.model.domain.FirstNameRequired
+import com.github.michaelbull.result.example.model.domain.FirstNameTooLong
+import com.github.michaelbull.result.example.model.domain.LastNameRequired
+import com.github.michaelbull.result.example.model.domain.LastNameTooLong
+import com.github.michaelbull.result.example.model.domain.SqlCustomerInvalid
 import com.github.michaelbull.result.example.model.dto.CustomerDto
 import com.github.michaelbull.result.example.service.CustomerService
+import com.github.michaelbull.result.mapBoth
+import com.github.michaelbull.result.mapError
 import io.ktor.application.Application
 import io.ktor.application.call
 import io.ktor.application.install
@@ -72,36 +92,36 @@ fun Application.main() {
 
 private fun readId(values: ValuesMap): Result<Long, DomainMessage> {
     val id = values["id"]?.toLongOrNull()
-    return if (id != null) Ok(id) else Err(DomainMessage.CustomerRequired)
+    return if (id != null) Ok(id) else Err(CustomerRequired)
 }
 
 private fun messageToResponse(message: DomainMessage) = when (message) {
-    DomainMessage.CustomerRequired,
-    DomainMessage.CustomerIdMustBePositive,
-    DomainMessage.FirstNameRequired,
-    DomainMessage.FirstNameTooLong,
-    DomainMessage.LastNameRequired,
-    DomainMessage.LastNameTooLong,
-    DomainMessage.EmailRequired,
-    DomainMessage.EmailTooLong,
-    DomainMessage.EmailInvalid ->
+    CustomerRequired,
+    CustomerIdMustBePositive,
+    FirstNameRequired,
+    FirstNameTooLong,
+    LastNameRequired,
+    LastNameTooLong,
+    EmailRequired,
+    EmailTooLong,
+    EmailInvalid ->
         Pair(HttpStatusCode.BadRequest, "There is an error in your request")
 
 // events
-    DomainMessage.CustomerCreated ->
+    CustomerCreated ->
         Pair(HttpStatusCode.Created, "Customer created")
 
-    is DomainMessage.EmailAddressChanged ->
+    is EmailAddressChanged ->
         Pair(HttpStatusCode.OK, "Email address changed from ${message.old} to ${message.new}")
 
 // exposed errors
-    DomainMessage.CustomerNotFound ->
+    CustomerNotFound ->
         Pair(HttpStatusCode.NotFound, "Unknown customer")
 
 // internal errors
-    DomainMessage.SqlCustomerInvalid,
-    DomainMessage.DatabaseTimeout,
-    is DomainMessage.DatabaseError ->
+    SqlCustomerInvalid,
+    DatabaseTimeout,
+    is DatabaseError ->
         Pair(HttpStatusCode.InternalServerError, "Internal server error occurred")
 
 }

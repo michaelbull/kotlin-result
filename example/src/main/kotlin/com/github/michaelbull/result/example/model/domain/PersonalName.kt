@@ -9,10 +9,10 @@ data class PersonalName(
 ) {
     companion object {
         fun create(first: String?, last: String?) = when {
-            first == null || first.isBlank() -> Err(DomainMessage.FirstNameRequired)
-            last == null || last.isBlank() -> Err(DomainMessage.LastNameRequired)
-            first.length > 10 -> Err(DomainMessage.FirstNameTooLong)
-            last.length > 10 -> Err(DomainMessage.LastNameTooLong)
+            first == null || first.isBlank() -> Err(FirstNameRequired)
+            last == null || last.isBlank() -> Err(LastNameRequired)
+            first.length > 10 -> Err(FirstNameTooLong)
+            last.length > 10 -> Err(LastNameTooLong)
             else -> Ok(PersonalName(first, last))
         }
     }

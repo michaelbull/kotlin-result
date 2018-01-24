@@ -25,9 +25,6 @@ representing an error and containing an `error` value.
 
 Scott Wlaschin's article on [Railway Oriented Programming][swalschin-rop] is a great
 introduction to the benefits of modelling operations using the `Result` type.
-The [example][example] module contains an implementation of Scott's
-[example application][swalschin-example] that demonstrates the usage of `Result`
-in a real world scenario.
 
 Mappings are available on the [wiki][wiki] to assist those with experience 
 using the `Result` type in other languages:
@@ -137,6 +134,70 @@ Improvements on the existing solutions include:
     `unwrap`)
 - Extensive test suite with over 50 [unit tests][unit-tests] covering every library method
 
+## Example
+
+The [example][example] module contains an implementation of Scott's
+[example application][swalschin-example] that demonstrates the usage of `Result`
+in a real world scenario.
+
+It hosts a [ktor][ktor] server on port 9000 with a `/customers` endpoint. The
+endpoint responds to both `GET` and `POST` requests with a provided `id`, e.g.
+`/customers/100`. Upserting a customer id of 42 is hardcoded to throw an 
+[`SQLException`][customer-42] to demonstrate how the `Result` type can [map 
+internal program errors][update-customer-error] to more appropriate 
+user-facing errors.
+
+### Payloads
+
+#### `GET`
+
+##### Input
+
+```
+$ curl -i -X GET  'http://localhost:9000/customers/5'
+```
+
+##### Output
+
+```
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=UTF-8
+Content-Length: 93
+
+{
+  "id": 5,
+  "firstName": "Michael",
+  "lastName": "Bull",
+  "email": "example@email.com"
+}
+```
+
+#### `POST`
+
+##### Input
+
+```
+$ curl -i -X POST \
+   -H "Content-Type:application/json" \
+   -d \
+'{
+  "firstName": "Your",
+  "lastName": "Name",
+  "email": "your@email.com"
+}' \
+ 'http://localhost:9000/customers/200'
+```
+
+##### Output
+
+```
+HTTP/1.1 201 Created
+Content-Type: text/plain; charset=UTF-8
+Content-Length: 16
+
+Customer created
+```
+
 ## Contributing
 
 Bug reports and pull requests are welcome on [GitHub][github].
@@ -150,10 +211,13 @@ This project is available under the terms of the ISC license. See the
 [result-ok]: https://github.com/michaelbull/kotlin-result/blob/master/src/main/kotlin/com/github/michaelbull/result/Result.kt#L30
 [result-err]: https://github.com/michaelbull/kotlin-result/blob/master/src/main/kotlin/com/github/michaelbull/result/Result.kt#L35
 [result-of]: https://github.com/michaelbull/kotlin-result/blob/master/src/main/kotlin/com/github/michaelbull/result/Result.kt#L17
-[example]: https://github.com/michaelbull/kotlin-result/tree/master/example/src/main/kotlin/com/github/michaelbull/result/example
 [swalschin-rop]: https://fsharpforfunandprofit.com/rop/
-[swalschin-example]: https://github.com/swlaschin/Railway-Oriented-Programming-Example
 [wiki]: https://github.com/michaelbull/kotlin-result/wiki
 [unit-tests]: https://github.com/michaelbull/kotlin-result/tree/master/src/test/kotlin/com/github/michaelbull/result
 [multiplatform]: https://kotlinlang.org/docs/reference/multiplatform.html
+[example]: https://github.com/michaelbull/kotlin-result/tree/master/example/src/main/kotlin/com/github/michaelbull/result/example
+[swalschin-example]: https://github.com/swlaschin/Railway-Oriented-Programming-Example
+[ktor]: http://ktor.io/
+[customer-42]: https://github.com/michaelbull/kotlin-result/blob/master/example/src/main/kotlin/com/github/michaelbull/result/example/service/InMemoryCustomerRepository.kt#L38
+[update-customer-error]: https://github.com/michaelbull/kotlin-result/blob/master/example/src/main/kotlin/com/github/michaelbull/result/example/service/CustomerService.kt#L42
 [github]: https://github.com/michaelbull/kotlin-result

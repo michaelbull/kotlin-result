@@ -13,7 +13,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.michaelbull:kotlin-result:1.0.7'
+    compile 'com.github.michaelbull:kotlin-result:1.0.8'
 }
 ```
 

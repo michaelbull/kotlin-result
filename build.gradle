@@ -33,7 +33,7 @@ dependencies {
 
 dokka {
     outputFormat = 'javadoc'
-    outputDirectory = "$buildDir/docs"
+    outputDirectory = "${docsDir}/javadoc"
 }
 
 task javadocJar(type: Jar, dependsOn: dokka) {

@@ -7,17 +7,16 @@ buildscript {
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
         classpath "org.jetbrains.dokka:dokka-gradle-plugin:$dokkaVersion"
-        classpath "net.researchgate:gradle-release:$gradleReleaseVersion"
     }
 }
 
 plugins {
     id 'com.github.ben-manes.versions' version '0.17.0'
+    id 'net.researchgate.release' version '2.6.0'
 }
 
 apply plugin: 'kotlin-platform-common'
 apply plugin: 'maven-publish'
-apply plugin: 'net.researchgate.release'
 apply plugin: 'org.jetbrains.dokka'
 
 description = 'A Result monad for modelling success or failure operations.'

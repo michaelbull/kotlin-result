@@ -35,7 +35,7 @@ inline infix fun <V, E, F> Result<V, E>.mapError(transform: (E) -> F): Result<V,
  * is [Ok], or the [failure] function if this [Result] is an [Err]. Both of these functions must
  * return the same type (`U`).
  *
- * - Elm: [Result.Extra.mapBoth](http://package.elm-lang.org/packages/circuithub/elm-result-extra/1.4.0/Result-Extra#mapBoth)
+ * - Elm: [Result.Extra.mapBoth](http://package.elm-lang.org/packages/elm-community/result-extra/2.2.0/Result-Extra#mapBoth)
  * - Haskell: [Data.Either.either](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Either.html#v:either)
  */
 inline fun <V, E, U> Result<V, E>.mapBoth(
@@ -48,7 +48,6 @@ inline fun <V, E, U> Result<V, E>.mapBoth(
     }
 }
 
-// TODO: better name?
 /**
  * Maps this [Result<V, E>][Result] to [Result<U, F>][Result] by applying either the [success] function
  * if this [Result] is [Ok], or the [failure] function if this [Result] is an [Err].

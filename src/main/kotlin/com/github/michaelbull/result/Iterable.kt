@@ -52,14 +52,14 @@ inline fun <T, R, E> List<T>.foldRight(
 /**
  * Combines a vararg of [Results][Result] into a single [Result] (holding a [List]).
  *
- * - Elm: [Result.Extra.combine](http://package.elm-lang.org/packages/circuithub/elm-result-extra/1.4.0/Result-Extra#combine)
+ * - Elm: [Result.Extra.combine](http://package.elm-lang.org/packages/elm-community/result-extra/2.2.0/Result-Extra#combine)
  */
 fun <V, E> combine(vararg results: Result<V, E>) = results.asIterable().combine()
 
 /**
  * Combines an [Iterable] of [Results][Result] into a single [Result] (holding a [List]).
  *
- * - Elm: [Result.Extra.combine](http://package.elm-lang.org/packages/circuithub/elm-result-extra/1.4.0/Result-Extra#combine)
+ * - Elm: [Result.Extra.combine](http://package.elm-lang.org/packages/elm-community/result-extra/2.2.0/Result-Extra#combine)
  */
 fun <V, E> Iterable<Result<V, E>>.combine(): Result<List<V>, E> {
     return Ok(map {

@@ -9,7 +9,7 @@ failure ([`Err`][result-err]) operations.
 
 ```groovy
 repositories {
-    maven { url = 'https://dl.bintray.com/michaelbull/maven'  }
+    maven { url = 'https://dl.bintray.com/michaelbull/maven' }
 }
 
 dependencies {

@@ -13,6 +13,7 @@ buildscript {
 plugins {
     id 'com.github.ben-manes.versions' version '0.20.0'
     id 'net.researchgate.release' version '2.7.0'
+    id 'com.jfrog.bintray' version '1.8.4'
 }
 
 apply plugin: 'kotlin-platform-common'
@@ -32,7 +33,7 @@ dependencies {
 }
 
 dokka {
-    kotlinTasks { [] }
+    kotlinTasks { [ ] }
     sourceDirs = sourceSets.main.kotlin.srcDirs
     outputFormat = 'javadoc'
     outputDirectory = "${docsDir}/javadoc"
@@ -60,3 +61,18 @@ publishing {
         }
     }
 }
+
+bintray {
+    user = project.findProperty('bintrayUser') ?: ''
+    key = project.findProperty('bintrayKey') ?: ''
+    publications = [ 'mavenJava' ]
+
+    pkg {
+        repo = 'maven'
+        name = 'kotlin-result'
+        licenses = [ 'ISC' ]
+        vcsUrl = 'git@github.com:michaelbull/kotlin-result.git'
+    }
+}
+
+afterReleaseBuild.dependsOn bintrayUpload

@@ -135,3 +135,84 @@ fun <V, E> Iterable<Result<V, E>>.partition(): Pair<List<V>, List<E>> {
 
     return Pair(values, errors)
 }
+
+/**
+ * Returns a [Result<List<U>, E>][Result] containing the results of applying the given [transform] function to each
+ * element in the original collection, returning early with the first [Err] if a transformation fails.
+ */
+fun <V, E, U> Iterable<V>.mapResult(transform: (V) -> Result<U, E>): Result<List<U>, E> {
+    return Ok(map { element ->
+        transform(element).getOrElse { return Err(it) }
+    })
+}
+
+/**
+ * Applies the given [transform] function to each element of the original collection and appends the results to the
+ * given [destination], returning early with the first [Err] if a transformation fails.
+ */
+fun <V, E, U, C : MutableCollection<in U>> Iterable<V>.mapResultTo(destination: C, transform: (V) -> Result<U, E>): Result<C, E> {
+    return Ok(mapTo(destination) { element ->
+        transform(element).getOrElse { return Err(it) }
+    })
+}
+
+/**
+ * Returns a [Result<List<U>, E>][Result] containing only the non-null results of applying the given [transform]
+ * function to each element in the original collection, returning early with the first [Err] if a transformation fails.
+ */
+fun <V, E, U : Any> Iterable<V>.mapResultNotNull(transform: (V) -> Result<U, E>?): Result<List<U>, E> {
+    return Ok(mapNotNull { element ->
+        transform(element)?.getOrElse { return Err(it) }
+    })
+}
+
+/**
+ * Applies the given [transform] function to each element in the original collection and appends only the non-null
+ * results to the given [destination], returning early with the first [Err] if a transformation fails.
+ */
+fun <V, E, U : Any, C : MutableCollection<in U>> Iterable<V>.mapResultNotNullTo(destination: C, transform: (V) -> Result<U, E>?): Result<C, E> {
+    return Ok(mapNotNullTo(destination) { element ->
+        transform(element)?.getOrElse { return Err(it) }
+    })
+}
+
+/**
+ * Returns a [Result<List<U>, E>][Result] containing the results of applying the given [transform] function to each
+ * element and its index in the original collection, returning early with the first [Err] if a transformation fails.
+ */
+fun <V, E, U> Iterable<V>.mapResultIndexed(transform: (index: Int, V) -> Result<U, E>): Result<List<U>, E> {
+    return Ok(mapIndexed { index, element ->
+        transform(index, element).getOrElse { return Err(it) }
+    })
+}
+
+/**
+ * Applies the given [transform] function to each element and its index in the original collection and appends the
+ * results to the given [destination], returning early with the first [Err] if a transformation fails.
+ */
+fun <V, E, U, C : MutableCollection<in U>> Iterable<V>.mapResultIndexedTo(destination: C, transform: (index: Int, V) -> Result<U, E>): Result<C, E> {
+    return Ok(mapIndexedTo(destination) { index, element ->
+        transform(index, element).getOrElse { return Err(it) }
+    })
+}
+
+/**
+ * Returns a [Result<List<U>, E>][Result] containing only the non-null results of applying the given [transform]
+ * function to each element and its index in the original collection, returning early with the first [Err] if a
+ * transformation fails.
+ */
+fun <V, E, U : Any> Iterable<V>.mapResultIndexedNotNull(transform: (index: Int, V) -> Result<U, E>?): Result<List<U>, E> {
+    return Ok(mapIndexedNotNull { index, element ->
+        transform(index, element)?.getOrElse { return Err(it) }
+    })
+}
+
+/**
+ * Applies the given [transform] function to each element and its index in the original collection and appends only the
+ * non-null results to the given [destination], returning early with the first [Err] if a transformation fails.
+ */
+fun <V, E, U : Any, C : MutableCollection<in U>> Iterable<V>.mapResultIndexedNotNullTo(destination: C, transform: (index: Int, V) -> Result<U, E>?): Result<C, E> {
+    return Ok(mapIndexedNotNullTo(destination) { index, element ->
+        transform(index, element)?.getOrElse { return Err(it) }
+    })
+}

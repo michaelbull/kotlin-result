@@ -31,6 +31,18 @@ inline infix fun <V, E, F> Result<V, E>.mapError(transform: (E) -> F): Result<V,
 }
 
 /**
+ * Returns a [Result<List<U>, E>][Result] containing the results of applying the given [transform] function to each
+ * element in the original collection, returning early with the first [Err] if a transformation fails.
+ */
+fun <V, E, U> Result<Iterable<V>, E>.mapAll(transform: (V) -> Result<U, E>): Result<List<U>, E> {
+    return map { iterable ->
+        iterable.map { element ->
+            transform(element).getOrElse { return Err(it) }
+        }
+    }
+}
+
+/**
  * Maps this [Result<V, E>][Result] to `U` by applying either the [success] function if this [Result]
  * is [Ok], or the [failure] function if this [Result] is an [Err]. Both of these functions must
  * return the same type (`U`).

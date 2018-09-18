@@ -5,17 +5,17 @@ mainClassName = 'io.ktor.server.netty.DevelopmentEngine'
 
 repositories {
     mavenCentral()
-    maven { url  "http://dl.bintray.com/kotlin/ktor" }
-    maven { url "https://dl.bintray.com/kotlin/kotlinx" }
+    maven { url = "http://dl.bintray.com/kotlin/ktor" }
+    maven { url = "https://dl.bintray.com/kotlin/kotlinx" }
 }
 
 dependencies {
-    compile project(":jvm")
-    compile "ch.qos.logback:logback-classic:$logbackVersion"
-    compile "io.ktor:ktor-server-core:$ktorVersion"
-    compile "io.ktor:ktor-server-netty:$ktorVersion"
-    compile "io.ktor:ktor-gson:$ktorVersion"
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+    implementation project(":")
+    implementation "ch.qos.logback:logback-classic:$logbackVersion"
+    implementation "io.ktor:ktor-server-core:$ktorVersion"
+    implementation "io.ktor:ktor-server-netty:$ktorVersion"
+    implementation "io.ktor:ktor-gson:$ktorVersion"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
 }
 
 compileKotlin {

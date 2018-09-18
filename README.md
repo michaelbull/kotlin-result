@@ -122,7 +122,6 @@ Improvements on the existing solutions include:
 
 - Feature parity with Result types from other languages including Elm, Haskell,
      & Rust
-- [Multiplatform][multiplatform] project support
 - Lax constraints on `value`/`error` nullability
 - Lax constraints on the `error` type's inheritance (does not inherit from
     `Exception`)
@@ -208,7 +207,6 @@ This project is available under the terms of the ISC license. See the
 [swalschin-rop]: https://fsharpforfunandprofit.com/rop/
 [wiki]: https://github.com/michaelbull/kotlin-result/wiki
 [unit-tests]: https://github.com/michaelbull/kotlin-result/tree/master/src/test/kotlin/com/github/michaelbull/result
-[multiplatform]: https://kotlinlang.org/docs/reference/multiplatform.html
 [example]: https://github.com/michaelbull/kotlin-result/tree/master/example/src/main/kotlin/com/github/michaelbull/result/example
 [swalschin-example]: https://github.com/swlaschin/Railway-Oriented-Programming-Example
 [ktor]: http://ktor.io/

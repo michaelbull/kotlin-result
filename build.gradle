@@ -6,19 +6,18 @@ buildscript {
 
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
-        classpath "org.jetbrains.dokka:dokka-gradle-plugin:$dokkaVersion"
     }
 }
 
 plugins {
     id 'com.github.ben-manes.versions' version '0.20.0'
-    id 'net.researchgate.release' version '2.7.0'
     id 'com.jfrog.bintray' version '1.8.4'
+    id 'net.researchgate.release' version '2.7.0'
+    id 'org.jetbrains.dokka' version '0.9.17'
 }
 
-apply plugin: 'kotlin-platform-common'
+apply plugin: 'kotlin'
 apply plugin: 'maven-publish'
-apply plugin: 'org.jetbrains.dokka'
 
 description = 'A Result monad for modelling success or failure operations.'
 
@@ -27,9 +26,21 @@ repositories {
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinVersion"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
+
+    testImplementation "junit:junit:$junitVersion"
     testImplementation "org.jetbrains.kotlin:kotlin-test-common:$kotlinVersion"
     testImplementation "org.jetbrains.kotlin:kotlin-test-annotations-common:$kotlinVersion"
+    testImplementation "org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion"
+    testImplementation "org.jetbrains.kotlin:kotlin-test:$kotlinVersion"
+}
+
+compileKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+
+compileTestKotlin {
+    kotlinOptions.jvmTarget = "1.8"
 }
 
 dokka {
@@ -56,6 +67,7 @@ task sourcesJar(type: Jar) {
 publishing {
     publications {
         mavenJava(MavenPublication) {
+            from components.java
             artifact javadocJar
             artifact sourcesJar
         }

@@ -1,5 +1,5 @@
 rootProject.name = 'kotlin-result'
 
-include 'example', 'js', 'jvm'
+include 'example'
 
 enableFeaturePreview('STABLE_PUBLISHING')

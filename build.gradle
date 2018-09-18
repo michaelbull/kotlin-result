@@ -26,12 +26,14 @@ repositories {
 }
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinVersion"
-    testCompile "org.jetbrains.kotlin:kotlin-test-annotations-common:$kotlinVersion"
-    testCompile "org.jetbrains.kotlin:kotlin-test-common:$kotlinVersion"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinVersion"
+    testImplementation "org.jetbrains.kotlin:kotlin-test-common:$kotlinVersion"
+    testImplementation "org.jetbrains.kotlin:kotlin-test-annotations-common:$kotlinVersion"
 }
 
 dokka {
+    kotlinTasks { [] }
+    sourceDirs = sourceSets.main.kotlin.srcDirs
     outputFormat = 'javadoc'
     outputDirectory = "${docsDir}/javadoc"
 }

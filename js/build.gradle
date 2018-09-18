@@ -5,7 +5,8 @@ repositories {
 }
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlinVersion"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlinVersion"
     expectedBy project(":")
-    testCompile "org.jetbrains.kotlin:kotlin-test-js:$kotlinVersion"
+
+    testImplementation "org.jetbrains.kotlin:kotlin-test-js:$kotlinVersion"
 }

@@ -75,4 +75,9 @@ bintray {
     }
 }
 
+bintrayUpload.dependsOn build
+bintrayUpload.dependsOn sourcesJar
+bintrayUpload.dependsOn javadocJar
+bintrayUpload.dependsOn generatePomFileForMavenJavaPublication
+
 afterReleaseBuild.dependsOn bintrayUpload

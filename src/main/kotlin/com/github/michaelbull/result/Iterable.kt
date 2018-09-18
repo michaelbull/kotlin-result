@@ -143,7 +143,7 @@ fun <V, E> Iterable<Result<V, E>>.partition(): Pair<List<V>, List<E>> {
  * function to each element in the original collection, returning early with the first [Err] if a
  * transformation fails.
  */
-fun <V, E, U> Iterable<V>.mapResult(transform: (V) -> Result<U, E>): Result<List<U>, E> {
+inline fun <V, E, U> Iterable<V>.mapResult(transform: (V) -> Result<U, E>): Result<List<U>, E> {
     return Ok(map { element ->
         val transformed = transform(element)
 
@@ -159,7 +159,7 @@ fun <V, E, U> Iterable<V>.mapResult(transform: (V) -> Result<U, E>): Result<List
  * the results to the given [destination], returning early with the first [Err] if a
  * transformation fails.
  */
-fun <V, E, U, C : MutableCollection<in U>> Iterable<V>.mapResultTo(destination: C, transform: (V) -> Result<U, E>): Result<C, E> {
+inline fun <V, E, U, C : MutableCollection<in U>> Iterable<V>.mapResultTo(destination: C, transform: (V) -> Result<U, E>): Result<C, E> {
     return Ok(mapTo(destination) { element ->
         val transformed = transform(element)
 
@@ -175,7 +175,7 @@ fun <V, E, U, C : MutableCollection<in U>> Iterable<V>.mapResultTo(destination: 
  * given [transform] function to each element in the original collection, returning early with the
  * first [Err] if a transformation fails.
  */
-fun <V, E, U : Any> Iterable<V>.mapResultNotNull(transform: (V) -> Result<U, E>?): Result<List<U>, E> {
+inline fun <V, E, U : Any> Iterable<V>.mapResultNotNull(transform: (V) -> Result<U, E>?): Result<List<U>, E> {
     return Ok(mapNotNull { element ->
         val transformed = transform(element)
 
@@ -192,7 +192,7 @@ fun <V, E, U : Any> Iterable<V>.mapResultNotNull(transform: (V) -> Result<U, E>?
  * only the non-null results to the given [destination], returning early with the first [Err] if a
  * transformation fails.
  */
-fun <V, E, U : Any, C : MutableCollection<in U>> Iterable<V>.mapResultNotNullTo(destination: C, transform: (V) -> Result<U, E>?): Result<C, E> {
+inline fun <V, E, U : Any, C : MutableCollection<in U>> Iterable<V>.mapResultNotNullTo(destination: C, transform: (V) -> Result<U, E>?): Result<C, E> {
     return Ok(mapNotNullTo(destination) { element ->
         val transformed = transform(element)
 
@@ -209,7 +209,7 @@ fun <V, E, U : Any, C : MutableCollection<in U>> Iterable<V>.mapResultNotNullTo(
  * function to each element and its index in the original collection, returning early with the
  * first [Err] if a transformation fails.
  */
-fun <V, E, U> Iterable<V>.mapResultIndexed(transform: (index: Int, V) -> Result<U, E>): Result<List<U>, E> {
+inline fun <V, E, U> Iterable<V>.mapResultIndexed(transform: (index: Int, V) -> Result<U, E>): Result<List<U>, E> {
     return Ok(mapIndexed { index, element ->
         val transformed = transform(index, element)
 
@@ -225,7 +225,7 @@ fun <V, E, U> Iterable<V>.mapResultIndexed(transform: (index: Int, V) -> Result<
  * and appends the results to the given [destination], returning early with the first [Err] if a
  * transformation fails.
  */
-fun <V, E, U, C : MutableCollection<in U>> Iterable<V>.mapResultIndexedTo(destination: C, transform: (index: Int, V) -> Result<U, E>): Result<C, E> {
+inline fun <V, E, U, C : MutableCollection<in U>> Iterable<V>.mapResultIndexedTo(destination: C, transform: (index: Int, V) -> Result<U, E>): Result<C, E> {
     return Ok(mapIndexedTo(destination) { index, element ->
         val transformed = transform(index, element)
 
@@ -241,7 +241,7 @@ fun <V, E, U, C : MutableCollection<in U>> Iterable<V>.mapResultIndexedTo(destin
  * given [transform] function to each element and its index in the original collection, returning
  * early with the first [Err] if a transformation fails.
  */
-fun <V, E, U : Any> Iterable<V>.mapResultIndexedNotNull(transform: (index: Int, V) -> Result<U, E>?): Result<List<U>, E> {
+inline fun <V, E, U : Any> Iterable<V>.mapResultIndexedNotNull(transform: (index: Int, V) -> Result<U, E>?): Result<List<U>, E> {
     return Ok(mapIndexedNotNull { index, element ->
         val transformed = transform(index, element)
 
@@ -258,7 +258,7 @@ fun <V, E, U : Any> Iterable<V>.mapResultIndexedNotNull(transform: (index: Int, 
  * and appends only the non-null results to the given [destination], returning early with the first
  * [Err] if a transformation fails.
  */
-fun <V, E, U : Any, C : MutableCollection<in U>> Iterable<V>.mapResultIndexedNotNullTo(destination: C, transform: (index: Int, V) -> Result<U, E>?): Result<C, E> {
+inline fun <V, E, U : Any, C : MutableCollection<in U>> Iterable<V>.mapResultIndexedNotNullTo(destination: C, transform: (index: Int, V) -> Result<U, E>?): Result<C, E> {
     return Ok(mapIndexedNotNullTo(destination) { index, element ->
         val transformed = transform(index, element)
 

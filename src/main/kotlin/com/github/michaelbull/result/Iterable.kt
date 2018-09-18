@@ -54,7 +54,9 @@ inline fun <T, R, E> List<T>.foldRight(
  *
  * - Elm: [Result.Extra.combine](http://package.elm-lang.org/packages/elm-community/result-extra/2.2.0/Result-Extra#combine)
  */
-fun <V, E> combine(vararg results: Result<V, E>) = results.asIterable().combine()
+fun <V, E> combine(vararg results: Result<V, E>): Result<List<V>, E> {
+    return results.asIterable().combine()
+}
 
 /**
  * Combines an [Iterable] of [Results][Result] into a single [Result] (holding a [List]).
@@ -142,7 +144,12 @@ fun <V, E> Iterable<Result<V, E>>.partition(): Pair<List<V>, List<E>> {
  */
 fun <V, E, U> Iterable<V>.mapResult(transform: (V) -> Result<U, E>): Result<List<U>, E> {
     return Ok(map { element ->
-        transform(element).getOrElse { return Err(it) }
+        val transformed = transform(element)
+
+        when (transformed) {
+            is Ok -> transformed.value
+            is Err -> return transformed
+        }
     })
 }
 
@@ -152,7 +159,12 @@ fun <V, E, U> Iterable<V>.mapResult(transform: (V) -> Result<U, E>): Result<List
  */
 fun <V, E, U, C : MutableCollection<in U>> Iterable<V>.mapResultTo(destination: C, transform: (V) -> Result<U, E>): Result<C, E> {
     return Ok(mapTo(destination) { element ->
-        transform(element).getOrElse { return Err(it) }
+        val transformed = transform(element)
+
+        when (transformed) {
+            is Ok -> transformed.value
+            is Err -> return transformed
+        }
     })
 }
 
@@ -162,7 +174,13 @@ fun <V, E, U, C : MutableCollection<in U>> Iterable<V>.mapResultTo(destination: 
  */
 fun <V, E, U : Any> Iterable<V>.mapResultNotNull(transform: (V) -> Result<U, E>?): Result<List<U>, E> {
     return Ok(mapNotNull { element ->
-        transform(element)?.getOrElse { return Err(it) }
+        val transformed = transform(element)
+
+        when (transformed) {
+            is Ok -> transformed.value
+            is Err -> return transformed
+            null -> null
+        }
     })
 }
 
@@ -172,7 +190,13 @@ fun <V, E, U : Any> Iterable<V>.mapResultNotNull(transform: (V) -> Result<U, E>?
  */
 fun <V, E, U : Any, C : MutableCollection<in U>> Iterable<V>.mapResultNotNullTo(destination: C, transform: (V) -> Result<U, E>?): Result<C, E> {
     return Ok(mapNotNullTo(destination) { element ->
-        transform(element)?.getOrElse { return Err(it) }
+        val transformed = transform(element)
+
+        when (transformed) {
+            is Ok -> transformed.value
+            is Err -> return transformed
+            null -> null
+        }
     })
 }
 
@@ -182,7 +206,12 @@ fun <V, E, U : Any, C : MutableCollection<in U>> Iterable<V>.mapResultNotNullTo(
  */
 fun <V, E, U> Iterable<V>.mapResultIndexed(transform: (index: Int, V) -> Result<U, E>): Result<List<U>, E> {
     return Ok(mapIndexed { index, element ->
-        transform(index, element).getOrElse { return Err(it) }
+        val transformed = transform(index, element)
+
+        when (transformed) {
+            is Ok -> transformed.value
+            is Err -> return transformed
+        }
     })
 }
 
@@ -192,7 +221,12 @@ fun <V, E, U> Iterable<V>.mapResultIndexed(transform: (index: Int, V) -> Result<
  */
 fun <V, E, U, C : MutableCollection<in U>> Iterable<V>.mapResultIndexedTo(destination: C, transform: (index: Int, V) -> Result<U, E>): Result<C, E> {
     return Ok(mapIndexedTo(destination) { index, element ->
-        transform(index, element).getOrElse { return Err(it) }
+        val transformed = transform(index, element)
+
+        when (transformed) {
+            is Ok -> transformed.value
+            is Err -> return transformed
+        }
     })
 }
 
@@ -203,7 +237,13 @@ fun <V, E, U, C : MutableCollection<in U>> Iterable<V>.mapResultIndexedTo(destin
  */
 fun <V, E, U : Any> Iterable<V>.mapResultIndexedNotNull(transform: (index: Int, V) -> Result<U, E>?): Result<List<U>, E> {
     return Ok(mapIndexedNotNull { index, element ->
-        transform(index, element)?.getOrElse { return Err(it) }
+        val transformed = transform(index, element)
+
+        when (transformed) {
+            is Ok -> transformed.value
+            is Err -> return transformed
+            null -> null
+        }
     })
 }
 
@@ -213,6 +253,12 @@ fun <V, E, U : Any> Iterable<V>.mapResultIndexedNotNull(transform: (index: Int, 
  */
 fun <V, E, U : Any, C : MutableCollection<in U>> Iterable<V>.mapResultIndexedNotNullTo(destination: C, transform: (index: Int, V) -> Result<U, E>?): Result<C, E> {
     return Ok(mapIndexedNotNullTo(destination) { index, element ->
-        transform(index, element)?.getOrElse { return Err(it) }
+        val transformed = transform(index, element)
+
+        when (transformed) {
+            is Ok -> transformed.value
+            is Err -> return transformed
+            null -> null
+        }
     })
 }

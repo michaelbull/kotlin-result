@@ -37,7 +37,12 @@ inline infix fun <V, E, F> Result<V, E>.mapError(transform: (E) -> F): Result<V,
 fun <V, E, U> Result<Iterable<V>, E>.mapAll(transform: (V) -> Result<U, E>): Result<List<U>, E> {
     return map { iterable ->
         iterable.map { element ->
-            transform(element).getOrElse { return Err(it) }
+            val transformed = transform(element)
+
+            when (transformed) {
+                is Ok -> transformed.value
+                is Err -> return transformed
+            }
         }
     }
 }

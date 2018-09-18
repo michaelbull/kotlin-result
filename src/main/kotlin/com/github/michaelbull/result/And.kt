@@ -18,8 +18,8 @@ inline infix fun <V, E> Result<V, E>.and(result: () -> Result<V, E>): Result<V, 
 }
 
 /**
- * Maps this [Result<V, E>][Result] to [Result<U, E>][Result] by either applying the [transform] function
- * if this [Result] is [Ok], or returning this [Err].
+ * Maps this [Result<V, E>][Result] to [Result<U, E>][Result] by either applying the [transform]
+ * function if this [Result] is [Ok], or returning this [Err].
  *
  * - Elm: [Result.andThen](http://package.elm-lang.org/packages/elm-lang/core/latest/Result#andThen)
  * - Rust: [Result.and_then](https://doc.rust-lang.org/std/result/enum.Result.html#method.and_then)

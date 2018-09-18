@@ -1,8 +1,8 @@
 package com.github.michaelbull.result
 
 /**
- * Maps this [Result<V, E>][Result] to [Result<U, E>][Result] by either applying the [transform] function
- * to the [value][Ok.value] if this [Result] is [Ok], or returning this [Err].
+ * Maps this [Result<V, E>][Result] to [Result<U, E>][Result] by either applying the [transform]
+ * function to the [value][Ok.value] if this [Result] is [Ok], or returning this [Err].
  *
  * - Elm: [Result.map](http://package.elm-lang.org/packages/elm-lang/core/latest/Result#map)
  * - Haskell: [Data.Bifunctor.first](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Bifunctor.html#v:first)
@@ -16,8 +16,8 @@ inline infix fun <V, E, U> Result<V, E>.map(transform: (V) -> U): Result<U, E> {
 }
 
 /**
- * Maps this [Result<V, E>][Result] to [Result<V, F>][Result] by either applying the [transform] function
- * to the [error][Err.error] if this [Result] is [Err], or returning this [Ok].
+ * Maps this [Result<V, E>][Result] to [Result<V, F>][Result] by either applying the [transform]
+ * function to the [error][Err.error] if this [Result] is [Err], or returning this [Ok].
  *
  * - Elm: [Result.mapError](http://package.elm-lang.org/packages/elm-lang/core/latest/Result#mapError)
  * - Haskell: [Data.Bifunctor.right](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Bifunctor.html#v:second)
@@ -31,8 +31,9 @@ inline infix fun <V, E, F> Result<V, E>.mapError(transform: (E) -> F): Result<V,
 }
 
 /**
- * Returns a [Result<List<U>, E>][Result] containing the results of applying the given [transform] function to each
- * element in the original collection, returning early with the first [Err] if a transformation fails.
+ * Returns a [Result<List<U>, E>][Result] containing the results of applying the given [transform]
+ * function to each element in the original collection, returning early with the first [Err] if a
+ * transformation fails.
  */
 fun <V, E, U> Result<Iterable<V>, E>.mapAll(transform: (V) -> Result<U, E>): Result<List<U>, E> {
     return map { iterable ->
@@ -48,17 +49,14 @@ fun <V, E, U> Result<Iterable<V>, E>.mapAll(transform: (V) -> Result<U, E>): Res
 }
 
 /**
- * Maps this [Result<V, E>][Result] to `U` by applying either the [success] function if this [Result]
- * is [Ok], or the [failure] function if this [Result] is an [Err]. Both of these functions must
- * return the same type (`U`).
+ * Maps this [Result<V, E>][Result] to `U` by applying either the [success] function if this
+ * [Result] is [Ok], or the [failure] function if this [Result] is an [Err]. Both of these
+ * functions must return the same type (`U`).
  *
  * - Elm: [Result.Extra.mapBoth](http://package.elm-lang.org/packages/elm-community/result-extra/2.2.0/Result-Extra#mapBoth)
  * - Haskell: [Data.Either.either](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Either.html#v:either)
  */
-inline fun <V, E, U> Result<V, E>.mapBoth(
-    success: (V) -> U,
-    failure: (E) -> U
-): U {
+inline fun <V, E, U> Result<V, E>.mapBoth(success: (V) -> U, failure: (E) -> U): U {
     return when (this) {
         is Ok -> success(value)
         is Err -> failure(error)
@@ -66,15 +64,12 @@ inline fun <V, E, U> Result<V, E>.mapBoth(
 }
 
 /**
- * Maps this [Result<V, E>][Result] to [Result<U, F>][Result] by applying either the [success] function
- * if this [Result] is [Ok], or the [failure] function if this [Result] is an [Err].
+ * Maps this [Result<V, E>][Result] to [Result<U, F>][Result] by applying either the [success]
+ * function if this [Result] is [Ok], or the [failure] function if this [Result] is an [Err].
  *
  * - Haskell: [Data.Bifunctor.Bimap](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Bifunctor.html#v:bimap)
  */
-inline fun <V, E, U, F> Result<V, E>.mapEither(
-    success: (V) -> U,
-    failure: (E) -> F
-): Result<U, F> {
+inline fun <V, E, U, F> Result<V, E>.mapEither(success: (V) -> U, failure: (E) -> F): Result<U, F> {
     return when (this) {
         is Ok -> Ok(success(value))
         is Err -> Err(failure(error))
@@ -82,8 +77,8 @@ inline fun <V, E, U, F> Result<V, E>.mapEither(
 }
 
 /**
- * Maps this [Result<V, E>][Result] to [Result<U, E>][Result] by either applying the [transform] function
- * if this [Result] is [Ok], or returning this [Err].
+ * Maps this [Result<V, E>][Result] to [Result<U, E>][Result] by either applying the [transform]
+ * function if this [Result] is [Ok], or returning this [Err].
  *
  * This is functionally equivalent to [andThen].
  *

@@ -1,12 +1,10 @@
 package com.github.michaelbull.result
 
 /**
- * Accumulates value starting with [initial] value and applying [operation] from left to right to current accumulator value and each element.
+ * Accumulates value starting with [initial] value and applying [operation] from left to right to
+ * current accumulator value and each element.
  */
-inline fun <T, R, E> Iterable<T>.fold(
-    initial: R,
-    operation: (acc: R, T) -> Result<R, E>
-): Result<R, E> {
+inline fun <T, R, E> Iterable<T>.fold(initial: R, operation: (acc: R, T) -> Result<R, E>): Result<R, E> {
     var accumulator = initial
 
     forEach { element ->
@@ -24,12 +22,10 @@ inline fun <T, R, E> Iterable<T>.fold(
 }
 
 /**
- * Accumulates value starting with [initial] value and applying [operation] from right to left to each element and current accumulator value.
+ * Accumulates value starting with [initial] value and applying [operation] from right to left to
+ * each element and current accumulator value.
  */
-inline fun <T, R, E> List<T>.foldRight(
-    initial: R,
-    operation: (T, acc: R) -> Result<R, E>
-): Result<R, E> {
+inline fun <T, R, E> List<T>.foldRight(initial: R, operation: (T, acc: R) -> Result<R, E>): Result<R, E> {
     var accumulator = initial
 
     if (!isEmpty()) {
@@ -78,7 +74,9 @@ fun <V, E> Iterable<Result<V, E>>.combine(): Result<List<V>, E> {
  *
  * - Haskell: [Data.Either.lefts](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Either.html#v:lefts)
  */
-fun <V, E> getAll(vararg results: Result<V, E>) = results.asIterable().getAll()
+fun <V, E> getAll(vararg results: Result<V, E>): List<V> {
+    return results.asIterable().getAll()
+}
 
 /**
  * Extracts from an [Iterable] of [Results][Result] all the [Ok] elements. All the [Ok] elements
@@ -91,16 +89,16 @@ fun <V, E> Iterable<Result<V, E>>.getAll(): List<V> {
 }
 
 /**
- * Extracts from a vararg of [Results][Result] all the [Err] elements. All the [Err] elements
- * are extracted in order.
+ * Extracts from a vararg of [Results][Result] all the [Err] elements. All the [Err] elements are
+ * extracted in order.
  *
  * - Haskell: [Data.Either.rights](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Either.html#v:rights)
  */
 fun <V, E> getAllErrors(vararg results: Result<V, E>) = results.asIterable().getAllErrors()
 
 /**
- * Extracts from an [Iterable] of [Results][Result] all the [Err] elements. All the [Err]
- * elements are extracted in order.
+ * Extracts from an [Iterable] of [Results][Result] all the [Err] elements. All the [Err] elements
+ * are extracted in order.
  *
  * - Haskell: [Data.Either.rights](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Either.html#v:rights)
  */
@@ -115,12 +113,14 @@ fun <V, E> Iterable<Result<V, E>>.getAllErrors(): List<E> {
  *
  * - Haskell: [Data.Either.partitionEithers](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Either.html#v:partitionEithers)
  */
-fun <V, E> partition(vararg results: Result<V, E>) = results.asIterable().partition()
+fun <V, E> partition(vararg results: Result<V, E>): Pair<List<V>, List<E>> {
+    return results.asIterable().partition()
+}
 
 /**
  * Partitions an [Iterable] of [Results][Result] into a [Pair] of  [Lists][List]. All the [Ok]
- * elements are extracted, in order, to the [first][Pair.first] value. Similarly the [Err]
- * elements are extracted to the [Pair.second] value.
+ * elements are extracted, in order, to the [first][Pair.first] value. Similarly the [Err] elements
+ * are extracted to the [Pair.second] value.
  *
  * - Haskell: [Data.Either.partitionEithers](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Either.html#v:partitionEithers)
  */
@@ -139,8 +139,9 @@ fun <V, E> Iterable<Result<V, E>>.partition(): Pair<List<V>, List<E>> {
 }
 
 /**
- * Returns a [Result<List<U>, E>][Result] containing the results of applying the given [transform] function to each
- * element in the original collection, returning early with the first [Err] if a transformation fails.
+ * Returns a [Result<List<U>, E>][Result] containing the results of applying the given [transform]
+ * function to each element in the original collection, returning early with the first [Err] if a
+ * transformation fails.
  */
 fun <V, E, U> Iterable<V>.mapResult(transform: (V) -> Result<U, E>): Result<List<U>, E> {
     return Ok(map { element ->
@@ -154,8 +155,9 @@ fun <V, E, U> Iterable<V>.mapResult(transform: (V) -> Result<U, E>): Result<List
 }
 
 /**
- * Applies the given [transform] function to each element of the original collection and appends the results to the
- * given [destination], returning early with the first [Err] if a transformation fails.
+ * Applies the given [transform] function to each element of the original collection and appends
+ * the results to the given [destination], returning early with the first [Err] if a
+ * transformation fails.
  */
 fun <V, E, U, C : MutableCollection<in U>> Iterable<V>.mapResultTo(destination: C, transform: (V) -> Result<U, E>): Result<C, E> {
     return Ok(mapTo(destination) { element ->
@@ -169,8 +171,9 @@ fun <V, E, U, C : MutableCollection<in U>> Iterable<V>.mapResultTo(destination: 
 }
 
 /**
- * Returns a [Result<List<U>, E>][Result] containing only the non-null results of applying the given [transform]
- * function to each element in the original collection, returning early with the first [Err] if a transformation fails.
+ * Returns a [Result<List<U>, E>][Result] containing only the non-null results of applying the
+ * given [transform] function to each element in the original collection, returning early with the
+ * first [Err] if a transformation fails.
  */
 fun <V, E, U : Any> Iterable<V>.mapResultNotNull(transform: (V) -> Result<U, E>?): Result<List<U>, E> {
     return Ok(mapNotNull { element ->
@@ -185,8 +188,9 @@ fun <V, E, U : Any> Iterable<V>.mapResultNotNull(transform: (V) -> Result<U, E>?
 }
 
 /**
- * Applies the given [transform] function to each element in the original collection and appends only the non-null
- * results to the given [destination], returning early with the first [Err] if a transformation fails.
+ * Applies the given [transform] function to each element in the original collection and appends
+ * only the non-null results to the given [destination], returning early with the first [Err] if a
+ * transformation fails.
  */
 fun <V, E, U : Any, C : MutableCollection<in U>> Iterable<V>.mapResultNotNullTo(destination: C, transform: (V) -> Result<U, E>?): Result<C, E> {
     return Ok(mapNotNullTo(destination) { element ->
@@ -201,8 +205,9 @@ fun <V, E, U : Any, C : MutableCollection<in U>> Iterable<V>.mapResultNotNullTo(
 }
 
 /**
- * Returns a [Result<List<U>, E>][Result] containing the results of applying the given [transform] function to each
- * element and its index in the original collection, returning early with the first [Err] if a transformation fails.
+ * Returns a [Result<List<U>, E>][Result] containing the results of applying the given [transform]
+ * function to each element and its index in the original collection, returning early with the
+ * first [Err] if a transformation fails.
  */
 fun <V, E, U> Iterable<V>.mapResultIndexed(transform: (index: Int, V) -> Result<U, E>): Result<List<U>, E> {
     return Ok(mapIndexed { index, element ->
@@ -216,8 +221,9 @@ fun <V, E, U> Iterable<V>.mapResultIndexed(transform: (index: Int, V) -> Result<
 }
 
 /**
- * Applies the given [transform] function to each element and its index in the original collection and appends the
- * results to the given [destination], returning early with the first [Err] if a transformation fails.
+ * Applies the given [transform] function to each element and its index in the original collection
+ * and appends the results to the given [destination], returning early with the first [Err] if a
+ * transformation fails.
  */
 fun <V, E, U, C : MutableCollection<in U>> Iterable<V>.mapResultIndexedTo(destination: C, transform: (index: Int, V) -> Result<U, E>): Result<C, E> {
     return Ok(mapIndexedTo(destination) { index, element ->
@@ -231,9 +237,9 @@ fun <V, E, U, C : MutableCollection<in U>> Iterable<V>.mapResultIndexedTo(destin
 }
 
 /**
- * Returns a [Result<List<U>, E>][Result] containing only the non-null results of applying the given [transform]
- * function to each element and its index in the original collection, returning early with the first [Err] if a
- * transformation fails.
+ * Returns a [Result<List<U>, E>][Result] containing only the non-null results of applying the
+ * given [transform] function to each element and its index in the original collection, returning
+ * early with the first [Err] if a transformation fails.
  */
 fun <V, E, U : Any> Iterable<V>.mapResultIndexedNotNull(transform: (index: Int, V) -> Result<U, E>?): Result<List<U>, E> {
     return Ok(mapIndexedNotNull { index, element ->
@@ -248,8 +254,9 @@ fun <V, E, U : Any> Iterable<V>.mapResultIndexedNotNull(transform: (index: Int, 
 }
 
 /**
- * Applies the given [transform] function to each element and its index in the original collection and appends only the
- * non-null results to the given [destination], returning early with the first [Err] if a transformation fails.
+ * Applies the given [transform] function to each element and its index in the original collection
+ * and appends only the non-null results to the given [destination], returning early with the first
+ * [Err] if a transformation fails.
  */
 fun <V, E, U : Any, C : MutableCollection<in U>> Iterable<V>.mapResultIndexedNotNullTo(destination: C, transform: (index: Int, V) -> Result<U, E>?): Result<C, E> {
     return Ok(mapIndexedNotNullTo(destination) { index, element ->

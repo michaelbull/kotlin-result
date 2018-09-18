@@ -68,8 +68,8 @@ inline infix fun <V, E> Result<V, E>.getErrorOr(default: () -> E): E {
 }
 
 /**
- * Returns the [value][Ok.value] if this [Result] is [Ok], otherwise
- * the [transformation][transform] of the [error][Err.error].
+ * Returns the [value][Ok.value] if this [Result] is [Ok], otherwise the
+ * [transformation][transform] of the [error][Err.error].
  *
  * - Elm: [Result.extract](http://package.elm-lang.org/packages/elm-community/result-extra/2.2.0/Result-Extra#extract)
  * - Rust: [Result.unwrap_or_else](https://doc.rust-lang.org/src/core/result.rs.html#735-740)
@@ -82,8 +82,8 @@ inline infix fun <V, E> Result<V, E>.getOrElse(transform: (E) -> V): V {
 }
 
 /**
- * Returns the [error][Err.error] if this [Result] is [Err], otherwise
- * the [transformation][transform] of the [value][Ok.value].
+ * Returns the [error][Err.error] if this [Result] is [Err], otherwise the
+ * [transformation][transform] of the [value][Ok.value].
  */
 inline infix fun <V, E> Result<V, E>.getErrorOrElse(transform: (V) -> E): E {
     return when (this) {

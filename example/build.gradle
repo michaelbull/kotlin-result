@@ -1,5 +1,7 @@
-apply plugin: 'application'
-apply plugin: 'kotlin'
+plugins {
+    id 'application'
+    id 'org.jetbrains.kotlin.jvm'
+}
 
 mainClassName = 'io.ktor.server.netty.DevelopmentEngine'
 
@@ -15,7 +17,7 @@ dependencies {
     implementation "io.ktor:ktor-server-core:$ktorVersion"
     implementation "io.ktor:ktor-server-netty:$ktorVersion"
     implementation "io.ktor:ktor-gson:$ktorVersion"
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
 }
 
 compileKotlin {

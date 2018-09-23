@@ -1,23 +1,11 @@
-buildscript {
-    repositories {
-        mavenCentral()
-        jcenter()
-    }
-
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
-    }
-}
-
 plugins {
+    id 'maven-publish'
+    id 'org.jetbrains.kotlin.jvm' version '1.2.70'
+    id 'org.jetbrains.dokka' version '0.9.17'
     id 'com.github.ben-manes.versions' version '0.20.0'
     id 'com.jfrog.bintray' version '1.8.4'
     id 'net.researchgate.release' version '2.7.0'
-    id 'org.jetbrains.dokka' version '0.9.17'
 }
-
-apply plugin: 'kotlin'
-apply plugin: 'maven-publish'
 
 description = 'A Result monad for modelling success or failure operations.'
 
@@ -26,13 +14,13 @@ repositories {
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
 
-    testImplementation "junit:junit:$junitVersion"
-    testImplementation "org.jetbrains.kotlin:kotlin-test-common:$kotlinVersion"
-    testImplementation "org.jetbrains.kotlin:kotlin-test-annotations-common:$kotlinVersion"
-    testImplementation "org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion"
-    testImplementation "org.jetbrains.kotlin:kotlin-test:$kotlinVersion"
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'org.jetbrains.kotlin:kotlin-test-common'
+    testImplementation 'org.jetbrains.kotlin:kotlin-test-annotations-common'
+    testImplementation 'org.jetbrains.kotlin:kotlin-test-junit'
+    testImplementation 'org.jetbrains.kotlin:kotlin-test'
 }
 
 compileKotlin {

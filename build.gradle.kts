@@ -59,7 +59,7 @@ val javadocJar by tasks.registering(Jar::class) {
     group = LifecycleBasePlugin.BUILD_GROUP
     description = "Assembles a jar archive containing the Javadoc API documentation."
     classifier = "javadoc"
-    dependsOn(dokka.get())
+    dependsOn(dokka)
     from(dokka.get().outputDirectory)
 }
 

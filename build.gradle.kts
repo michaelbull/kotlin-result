@@ -24,13 +24,13 @@ allprojects {
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    implementation(kotlin("stdlib-jdk8"))
 
     testImplementation("junit:junit:4.12")
-    testImplementation("org.jetbrains.kotlin:kotlin-test-common")
-    testImplementation("org.jetbrains.kotlin:kotlin-test-annotations-common")
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
-    testImplementation("org.jetbrains.kotlin:kotlin-test")
+    testImplementation(kotlin("test-common"))
+    testImplementation(kotlin("test-annotations-common"))
+    testImplementation(kotlin("test-junit"))
+    testImplementation(kotlin("test"))
 }
 
 val SourceSet.kotlin: SourceDirectorySet

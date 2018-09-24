@@ -10,7 +10,7 @@ description = "A Result monad for modelling success or failure operations."
 
 plugins {
     `maven-publish`
-    kotlin("jvm") version ("1.2.70")
+    kotlin("jvm") version ("1.2.71")
     id("org.jetbrains.dokka") version ("0.9.17")
     id("com.github.ben-manes.versions") version ("0.20.0")
     id("com.jfrog.bintray") version ("1.8.4")

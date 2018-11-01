@@ -35,7 +35,7 @@ inline infix fun <V, E> Result<V, E>.orElse(transform: (E) -> Result<V, E>): Res
  * otherwise this [Ok].
  */
 inline infix fun <V, E> Result<V, E>.recover(transform: (E) -> V): Ok<V> {
-    return when(this) {
+    return when (this) {
         is Ok -> this
         is Err -> Ok(transform(error))
     }

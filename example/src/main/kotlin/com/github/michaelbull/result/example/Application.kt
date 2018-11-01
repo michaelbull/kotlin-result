@@ -27,6 +27,7 @@ import com.github.michaelbull.result.mapBoth
 import com.github.michaelbull.result.mapError
 import com.github.michaelbull.result.toResultOr
 import io.ktor.application.Application
+import io.ktor.application.ApplicationCall
 import io.ktor.application.call
 import io.ktor.application.install
 import io.ktor.features.CallLogging
@@ -35,12 +36,12 @@ import io.ktor.features.ContentNegotiation
 import io.ktor.features.DefaultHeaders
 import io.ktor.gson.gson
 import io.ktor.http.HttpStatusCode
+import io.ktor.http.Parameters
 import io.ktor.request.receive
 import io.ktor.response.respond
 import io.ktor.routing.get
 import io.ktor.routing.post
 import io.ktor.routing.routing
-import io.ktor.util.ValuesMap
 
 fun Application.main() {
     install(DefaultHeaders)
@@ -52,30 +53,35 @@ fun Application.main() {
         }
     }
 
+
     routing {
         get("/customers/{id}") {
-            readId(call.parameters)
+            call.parameters.readId()
                 .andThen(CustomerId.Companion::create)
                 .andThen(CustomerService::getById)
                 .mapError(::messageToResponse)
                 .mapBoth(
-                    { call.respond(HttpStatusCode.OK, CustomerDto.from(it)) },
-                    { call.respond(it.first, it.second) }
+                    success = { customer ->
+                        call.respond(HttpStatusCode.OK, CustomerDto.from(customer))
+                    },
+                    failure = { (status, message) ->
+                        call.respond(status, message)
+                    }
                 )
         }
 
         post("/customers/{id}") {
-            readId(call.parameters)
-                .andThen {
+            call.parameters.readId()
+                .andThen { id ->
                     val dto = call.receive<CustomerDto>()
-                    dto.id = it
+                    dto.id = id
                     Ok(dto)
                 }
                 .andThen(Customer.Companion::from)
                 .andThen(CustomerService::upsert)
                 .mapError(::messageToResponse)
                 .mapBoth(
-                    { event ->
+                    success = { event ->
                         if (event == null) {
                             call.respond(HttpStatusCode.NotModified)
                         } else {
@@ -83,15 +89,17 @@ fun Application.main() {
                             call.respond(status, message)
                         }
                     },
-                    { call.respond(it.first, it.second) }
+                    failure = { (status, message) ->
+                        call.respond(status, message)
+                    }
                 )
         }
     }
 
 }
 
-private fun readId(values: ValuesMap): Result<Long, DomainMessage> {
-    return values["id"]
+private fun Parameters.readId(): Result<Long, DomainMessage> {
+    return this["id"]
         ?.toLongOrNull()
         .toResultOr { CustomerRequired }
 }

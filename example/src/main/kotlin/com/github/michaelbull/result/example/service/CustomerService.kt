@@ -1,7 +1,5 @@
 package com.github.michaelbull.result.example.service
 
-import com.github.michaelbull.result.Err
-import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.andThen
 import com.github.michaelbull.result.example.model.domain.Customer
@@ -14,6 +12,7 @@ import com.github.michaelbull.result.example.model.domain.DomainMessage
 import com.github.michaelbull.result.example.model.domain.EmailAddressChanged
 import com.github.michaelbull.result.example.model.entity.CustomerEntity
 import com.github.michaelbull.result.map
+import com.github.michaelbull.result.mapAll
 import com.github.michaelbull.result.mapBoth
 import com.github.michaelbull.result.mapError
 import com.github.michaelbull.result.toResultOr
@@ -25,26 +24,18 @@ object CustomerService {
     fun getAll(): Result<Collection<Customer>, DomainMessage> {
         return Result.of(repository::findAll)
             .mapError(::exceptionToDomainMessage)
-            .andThen { result: Collection<CustomerEntity> ->
-                Ok(result.map {
-                    val customer = Customer.from(it)
-                    when (customer) {
-                        is Ok -> customer.value
-                        is Err -> return customer
-                    }
-                })
-            }
+            .mapAll(Customer.Companion::from)
     }
 
     fun getById(id: CustomerId): Result<Customer, DomainMessage> {
-        return getAll().andThen { it.findCustomer(id) }
+        return getAll().andThen { customers -> customers.findCustomer(id) }
     }
 
     fun upsert(customer: Customer): Result<DomainMessage?, DomainMessage> {
         val entity = CustomerEntity.from(customer)
         return getById(customer.id).mapBoth(
-            { existing -> updateCustomer(entity, existing, customer) },
-            { createCustomer(entity) }
+            success = { existing -> updateCustomer(entity, existing, customer) },
+            failure = { createCustomer(entity) }
         )
     }
 

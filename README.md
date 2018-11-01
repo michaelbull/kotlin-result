@@ -21,7 +21,7 @@ dependencies {
 
 The [`Result`][result] monad has two subtypes, [`Ok<V>`][result-ok] 
 representing success and containing a `value`, and [`Err<E>`][result-err],
-representing an error and containing an `error` value. 
+representing failure and containing an `error`. 
 
 Scott Wlaschin's article on [Railway Oriented Programming][swalschin-rop] is a great
 introduction to the benefits of modelling operations using the `Result` type.

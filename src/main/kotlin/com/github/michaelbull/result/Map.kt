@@ -56,11 +56,31 @@ inline infix fun <V, E, U> Result<Iterable<V>, E>.mapAll(transform: (V) -> Resul
  * - Elm: [Result.Extra.mapBoth](http://package.elm-lang.org/packages/elm-community/result-extra/2.2.0/Result-Extra#mapBoth)
  * - Haskell: [Data.Either.either](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Either.html#v:either)
  */
-inline fun <V, E, U> Result<V, E>.mapBoth(success: (V) -> U, failure: (E) -> U): U {
+inline fun <V, E, U> Result<V, E>.mapBoth(
+    success: (V) -> U,
+    failure: (E) -> U
+): U {
     return when (this) {
         is Ok -> success(value)
         is Err -> failure(error)
     }
+}
+
+/**
+ * Maps this [Result<V, E>][Result] to `U` by applying either the [success] function if this
+ * [Result] is [Ok], or the [failure] function if this [Result] is an [Err]. Both of these
+ * functions must return the same type (`U`).
+ *
+ * This is functionally equivalent to [mapBoth].
+ *
+ * - Elm: [Result.Extra.mapBoth](http://package.elm-lang.org/packages/elm-community/result-extra/2.2.0/Result-Extra#mapBoth)
+ * - Haskell: [Data.Either.either](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Either.html#v:either)
+ */
+inline fun <V, E, U> Result<V, E>.fold(
+    success: (V) -> U,
+    failure: (E) -> U
+): U {
+    return mapBoth(success, failure)
 }
 
 /**
@@ -69,7 +89,10 @@ inline fun <V, E, U> Result<V, E>.mapBoth(success: (V) -> U, failure: (E) -> U):
  *
  * - Haskell: [Data.Bifunctor.Bimap](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Bifunctor.html#v:bimap)
  */
-inline fun <V, E, U, F> Result<V, E>.mapEither(success: (V) -> U, failure: (E) -> F): Result<U, F> {
+inline fun <V, E, U, F> Result<V, E>.mapEither(
+    success: (V) -> U,
+    failure: (E) -> F
+): Result<U, F> {
     return when (this) {
         is Ok -> Ok(success(value))
         is Err -> Err(failure(error))

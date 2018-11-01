@@ -44,6 +44,10 @@ dependencies {
 val SourceSet.kotlin: SourceDirectorySet
     get() = withConvention(KotlinSourceSet::class) { kotlin }
 
+fun BintrayExtension.pkg(configure: BintrayExtension.PackageConfig.() -> Unit): Any? {
+    return pkg(closureOf(configure))
+}
+
 val dokka by tasks.existing(DokkaTask::class) {
     kotlinTasks(closureOf<Any?> { emptyList() })
     sourceDirs = sourceSets["main"].kotlin.srcDirs
@@ -88,12 +92,12 @@ bintray {
     key = project.findProperty("bintrayKey")?.toString() ?: ""
     setPublications("mavenJava")
 
-    pkg(closureOf<BintrayExtension.PackageConfig> {
+    pkg {
         repo = "maven"
         name = "kotlin-result"
         vcsUrl = "git@github.com:michaelbull/kotlin-result.git"
         setLicenses("ISC")
-    })
+    }
 }
 
 val bintrayUpload by tasks.existing(BintrayUploadTask::class) {

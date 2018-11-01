@@ -4,10 +4,10 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
-internal class UnwrapTest {
-    internal class `unwrap` {
+class UnwrapTest {
+    class Unwrap {
         @Test
-        internal fun returnsValueIfOk() {
+        fun returnsValueIfOk() {
             assertEquals(
                 expected = 5000,
                 actual = Ok(5000).unwrap()
@@ -15,16 +15,16 @@ internal class UnwrapTest {
         }
 
         @Test
-        internal fun throwsExceptionIfErr() {
+        fun throwsExceptionIfErr() {
             assertFailsWith<UnwrapException>("called Result.wrap on an Err value 5000") {
                 Err(5000).unwrap()
             }
         }
     }
 
-    internal class `expect` {
+    class Expect {
         @Test
-        internal fun returnsValueIfOk() {
+        fun returnsValueIfOk() {
             assertEquals(
                 expected = 1994,
                 actual = Ok(1994).expect { "the year should be" }
@@ -32,7 +32,7 @@ internal class UnwrapTest {
         }
 
         @Test
-        internal fun throwsExceptionIfErr() {
+        fun throwsExceptionIfErr() {
             val message = object {
                 override fun toString() = "the year should be"
             }
@@ -43,16 +43,16 @@ internal class UnwrapTest {
         }
     }
 
-    internal class `unwrapError` {
+    class UnwrapError {
         @Test
-        internal fun throwsExceptionIfOk() {
+        fun throwsExceptionIfOk() {
             assertFailsWith<UnwrapException>("called Result.unwrapError on an Ok value example") {
                 Ok("example").unwrapError()
             }
         }
 
         @Test
-        internal fun returnsErrorIfErr() {
+        fun returnsErrorIfErr() {
             assertEquals(
                 expected = "example",
                 actual = Err("example").unwrapError()
@@ -60,9 +60,9 @@ internal class UnwrapTest {
         }
     }
 
-    internal class `expectError` {
+    class ExpectError {
         @Test
-        internal fun throwsExceptionIfOk() {
+        fun throwsExceptionIfOk() {
             val message = object {
                 override fun toString() = "the year should be"
             }
@@ -73,7 +73,7 @@ internal class UnwrapTest {
         }
 
         @Test
-        internal fun returnsErrorIfErr() {
+        fun returnsErrorIfErr() {
             assertEquals(
                 expected = 2010,
                 actual = Err(2010).expectError { "the year should be" }

@@ -4,15 +4,15 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertSame
 
-internal class IterableTest {
+class IterableTest {
     private sealed class IterableError {
         object IterableError1 : IterableError()
         object IterableError2 : IterableError()
     }
 
-    internal class `fold` {
+    class Fold {
         @Test
-        internal fun returnAccumulatedValueIfOk() {
+        fun returnAccumulatedValueIfOk() {
             val result = listOf(20, 30, 40, 50).fold(
                 initial = 10,
                 operation = { a, b -> Ok(a + b) }
@@ -27,7 +27,7 @@ internal class IterableTest {
         }
 
         @Test
-        internal fun returnsFirstErrorIfErr() {
+        fun returnsFirstErrorIfErr() {
             val result: Result<Int, IterableError> = listOf(5, 10, 15, 20, 25).fold(
                 initial = 1,
                 operation = { a, b ->
@@ -48,9 +48,9 @@ internal class IterableTest {
         }
     }
 
-    internal class `foldRight` {
+    class FoldRight {
         @Test
-        internal fun returnsAccumulatedValueIfOk() {
+        fun returnsAccumulatedValueIfOk() {
             val result = listOf(2, 5, 10, 20).foldRight(
                 initial = 100,
                 operation = { a, b -> Ok(b - a) }
@@ -65,7 +65,7 @@ internal class IterableTest {
         }
 
         @Test
-        internal fun returnsLastErrorIfErr() {
+        fun returnsLastErrorIfErr() {
             val result = listOf(2, 5, 10, 20, 40).foldRight(
                 initial = 38500,
                 operation = { a, b ->
@@ -86,9 +86,9 @@ internal class IterableTest {
         }
     }
 
-    internal class `combine` {
+    class Combine {
         @Test
-        internal fun returnsValuesIfAllOk() {
+        fun returnsValuesIfAllOk() {
             val values = combine(
                 Ok(10),
                 Ok(20),
@@ -117,7 +117,7 @@ internal class IterableTest {
         }
 
         @Test
-        internal fun returnsFirstErrorIfErr() {
+        fun returnsFirstErrorIfErr() {
             val result = combine(
                 Ok(20),
                 Ok(40),
@@ -136,9 +136,9 @@ internal class IterableTest {
         }
     }
 
-    internal class `getAll` {
+    class GetAll {
         @Test
-        internal fun returnsAllValues() {
+        fun returnsAllValues() {
             val values = getAll(
                 Ok("hello"),
                 Ok("big"),
@@ -175,9 +175,9 @@ internal class IterableTest {
         }
     }
 
-    internal class `getAllErrors` {
+    class GetAllErrors {
         @Test
-        internal fun returnsAllErrors() {
+        fun returnsAllErrors() {
             val errors = getAllErrors(
                 Err(IterableError.IterableError2),
                 Ok("haskell"),
@@ -222,9 +222,9 @@ internal class IterableTest {
         }
     }
 
-    internal class `partition` {
+    class Partition {
         @Test
-        internal fun returnsPairOfValuesAndErrors() {
+        fun returnsPairOfValuesAndErrors() {
             val pairs = partition(
                 Err(IterableError.IterableError2),
                 Ok("haskell"),

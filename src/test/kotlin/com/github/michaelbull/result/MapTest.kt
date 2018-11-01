@@ -4,16 +4,16 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertSame
 
-internal class MapTest {
-    private sealed class MapError(val reason: String) {
-        object HelloError : MapError("hello")
-        object WorldError : MapError("world")
-        class CustomError(reason: String) : MapError(reason)
+class MapTest {
+    private sealed class MapErr(val reason: String) {
+        object HelloError : MapErr("hello")
+        object WorldError : MapErr("world")
+        class CustomError(reason: String) : MapErr(reason)
     }
 
-    internal class `map` {
+    class Map {
         @Test
-        internal fun returnsTransformedValueIfOk() {
+        fun returnsTransformedValueIfOk() {
             assertEquals(
                 expected = 30,
                 actual = Ok(10).map { it + 20 }.get()
@@ -22,22 +22,22 @@ internal class MapTest {
 
         @Test
         @Suppress("UNREACHABLE_CODE")
-        internal fun returnsErrorIfErr() {
-            val result = Err(MapError.HelloError).map { "hello $it" }
+        fun returnsErrorIfErr() {
+            val result = Err(MapErr.HelloError).map { "hello $it" }
 
             result as Err
 
             assertSame(
-                expected = MapError.HelloError,
+                expected = MapErr.HelloError,
                 actual = result.error
             )
         }
     }
 
-    internal class `mapError` {
+    class MapError {
         @Test
-        internal fun returnsValueIfOk() {
-            val value = Ok(55).map { it + 15 }.mapError { MapError.WorldError }.get()
+        fun returnsValueIfOk() {
+            val value = Ok(55).map { it + 15 }.mapError { MapErr.WorldError }.get()
 
             assertEquals(
                 expected = 70,
@@ -46,16 +46,16 @@ internal class MapTest {
         }
 
         @Test
-        internal fun returnsErrorIfErr() {
-            val result: Result<String, MapError> = Ok("let")
+        fun returnsErrorIfErr() {
+            val result: Result<String, MapErr> = Ok("let")
                 .map { "$it me" }
                 .andThen {
                     when (it) {
-                        "let me" -> Err(MapError.CustomError("$it $it"))
+                        "let me" -> Err(MapErr.CustomError("$it $it"))
                         else -> Ok("$it get")
                     }
                 }
-                .mapError { MapError.CustomError("${it.reason} get what i want") }
+                .mapError { MapErr.CustomError("${it.reason} get what i want") }
 
             result as Err
 
@@ -66,10 +66,10 @@ internal class MapTest {
         }
     }
 
-    internal class `mapBoth` {
+    class MapBoth {
         @Test
         @Suppress("UNREACHABLE_CODE")
-        internal fun returnsTransformedValueIfOk() {
+        fun returnsTransformedValueIfOk() {
             val value = Ok("there is").mapBoth(
                 success = { "$it a light" },
                 failure = { "$it that never" }
@@ -83,8 +83,8 @@ internal class MapTest {
 
         @Test
         @Suppress("UNREACHABLE_CODE")
-        internal fun returnsTransformedErrorIfErr() {
-            val error = Err(MapError.CustomError("this")).mapBoth(
+        fun returnsTransformedErrorIfErr() {
+            val error = Err(MapErr.CustomError("this")).mapBoth(
                 success = { "$it charming" },
                 failure = { "${it.reason} man" }
             )
@@ -96,13 +96,13 @@ internal class MapTest {
         }
     }
 
-    internal class `mapEither` {
+    class MapEither {
         @Test
         @Suppress("UNREACHABLE_CODE")
-        internal fun returnsTransformedValueIfOk() {
+        fun returnsTransformedValueIfOk() {
             val result = Ok(500).mapEither(
                 success = { it + 500 },
-                failure = { MapError.CustomError("$it") }
+                failure = { MapErr.CustomError("$it") }
             )
 
             result as Ok
@@ -114,10 +114,10 @@ internal class MapTest {
         }
 
         @Test
-        internal fun returnsTransformedErrorIfErr() {
+        fun returnsTransformedErrorIfErr() {
             val result = Err("the reckless").mapEither(
                 success = { "the wild youth" },
-                failure = { MapError.CustomError("the truth") }
+                failure = { MapErr.CustomError("the truth") }
             )
 
             result as Err

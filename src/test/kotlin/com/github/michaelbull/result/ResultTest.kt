@@ -4,10 +4,10 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertSame
 
-internal class ResultTest {
-    internal class `of` {
+class ResultTest {
+    class Of {
         @Test
-        internal fun returnsOkIfInvocationSuccessful() {
+        fun returnsOkIfInvocationSuccessful() {
             val callback = { "example" }
             val result = Result.of(callback)
 
@@ -18,7 +18,7 @@ internal class ResultTest {
         }
 
         @Test
-        internal fun returnsErrIfInvocationFails() {
+        fun returnsErrIfInvocationFails() {
             val exception = IllegalArgumentException("throw me")
             val callback = { throw exception }
             val result = Result.of(callback)
@@ -30,9 +30,9 @@ internal class ResultTest {
         }
     }
 
-    internal class `toResultOr` {
+    class ToResultOr {
         @Test
-        internal fun returnsOkfIfNonNull() {
+        fun returnsOkfIfNonNull() {
             val result = "ok".toResultOr { "err" }
 
             assertEquals(
@@ -42,7 +42,7 @@ internal class ResultTest {
         }
 
         @Test
-        internal fun returnsErrIfNull() {
+        fun returnsErrIfNull() {
             val result = "ok".toLongOrNull().toResultOr { "err" }
 
             assertEquals(

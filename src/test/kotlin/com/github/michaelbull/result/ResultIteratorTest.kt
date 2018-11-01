@@ -2,31 +2,31 @@ package com.github.michaelbull.result
 
 import kotlin.test.*
 
-internal class ResultIteratorTest {
-    internal class `hasNext` {
+class ResultIteratorTest {
+    class HasNext {
         @Test
-        internal fun returnsTrueIfUnyieldedAndOk() {
+        fun returnsTrueIfUnyieldedAndOk() {
             val iterator = Ok("hello").iterator()
             assertTrue { iterator.hasNext() }
         }
 
         @Test
-        internal fun returnsFalseIfErr() {
+        fun returnsFalseIfErr() {
             val iterator = Err("hello").iterator()
             assertFalse { iterator.hasNext() }
         }
 
         @Test
-        internal fun returnsFalseIfYielded() {
+        fun returnsFalseIfYielded() {
             val iterator = Ok("hello").iterator()
             iterator.next()
             assertFalse { iterator.hasNext() }
         }
     }
 
-    internal class `next` {
+    class Next {
         @Test
-        internal fun returnsValueIfUnyieldedAndOk() {
+        fun returnsValueIfUnyieldedAndOk() {
             assertEquals(
                 expected = "hello",
                 actual = Ok("hello").iterator().next()
@@ -34,29 +34,29 @@ internal class ResultIteratorTest {
         }
 
         @Test
-        internal fun throwsExceptionIfUnyieldedAndErr() {
+        fun throwsExceptionIfUnyieldedAndErr() {
             val iterator = Err("hello").iterator()
             assertFailsWith<NoSuchElementException> { iterator.next() }
         }
 
         @Test
-        internal fun throwsExceptionIfYieldedAndOk() {
+        fun throwsExceptionIfYieldedAndOk() {
             val iterator = Ok("hello").iterator()
             iterator.next()
             assertFailsWith<NoSuchElementException> { iterator.next() }
         }
     }
 
-    internal class `remove` {
+    class Remove {
         @Test
-        internal fun makesHasNextReturnFalse() {
+        fun makesHasNextReturnFalse() {
             val iterator = Ok("hello").mutableIterator()
             iterator.remove()
             assertFalse { iterator.hasNext() }
         }
 
         @Test
-        internal fun makesNextThrowException() {
+        fun makesNextThrowException() {
             val iterator = Ok("hello").mutableIterator()
             iterator.remove()
             assertFailsWith<NoSuchElementException> { iterator.next() }

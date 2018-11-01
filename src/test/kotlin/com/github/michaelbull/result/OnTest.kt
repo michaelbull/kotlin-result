@@ -3,13 +3,13 @@ package com.github.michaelbull.result
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-internal class OnTest {
+class OnTest {
     object CounterError
     class Counter(var count: Int)
 
-    internal class `onSuccess` {
+    class OnSuccess {
         @Test
-        internal fun invokesActionIfOk() {
+        fun invokesActionIfOk() {
             val counter = Counter(50)
 
             Ok(counter).onSuccess { it.count += 50 }
@@ -21,7 +21,7 @@ internal class OnTest {
         }
 
         @Test
-        internal fun invokesNothingIfErr() {
+        fun invokesNothingIfErr() {
             val counter = Counter(200)
 
             Err(CounterError).onSuccess { counter.count -= 50 }
@@ -33,9 +33,9 @@ internal class OnTest {
         }
     }
 
-    internal class `onFailure` {
+    class OnFailure {
         @Test
-        internal fun invokesActionIfErr() {
+        fun invokesActionIfErr() {
             val counter = Counter(555)
 
             Err(CounterError).onFailure { counter.count += 100 }
@@ -47,7 +47,7 @@ internal class OnTest {
         }
 
         @Test
-        internal fun invokesNothingIfOk() {
+        fun invokesNothingIfOk() {
             val counter = Counter(1020)
 
             Ok("hello").onFailure { counter.count = 1030 }

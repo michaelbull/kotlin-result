@@ -4,12 +4,12 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertSame
 
-internal class AndTest {
+class AndTest {
     private object AndError
 
-    internal class `and` {
+    class And {
         @Test
-        internal fun returnsValueIfOk() {
+        fun returnsValueIfOk() {
             assertEquals(
                 expected = 500,
                 actual = Ok(230).and { Ok(500) }.get()
@@ -17,7 +17,7 @@ internal class AndTest {
         }
 
         @Test
-        internal fun returnsValueIfErr() {
+        fun returnsValueIfErr() {
             assertEquals(
                 expected = "hello world",
                 actual = Ok(300).and { Err("hello world") }.getError()
@@ -25,9 +25,9 @@ internal class AndTest {
         }
     }
 
-    internal class `andThen` {
+    class AndThen {
         @Test
-        internal fun returnsTransformedValueIfOk() {
+        fun returnsTransformedValueIfOk() {
             assertEquals(
                 expected = 12,
                 actual = Ok(5).andThen { Ok(it + 7) }.get()
@@ -35,7 +35,7 @@ internal class AndTest {
         }
 
         @Test
-        internal fun returnsErrorIfErr() {
+        fun returnsErrorIfErr() {
             assertSame(
                 expected = AndError,
                 actual = Ok(20).andThen { Ok(it + 43) }.andThen { Err(AndError) }.getError()!!

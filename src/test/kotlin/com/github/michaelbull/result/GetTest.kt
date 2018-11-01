@@ -4,10 +4,10 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
-internal class GetTest {
-    internal class `get` {
+class GetTest {
+    class Get {
         @Test
-        internal fun returnsValueIfOk() {
+        fun returnsValueIfOk() {
             assertEquals(
                 expected = 12,
                 actual = Ok(12).get()
@@ -15,19 +15,19 @@ internal class GetTest {
         }
 
         @Test
-        internal fun returnsNullIfErr() {
+        fun returnsNullIfErr() {
             assertNull(Err("error").get())
         }
     }
 
-    internal class `getError` {
+    class GetError {
         @Test
-        internal fun returnsNullIfOk() {
+        fun returnsNullIfOk() {
             assertNull(Ok("example").getError())
         }
 
         @Test
-        internal fun returnsErrorIfErr() {
+        fun returnsErrorIfErr() {
             assertEquals(
                 expected = "example",
                 actual = Err("example").getError()
@@ -35,9 +35,9 @@ internal class GetTest {
         }
     }
 
-    internal class `getOr` {
+    class GetOr {
         @Test
-        internal fun returnsValueIfOk() {
+        fun returnsValueIfOk() {
             assertEquals(
                 expected = "hello",
                 actual = Ok("hello").getOr { "world" }
@@ -45,7 +45,7 @@ internal class GetTest {
         }
 
         @Test
-        internal fun returnsDefaultValueIfErr() {
+        fun returnsDefaultValueIfErr() {
             assertEquals(
                 expected = "default",
                 actual = Err("error").getOr { "default" }
@@ -53,9 +53,9 @@ internal class GetTest {
         }
     }
 
-    internal class `getErrorOr` {
+    class GetErrorOr {
         @Test
-        internal fun returnsDefaultValueIfOk() {
+        fun returnsDefaultValueIfOk() {
             assertEquals(
                 expected = "world",
                 actual = Ok("hello").getErrorOr { "world" }
@@ -63,7 +63,7 @@ internal class GetTest {
         }
 
         @Test
-        internal fun returnsErrorIfErr() {
+        fun returnsErrorIfErr() {
             assertEquals(
                 expected = "hello",
                 actual = Err("hello").getErrorOr { "world" }
@@ -71,9 +71,9 @@ internal class GetTest {
         }
     }
 
-    internal class `getOrElse` {
+    class GetOrElse {
         @Test
-        internal fun returnsValueIfOk() {
+        fun returnsValueIfOk() {
             assertEquals(
                 expected = "hello",
                 actual = Ok("hello").getOrElse { "world" }
@@ -81,7 +81,7 @@ internal class GetTest {
         }
 
         @Test
-        internal fun returnsTransformedErrorIfErr() {
+        fun returnsTransformedErrorIfErr() {
             assertEquals(
                 expected = "world",
                 actual = Err("hello").getOrElse { "world" }
@@ -89,9 +89,9 @@ internal class GetTest {
         }
     }
 
-    internal class `getErrorOrElse` {
+    class GetErrorOrElse {
         @Test
-        internal fun returnsTransformedValueIfOk() {
+        fun returnsTransformedValueIfOk() {
             assertEquals(
                 expected = "world",
                 actual = Ok("hello").getErrorOrElse { "world" }
@@ -99,7 +99,7 @@ internal class GetTest {
         }
 
         @Test
-        internal fun returnsErrorIfErr() {
+        fun returnsErrorIfErr() {
             assertEquals(
                 expected = "hello",
                 actual = Err("hello").getErrorOrElse { "world" }

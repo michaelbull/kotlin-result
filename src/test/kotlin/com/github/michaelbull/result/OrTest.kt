@@ -3,12 +3,12 @@ package com.github.michaelbull.result
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-internal class OrTest {
+class OrTest {
     private object OrError
 
-    internal class `or` {
+    class Or {
         @Test
-        internal fun returnsValueIfOk() {
+        fun returnsValueIfOk() {
             assertEquals(
                 expected = 500,
                 actual = Ok(500).or { Ok(1000) }.get()
@@ -16,7 +16,7 @@ internal class OrTest {
         }
 
         @Test
-        internal fun returnsDefaultValueIfErr() {
+        fun returnsDefaultValueIfErr() {
             assertEquals(
                 expected = 5000,
                 actual = Err(OrError).or { Ok(5000) }.get()
@@ -24,9 +24,9 @@ internal class OrTest {
         }
     }
 
-    internal class `orElse` {
+    class OrElse {
         @Test
-        internal fun returnsValueIfOk() {
+        fun returnsValueIfOk() {
             assertEquals(
                 expected = 3000,
                 actual = Ok(3000).orElse { Ok(4000) }.get()
@@ -34,7 +34,7 @@ internal class OrTest {
         }
 
         @Test
-        internal fun returnsTransformedValueIfErr() {
+        fun returnsTransformedValueIfErr() {
             assertEquals(
                 expected = 2000,
                 actual = Err(4000).orElse { Ok(2000) }.get()
@@ -42,9 +42,9 @@ internal class OrTest {
         }
     }
 
-    internal class `recover` {
+    class Recover {
         @Test
-        internal fun returnsValueIfOk() {
+        fun returnsValueIfOk() {
             assertEquals(
                 expected = 3000,
                 actual = Ok(3000).recover { 4000 }.get()
@@ -52,7 +52,7 @@ internal class OrTest {
         }
 
         @Test
-        internal fun returnsTransformedValueIfErr() {
+        fun returnsTransformedValueIfErr() {
             assertEquals(
                 expected = 2000,
                 actual = Err(4000).recover { 2000 }.get()

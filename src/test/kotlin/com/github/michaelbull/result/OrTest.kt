@@ -41,4 +41,22 @@ internal class OrTest {
             )
         }
     }
+
+    internal class `recover` {
+        @Test
+        internal fun returnsValueIfOk() {
+            assertEquals(
+                expected = 3000,
+                actual = Ok(3000).recover { 4000 }.get()
+            )
+        }
+
+        @Test
+        internal fun returnsTransformedValueIfErr() {
+            assertEquals(
+                expected = 2000,
+                actual = Err(4000).recover { 2000 }.get()
+            )
+        }
+    }
 }

@@ -29,3 +29,14 @@ inline infix fun <V, E> Result<V, E>.orElse(transform: (E) -> Result<V, E>): Res
         is Err -> transform(error)
     }
 }
+
+/**
+ * Returns the [transformation][transform] of the [error][Err.error] if this [Result] is [Err],
+ * otherwise this [Ok].
+ */
+inline infix fun <V, E> Result<V, E>.recover(transform: (E) -> V): Ok<V> {
+    return when(this) {
+        is Ok -> this
+        is Err -> Ok(transform(error))
+    }
+}

@@ -4,13 +4,14 @@ import groovy.lang.Closure
 import org.gradle.api.internal.HasConvention
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.dokka.gradle.DokkaTask
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 
 description = "A Result monad for modelling success or failure operations."
 
 plugins {
     `maven-publish`
-    kotlin("jvm") version ("1.2.71")
+    kotlin("jvm") version ("1.3.0")
     id("org.jetbrains.dokka") version ("0.9.17")
     id("com.github.ben-manes.versions") version ("0.20.0")
     id("com.jfrog.bintray") version ("1.8.4")
@@ -21,11 +22,18 @@ allprojects {
     repositories {
         mavenCentral()
     }
+
+    plugins.withType<KotlinPluginWrapper> {
+        tasks.withType<KotlinCompile> {
+            kotlinOptions {
+                jvmTarget = "1.8"
+            }
+        }
+    }
 }
 
 dependencies {
     implementation(kotlin("stdlib"))
-
     testImplementation("junit:junit:4.12")
     testImplementation(kotlin("test-common"))
     testImplementation(kotlin("test-annotations-common"))
@@ -36,16 +44,11 @@ dependencies {
 val SourceSet.kotlin: SourceDirectorySet
     get() = withConvention(KotlinSourceSet::class) { kotlin }
 
-val compileKotlin by tasks.existing(KotlinCompile::class)
-val compileTestKotlin by tasks.existing(KotlinCompile::class)
-val dokka by tasks.existing(DokkaTask::class)
-
-compileKotlin {
-    kotlinOptions.jvmTarget = "1.8"
-}
-
-compileTestKotlin {
-    kotlinOptions.jvmTarget = "1.8"
+val dokka by tasks.existing(DokkaTask::class) {
+    kotlinTasks(closureOf<Any?> { emptyList() })
+    sourceDirs = sourceSets["main"].kotlin.srcDirs
+    outputFormat = "javadoc"
+    outputDirectory = "$buildDir/docs/javadoc"
 }
 
 dokka {
@@ -93,19 +96,13 @@ bintray {
     })
 }
 
-val build by tasks.existing
-val generatePomFileForMavenJavaPublication by tasks.existing(GenerateMavenPom::class)
-val bintrayUpload by tasks.existing(BintrayUploadTask::class)
-
-bintrayUpload {
-    dependsOn(build)
-    dependsOn(generatePomFileForMavenJavaPublication)
+val bintrayUpload by tasks.existing(BintrayUploadTask::class) {
+    dependsOn("build")
+    dependsOn("generatePomFileForMavenJavaPublication")
     dependsOn(sourcesJar)
     dependsOn(javadocJar)
 }
 
-val afterReleaseBuild by tasks.existing
-
-afterReleaseBuild {
+tasks.named<Task>("afterReleaseBuild") {
     dependsOn(bintrayUpload)
 }

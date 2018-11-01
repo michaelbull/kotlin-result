@@ -24,17 +24,6 @@ dependencies {
     implementation("io.ktor:ktor-gson:${ext["ktorVersion"]}")
 }
 
-val compileKotlin by tasks.existing(KotlinCompile::class)
-val compileTestKotlin by tasks.existing(KotlinCompile::class)
-
-compileKotlin {
-    kotlinOptions.jvmTarget = "1.8"
-}
-
-compileTestKotlin {
-    kotlinOptions.jvmTarget = "1.8"
-}
-
 kotlin {
     experimental.coroutines = Coroutines.ENABLE
 }

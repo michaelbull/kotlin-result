@@ -9,7 +9,7 @@ internal class OnTest {
 
     internal class `onSuccess` {
         @Test
-        internal fun invokesCallbackIfOk() {
+        internal fun invokesActionIfOk() {
             val counter = Counter(50)
 
             Ok(counter).onSuccess { it.count += 50 }
@@ -35,7 +35,7 @@ internal class OnTest {
 
     internal class `onFailure` {
         @Test
-        internal fun invokesCallbackIfErr() {
+        internal fun invokesActionIfErr() {
             val counter = Counter(555)
 
             Err(CounterError).onFailure { counter.count += 100 }

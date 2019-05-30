@@ -1,5 +1,4 @@
 import org.jetbrains.kotlin.gradle.dsl.Coroutines
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     application
@@ -16,12 +15,14 @@ repositories {
 }
 
 dependencies {
+    val ktorVersion = "1.0.0-beta-3"
+
     implementation(project(":"))
     implementation(kotlin("stdlib-jdk8"))
-    implementation("ch.qos.logback:logback-classic:${ext["logbackVersion"]}")
-    implementation("io.ktor:ktor-server-core:${ext["ktorVersion"]}")
-    implementation("io.ktor:ktor-server-netty:${ext["ktorVersion"]}")
-    implementation("io.ktor:ktor-gson:${ext["ktorVersion"]}")
+    implementation("ch.qos.logback:logback-classic:1.2.3")
+    implementation("io.ktor:ktor-server-core:${ktorVersion}")
+    implementation("io.ktor:ktor-server-netty:${ktorVersion}")
+    implementation("io.ktor:ktor-gson:${ktorVersion}")
 }
 
 kotlin {

@@ -90,7 +90,11 @@ bintray {
     pkg {
         repo = "maven"
         name = "kotlin-result"
+        desc = "A Result monad for modelling success or failure operations."
+        websiteUrl = "https://github.com/michaelbull/kotlin-result"
+        issueTrackerUrl = "https://github.com/michaelbull/kotlin-result/issues"
         vcsUrl = "git@github.com:michaelbull/kotlin-result.git"
+        githubRepo = "michaelbull/kotlin-result"
         setLicenses("ISC")
     }
 }

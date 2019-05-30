@@ -48,13 +48,6 @@ fun BintrayExtension.pkg(configure: BintrayExtension.PackageConfig.() -> Unit) {
 }
 
 val dokka by tasks.existing(DokkaTask::class) {
-    kotlinTasks(closureOf<Any?> { emptyList() })
-    sourceDirs = sourceSets["main"].kotlin.srcDirs
-    outputFormat = "javadoc"
-    outputDirectory = "$buildDir/docs/javadoc"
-}
-
-dokka {
     sourceDirs = sourceSets["main"].kotlin.srcDirs
     outputFormat = "javadoc"
     outputDirectory = "$buildDir/docs/javadoc"

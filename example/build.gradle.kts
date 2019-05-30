@@ -18,7 +18,7 @@ dependencies {
     implementation(project(":"))
     implementation(kotlin("stdlib-jdk8"))
     implementation("ch.qos.logback:logback-classic:1.2.3")
-    implementation("io.ktor:ktor-server-core:${ktorVersion}")
-    implementation("io.ktor:ktor-server-netty:${ktorVersion}")
-    implementation("io.ktor:ktor-gson:${ktorVersion}")
+    implementation("io.ktor:ktor-server-core:$ktorVersion")
+    implementation("io.ktor:ktor-server-netty:$ktorVersion")
+    implementation("io.ktor:ktor-gson:$ktorVersion")
 }

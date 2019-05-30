@@ -19,6 +19,7 @@ plugins {
 allprojects {
     repositories {
         mavenCentral()
+        jcenter()
     }
 
     plugins.withType<KotlinPluginWrapper> {
@@ -42,8 +43,8 @@ dependencies {
 val SourceSet.kotlin: SourceDirectorySet
     get() = withConvention(KotlinSourceSet::class) { kotlin }
 
-fun BintrayExtension.pkg(configure: BintrayExtension.PackageConfig.() -> Unit): Any? {
-    return pkg(closureOf(configure))
+fun BintrayExtension.pkg(configure: BintrayExtension.PackageConfig.() -> Unit) {
+    pkg(delegateClosureOf(configure))
 }
 
 val dokka by tasks.existing(DokkaTask::class) {
@@ -54,16 +55,16 @@ val dokka by tasks.existing(DokkaTask::class) {
 }
 
 dokka {
-    kotlinTasks(closureOf<Any?> { emptyList() })
     sourceDirs = sourceSets["main"].kotlin.srcDirs
     outputFormat = "javadoc"
     outputDirectory = "$buildDir/docs/javadoc"
+    kotlinTasks(::defaultKotlinTasks)
 }
 
 val javadocJar by tasks.registering(Jar::class) {
     group = LifecycleBasePlugin.BUILD_GROUP
     description = "Assembles a jar archive containing the Javadoc API documentation."
-    classifier = "javadoc"
+    archiveClassifier.set("javadoc")
     dependsOn(dokka)
     from(dokka.get().outputDirectory)
 }
@@ -71,7 +72,7 @@ val javadocJar by tasks.registering(Jar::class) {
 val sourcesJar by tasks.registering(Jar::class) {
     group = LifecycleBasePlugin.BUILD_GROUP
     description = "Assembles a jar archive containing the main classes with sources."
-    classifier = "sources"
+    archiveClassifier.set("sources")
     from(sourceSets["main"].allSource)
 }
 
@@ -85,9 +86,12 @@ publishing {
     }
 }
 
+val bintrayUser: String? by project
+val bintrayKey: String? by project
+
 bintray {
-    user = project.findProperty("bintrayUser")?.toString() ?: ""
-    key = project.findProperty("bintrayKey")?.toString() ?: ""
+    user = bintrayUser
+    key = bintrayKey
     setPublications("mavenJava")
 
     pkg {
@@ -105,6 +109,6 @@ val bintrayUpload by tasks.existing(BintrayUploadTask::class) {
     dependsOn(javadocJar)
 }
 
-tasks.named<Task>("afterReleaseBuild") {
+tasks.named("afterReleaseBuild") {
     dependsOn(bintrayUpload)
 }

@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.dsl.Coroutines
-
 plugins {
     application
     kotlin("jvm")
@@ -15,7 +13,7 @@ repositories {
 }
 
 dependencies {
-    val ktorVersion = "1.0.0-beta-3"
+    val ktorVersion = "1.2.1"
 
     implementation(project(":"))
     implementation(kotlin("stdlib-jdk8"))
@@ -23,8 +21,4 @@ dependencies {
     implementation("io.ktor:ktor-server-core:${ktorVersion}")
     implementation("io.ktor:ktor-server-netty:${ktorVersion}")
     implementation("io.ktor:ktor-gson:${ktorVersion}")
-}
-
-kotlin {
-    experimental.coroutines = Coroutines.ENABLE
 }

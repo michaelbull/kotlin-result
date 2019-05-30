@@ -27,7 +27,6 @@ import com.github.michaelbull.result.mapBoth
 import com.github.michaelbull.result.mapError
 import com.github.michaelbull.result.toResultOr
 import io.ktor.application.Application
-import io.ktor.application.ApplicationCall
 import io.ktor.application.call
 import io.ktor.application.install
 import io.ktor.features.CallLogging
@@ -52,7 +51,6 @@ fun Application.main() {
             setPrettyPrinting()
         }
     }
-
 
     routing {
         get("/customers/{id}") {

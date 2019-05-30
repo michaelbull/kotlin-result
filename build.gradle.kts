@@ -1,21 +1,19 @@
 import com.jfrog.bintray.gradle.BintrayExtension
 import com.jfrog.bintray.gradle.tasks.BintrayUploadTask
-import groovy.lang.Closure
-import org.gradle.api.internal.HasConvention
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 description = "A Result monad for modelling success or failure operations."
 
 plugins {
     `maven-publish`
-    kotlin("jvm") version ("1.3.0")
-    id("org.jetbrains.dokka") version ("0.9.17")
-    id("com.github.ben-manes.versions") version ("0.20.0")
+    kotlin("jvm") version ("1.3.31")
+    id("org.jetbrains.dokka") version ("0.9.18")
+    id("com.github.ben-manes.versions") version ("0.21.0")
     id("com.jfrog.bintray") version ("1.8.4")
-    id("net.researchgate.release") version ("2.7.0")
+    id("net.researchgate.release") version ("2.8.0")
 }
 
 allprojects {

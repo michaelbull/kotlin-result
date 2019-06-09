@@ -1,7 +1,6 @@
 import com.jfrog.bintray.gradle.BintrayExtension
 import com.jfrog.bintray.gradle.tasks.BintrayUploadTask
 import org.jetbrains.dokka.gradle.DokkaTask
-import org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -16,19 +15,9 @@ plugins {
     id("net.researchgate.release") version ("2.8.0")
 }
 
-allprojects {
-    repositories {
-        mavenCentral()
-        jcenter()
-    }
-
-    plugins.withType<KotlinPluginWrapper> {
-        tasks.withType<KotlinCompile> {
-            kotlinOptions {
-                jvmTarget = "1.8"
-            }
-        }
-    }
+repositories {
+    mavenCentral()
+    jcenter()
 }
 
 dependencies {
@@ -38,6 +27,12 @@ dependencies {
     testImplementation(kotlin("test-annotations-common"))
     testImplementation(kotlin("test-junit"))
     testImplementation(kotlin("test"))
+}
+
+tasks.withType<KotlinCompile> {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
 }
 
 val SourceSet.kotlin: SourceDirectorySet
@@ -89,8 +84,8 @@ bintray {
 
     pkg {
         repo = "maven"
-        name = "kotlin-result"
-        desc = "A Result monad for modelling success or failure operations."
+        name = project.name
+        desc = project.description
         websiteUrl = "https://github.com/michaelbull/kotlin-result"
         issueTrackerUrl = "https://github.com/michaelbull/kotlin-result/issues"
         vcsUrl = "git@github.com:michaelbull/kotlin-result.git"

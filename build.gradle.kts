@@ -1,6 +1,4 @@
-import com.jfrog.bintray.gradle.BintrayExtension
-import com.jfrog.bintray.gradle.tasks.BintrayUploadTask
-import org.jetbrains.dokka.gradle.DokkaTask
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -15,9 +13,17 @@ plugins {
     id("net.researchgate.release") version ("2.8.0")
 }
 
-repositories {
-    mavenCentral()
-    jcenter()
+allprojects {
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
+
+    plugins.withType<KotlinPluginWrapper> {
+        tasks.withType<KotlinCompile> {
+            kotlinOptions.jvmTarget = "1.8"
+        }
+    }
 }
 
 dependencies {
@@ -27,12 +33,6 @@ dependencies {
     testImplementation(kotlin("test-annotations-common"))
     testImplementation(kotlin("test-junit"))
     testImplementation(kotlin("test"))
-}
-
-tasks.withType<KotlinCompile> {
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
 }
 
 val SourceSet.kotlin: SourceDirectorySet

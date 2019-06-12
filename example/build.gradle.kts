@@ -15,7 +15,7 @@ repositories {
 dependencies {
     val ktorVersion = "1.2.1"
 
-    implementation(project(":"))
+    implementation(rootProject)
     implementation(kotlin("stdlib-jdk8"))
     implementation("ch.qos.logback:logback-classic:1.2.3")
     implementation("io.ktor:ktor-server-core:$ktorVersion")

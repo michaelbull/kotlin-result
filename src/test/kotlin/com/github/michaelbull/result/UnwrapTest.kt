@@ -17,6 +17,7 @@ class UnwrapTest {
         @Test
         fun throwsExceptionIfErr() {
             assertFailsWith<UnwrapException>("called Result.wrap on an Err value 5000") {
+                @Suppress("IMPLICIT_NOTHING_AS_TYPE_PARAMETER")
                 Err(5000).unwrap()
             }
         }
@@ -38,6 +39,7 @@ class UnwrapTest {
             }
 
             assertFailsWith<UnwrapException>("the year should be 1994") {
+                @Suppress("IMPLICIT_NOTHING_AS_TYPE_PARAMETER")
                 Err(1994).expect { message }
             }
         }
@@ -47,6 +49,7 @@ class UnwrapTest {
         @Test
         fun throwsExceptionIfOk() {
             assertFailsWith<UnwrapException>("called Result.unwrapError on an Ok value example") {
+                @Suppress("IMPLICIT_NOTHING_AS_TYPE_PARAMETER")
                 Ok("example").unwrapError()
             }
         }
@@ -68,6 +71,7 @@ class UnwrapTest {
             }
 
             assertFailsWith<UnwrapException>("the year should be 2010") {
+                @Suppress("IMPLICIT_NOTHING_AS_TYPE_PARAMETER")
                 Ok(2010).expectError { message }
             }
         }

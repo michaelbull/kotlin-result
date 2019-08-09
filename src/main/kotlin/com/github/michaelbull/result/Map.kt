@@ -1,5 +1,8 @@
 package com.github.michaelbull.result
 
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
+
 /**
  * Maps this [Result<V, E>][Result] to [Result<U, E>][Result] by either applying the [transform]
  * function to the [value][Ok.value] if this [Result] is [Ok], or returning this [Err].
@@ -9,6 +12,10 @@ package com.github.michaelbull.result
  * - Rust: [Result.map](https://doc.rust-lang.org/std/result/enum.Result.html#method.map)
  */
 inline infix fun <V, E, U> Result<V, E>.map(transform: (V) -> U): Result<U, E> {
+    contract {
+        callsInPlace(transform, InvocationKind.AT_MOST_ONCE)
+    }
+
     return when (this) {
         is Ok -> Ok(transform(value))
         is Err -> this
@@ -24,6 +31,10 @@ inline infix fun <V, E, U> Result<V, E>.map(transform: (V) -> U): Result<U, E> {
  * - Rust: [Result.map_err](https://doc.rust-lang.org/std/result/enum.Result.html#method.map_err)
  */
 inline infix fun <V, E, F> Result<V, E>.mapError(transform: (E) -> F): Result<V, F> {
+    contract {
+        callsInPlace(transform, InvocationKind.AT_MOST_ONCE)
+    }
+
     return when (this) {
         is Ok -> this
         is Err -> Err(transform(error))
@@ -54,10 +65,12 @@ inline infix fun <V, E, U> Result<Iterable<V>, E>.mapAll(transform: (V) -> Resul
  * - Elm: [Result.Extra.mapBoth](http://package.elm-lang.org/packages/elm-community/result-extra/2.2.0/Result-Extra#mapBoth)
  * - Haskell: [Data.Either.either](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Either.html#v:either)
  */
-inline fun <V, E, U> Result<V, E>.mapBoth(
-    success: (V) -> U,
-    failure: (E) -> U
-): U {
+inline fun <V, E, U> Result<V, E>.mapBoth(success: (V) -> U, failure: (E) -> U): U {
+    contract {
+        callsInPlace(success, InvocationKind.AT_MOST_ONCE)
+        callsInPlace(failure, InvocationKind.AT_MOST_ONCE)
+    }
+
     return when (this) {
         is Ok -> success(value)
         is Err -> failure(error)
@@ -74,10 +87,12 @@ inline fun <V, E, U> Result<V, E>.mapBoth(
  * - Elm: [Result.Extra.mapBoth](http://package.elm-lang.org/packages/elm-community/result-extra/2.2.0/Result-Extra#mapBoth)
  * - Haskell: [Data.Either.either](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Either.html#v:either)
  */
-inline fun <V, E, U> Result<V, E>.fold(
-    success: (V) -> U,
-    failure: (E) -> U
-): U {
+inline fun <V, E, U> Result<V, E>.fold(success: (V) -> U, failure: (E) -> U): U {
+    contract {
+        callsInPlace(success, InvocationKind.AT_MOST_ONCE)
+        callsInPlace(failure, InvocationKind.AT_MOST_ONCE)
+    }
+
     return mapBoth(success, failure)
 }
 
@@ -87,10 +102,12 @@ inline fun <V, E, U> Result<V, E>.fold(
  *
  * - Haskell: [Data.Bifunctor.Bimap](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Bifunctor.html#v:bimap)
  */
-inline fun <V, E, U, F> Result<V, E>.mapEither(
-    success: (V) -> U,
-    failure: (E) -> F
-): Result<U, F> {
+inline fun <V, E, U, F> Result<V, E>.mapEither(success: (V) -> U, failure: (E) -> F): Result<U, F> {
+    contract {
+        callsInPlace(success, InvocationKind.AT_MOST_ONCE)
+        callsInPlace(failure, InvocationKind.AT_MOST_ONCE)
+    }
+
     return when (this) {
         is Ok -> Ok(success(value))
         is Err -> Err(failure(error))
@@ -106,5 +123,9 @@ inline fun <V, E, U, F> Result<V, E>.mapEither(
  * - Scala: [Either.flatMap](http://www.scala-lang.org/api/2.12.0/scala/util/Either.html#flatMap[AA>:A,Y](f:B=>scala.util.Either[AA,Y]):scala.util.Either[AA,Y])
  */
 inline infix fun <V, E, U> Result<V, E>.flatMap(transform: (V) -> Result<U, E>): Result<U, E> {
+    contract {
+        callsInPlace(transform, InvocationKind.AT_MOST_ONCE)
+    }
+
     return andThen(transform)
 }

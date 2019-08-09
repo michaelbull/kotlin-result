@@ -1,5 +1,8 @@
 package com.github.michaelbull.result
 
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
+
 private typealias Producer<T, E> = () -> Result<T, E>
 
 /**
@@ -13,6 +16,12 @@ inline fun <T1, T2, E, V> zip(
     result2: Producer<T2, E>,
     transform: (T1, T2) -> V
 ): Result<V, E> {
+    contract {
+        callsInPlace(result1, InvocationKind.EXACTLY_ONCE)
+        callsInPlace(result2, InvocationKind.AT_MOST_ONCE)
+        callsInPlace(transform, InvocationKind.AT_MOST_ONCE)
+    }
+
     return result1().flatMap { v1 ->
         result2().map { v2 ->
             transform(v1, v2)
@@ -32,6 +41,13 @@ inline fun <T1, T2, T3, E, V> zip(
     result3: Producer<T3, E>,
     transform: (T1, T2, T3) -> V
 ): Result<V, E> {
+    contract {
+        callsInPlace(result1, InvocationKind.EXACTLY_ONCE)
+        callsInPlace(result2, InvocationKind.AT_MOST_ONCE)
+        callsInPlace(result3, InvocationKind.AT_MOST_ONCE)
+        callsInPlace(transform, InvocationKind.AT_MOST_ONCE)
+    }
+
     return result1().flatMap { v1 ->
         result2().flatMap { v2 ->
             result3().map { v3 ->
@@ -54,6 +70,14 @@ inline fun <T1, T2, T3, T4, E, V> zip(
     result4: Producer<T4, E>,
     transform: (T1, T2, T3, T4) -> V
 ): Result<V, E> {
+    contract {
+        callsInPlace(result1, InvocationKind.EXACTLY_ONCE)
+        callsInPlace(result2, InvocationKind.AT_MOST_ONCE)
+        callsInPlace(result3, InvocationKind.AT_MOST_ONCE)
+        callsInPlace(result4, InvocationKind.AT_MOST_ONCE)
+        callsInPlace(transform, InvocationKind.AT_MOST_ONCE)
+    }
+
     return result1().flatMap { v1 ->
         result2().flatMap { v2 ->
             result3().flatMap { v3 ->
@@ -79,6 +103,15 @@ inline fun <T1, T2, T3, T4, T5, E, V> zip(
     result5: Producer<T5, E>,
     transform: (T1, T2, T3, T4, T5) -> V
 ): Result<V, E> {
+    contract {
+        callsInPlace(result1, InvocationKind.EXACTLY_ONCE)
+        callsInPlace(result2, InvocationKind.AT_MOST_ONCE)
+        callsInPlace(result3, InvocationKind.AT_MOST_ONCE)
+        callsInPlace(result4, InvocationKind.AT_MOST_ONCE)
+        callsInPlace(result5, InvocationKind.AT_MOST_ONCE)
+        callsInPlace(transform, InvocationKind.AT_MOST_ONCE)
+    }
+
     return result1().flatMap { v1 ->
         result2().flatMap { v2 ->
             result3().flatMap { v3 ->

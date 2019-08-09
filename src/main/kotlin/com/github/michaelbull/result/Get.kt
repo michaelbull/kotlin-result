@@ -1,5 +1,8 @@
 package com.github.michaelbull.result
 
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
+
 /**
  * Returns the [value][Ok.value] if this [Result] is [Ok], otherwise `null`.
  *
@@ -7,6 +10,11 @@ package com.github.michaelbull.result
  * - Rust: [Result.ok](https://doc.rust-lang.org/std/result/enum.Result.html#method.ok)
  */
 fun <V, E> Result<V, E>.get(): V? {
+    contract {
+        returnsNotNull() implies (this@get is Ok<V>)
+        returns(null) implies (this@get is Err<E>)
+    }
+
     return when (this) {
         is Ok -> value
         is Err -> null
@@ -19,6 +27,11 @@ fun <V, E> Result<V, E>.get(): V? {
  * - Rust: [Result.err](https://doc.rust-lang.org/std/result/enum.Result.html#method.err)
  */
 fun <V, E> Result<V, E>.getError(): E? {
+    contract {
+        returns(null) implies (this@getError is Ok<V>)
+        returnsNotNull() implies (this@getError is Err<E>)
+    }
+
     return when (this) {
         is Ok -> null
         is Err -> error
@@ -41,6 +54,10 @@ infix fun <V, E> Result<V, E>.getOr(default: V): V {
  * @return The [value][Ok.value] if [Ok], otherwise [default].
  */
 inline infix fun <V, E> Result<V, E>.getOr(default: () -> V): V {
+    contract {
+        callsInPlace(default, InvocationKind.AT_MOST_ONCE)
+    }
+
     return when (this) {
         is Ok -> value
         is Err -> default()
@@ -61,6 +78,10 @@ infix fun <V, E> Result<V, E>.getErrorOr(default: E): E {
  * @return The [error][Err.error] if [Err], otherwise [default].
  */
 inline infix fun <V, E> Result<V, E>.getErrorOr(default: () -> E): E {
+    contract {
+        callsInPlace(default, InvocationKind.AT_MOST_ONCE)
+    }
+
     return when (this) {
         is Ok -> default()
         is Err -> error
@@ -75,6 +96,10 @@ inline infix fun <V, E> Result<V, E>.getErrorOr(default: () -> E): E {
  * - Rust: [Result.unwrap_or_else](https://doc.rust-lang.org/src/core/result.rs.html#735-740)
  */
 inline infix fun <V, E> Result<V, E>.getOrElse(transform: (E) -> V): V {
+    contract {
+        callsInPlace(transform, InvocationKind.AT_MOST_ONCE)
+    }
+
     return when (this) {
         is Ok -> value
         is Err -> transform(error)
@@ -86,6 +111,10 @@ inline infix fun <V, E> Result<V, E>.getOrElse(transform: (E) -> V): V {
  * [transformation][transform] of the [value][Ok.value].
  */
 inline infix fun <V, E> Result<V, E>.getErrorOrElse(transform: (V) -> E): E {
+    contract {
+        callsInPlace(transform, InvocationKind.AT_MOST_ONCE)
+    }
+
     return when (this) {
         is Ok -> transform(value)
         is Err -> error

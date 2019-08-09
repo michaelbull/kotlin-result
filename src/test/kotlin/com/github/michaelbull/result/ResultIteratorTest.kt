@@ -1,6 +1,10 @@
 package com.github.michaelbull.result
 
-import kotlin.test.*
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class ResultIteratorTest {
     class HasNext {
@@ -36,7 +40,11 @@ class ResultIteratorTest {
         @Test
         fun throwsExceptionIfUnyieldedAndErr() {
             val iterator = Err("hello").iterator()
-            assertFailsWith<NoSuchElementException> { iterator.next() }
+
+            assertFailsWith<NoSuchElementException> {
+                @Suppress("IMPLICIT_NOTHING_AS_TYPE_PARAMETER")
+                iterator.next()
+            }
         }
 
         @Test

@@ -1,5 +1,8 @@
 package com.github.michaelbull.result
 
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
+
 @Deprecated("Use lazy-evaluating variant instead", ReplaceWith("and { result }"))
 infix fun <V, E> Result<V, E>.and(result: Result<V, E>): Result<V, E> {
     return and { result }
@@ -11,6 +14,10 @@ infix fun <V, E> Result<V, E>.and(result: Result<V, E>): Result<V, E> {
  * - Rust: [Result.and](https://doc.rust-lang.org/std/result/enum.Result.html#method.and)
  */
 inline infix fun <V, E> Result<V, E>.and(result: () -> Result<V, E>): Result<V, E> {
+    contract {
+        callsInPlace(result, InvocationKind.AT_MOST_ONCE)
+    }
+
     return when (this) {
         is Ok -> result()
         is Err -> this
@@ -25,6 +32,10 @@ inline infix fun <V, E> Result<V, E>.and(result: () -> Result<V, E>): Result<V, 
  * - Rust: [Result.and_then](https://doc.rust-lang.org/std/result/enum.Result.html#method.and_then)
  */
 inline infix fun <V, E, U> Result<V, E>.andThen(transform: (V) -> Result<U, E>): Result<U, E> {
+    contract {
+        callsInPlace(transform, InvocationKind.AT_MOST_ONCE)
+    }
+
     return when (this) {
         is Ok -> transform(value)
         is Err -> this

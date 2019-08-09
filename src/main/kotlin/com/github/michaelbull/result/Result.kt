@@ -1,5 +1,8 @@
 package com.github.michaelbull.result
 
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
+
 /**
  * [Result] is a type that represents either success ([Ok]) or failure ([Err]).
  *
@@ -39,6 +42,10 @@ data class Err<out E>(val error: E) : Result<Nothing, E>()
  * non-null, otherwise the supplied [error].
  */
 inline infix fun <V, E> V?.toResultOr(error: () -> E): Result<V, E> {
+    contract {
+        callsInPlace(error, InvocationKind.AT_MOST_ONCE)
+    }
+
     return when (this) {
         null -> Err(error())
         else -> Ok(this)

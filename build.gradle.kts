@@ -1,7 +1,6 @@
 import com.jfrog.bintray.gradle.BintrayExtension
 import com.jfrog.bintray.gradle.tasks.BintrayUploadTask
 import org.jetbrains.dokka.gradle.DokkaTask
-import org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -22,9 +21,10 @@ allprojects {
         jcenter()
     }
 
-    plugins.withType<KotlinPluginWrapper> {
-        tasks.withType<KotlinCompile> {
-            kotlinOptions.jvmTarget = "1.8"
+    tasks.withType<KotlinCompile> {
+        kotlinOptions {
+            jvmTarget = "1.8"
+            freeCompilerArgs = listOf("-Xuse-experimental=kotlin.contracts.ExperimentalContracts")
         }
     }
 }

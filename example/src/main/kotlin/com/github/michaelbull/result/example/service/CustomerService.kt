@@ -15,6 +15,7 @@ import com.github.michaelbull.result.map
 import com.github.michaelbull.result.mapAll
 import com.github.michaelbull.result.mapBoth
 import com.github.michaelbull.result.mapError
+import com.github.michaelbull.result.runCatching
 import com.github.michaelbull.result.toResultOr
 import java.sql.SQLTimeoutException
 
@@ -22,7 +23,7 @@ object CustomerService {
     private val repository = InMemoryCustomerRepository()
 
     fun getAll(): Result<Collection<Customer>, DomainMessage> {
-        return Result.of(repository::findAll)
+        return runCatching(repository::findAll)
             .mapError(::exceptionToDomainMessage)
             .mapAll(Customer.Companion::from)
     }
@@ -40,12 +41,12 @@ object CustomerService {
     }
 
     private fun updateCustomer(entity: CustomerEntity, old: Customer, new: Customer) =
-        Result.of { repository.update(entity) }
+        runCatching { repository.update(entity) }
             .map { differenceBetween(old, new) }
             .mapError(::exceptionToDomainMessage)
 
     private fun createCustomer(entity: CustomerEntity) =
-        Result.of { repository.insert(entity) }
+        runCatching { repository.insert(entity) }
             .map { CustomerCreated }
             .mapError(::exceptionToDomainMessage)
 

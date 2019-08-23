@@ -4,12 +4,12 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertSame
 
-class ResultTest {
-    class Of {
+class FactoryTest {
+    class RunCatching {
         @Test
         fun returnsOkIfInvocationSuccessful() {
             val callback = { "example" }
-            val result = Result.of(callback)
+            val result = runCatching(callback)
 
             assertEquals(
                 expected = "example",
@@ -21,7 +21,7 @@ class ResultTest {
         fun returnsErrIfInvocationFails() {
             val exception = IllegalArgumentException("throw me")
             val callback = { throw exception }
-            val result = Result.of(callback)
+            val result = runCatching(callback)
 
             assertSame(
                 expected = exception,

@@ -36,17 +36,6 @@ using the `Result` type in other languages:
 
 ### Creating Results
 
-To begin incorporating the `Result` type into an existing codebase, you can 
-wrap functions that may fail (i.e. throw an `Exception`) with
-[`Result.of`][result-of]. This will execute the block of code and `catch` any
-`Exception`, returning a `Result<T, Exception>`.
-
-```kotlin
-val result: Result<Customer, Exception> = Result.of { 
-    customerDb.findById(id = 50) // could throw SQLException or similar 
-}
-```
-
 The idiomatic approach to modelling operations that may fail in Railway
 Oriented Programming is to avoid throwing an exception and instead make the 
 return type of your function a `Result`.
@@ -58,6 +47,17 @@ fun checkPrivileges(user: User, command: Command): Result<Command, CommandError>
     } else {
         Err(CommandError.InsufficientRank(command.name))
     }
+}
+```
+
+To incorporate the `Result` type into an existing codebase that throws
+exceptions, you can wrap functions that may `throw` with 
+[`runCatching`][result-runCatching]. This will execute the block of code and
+`catch` any `Throwable`, returning a `Result<T, Throwable>`.
+
+```kotlin
+val result: Result<Customer, Throwable> = runCatching { 
+    customerDb.findById(id = 50) // could throw SQLException or similar 
 }
 ```
 
@@ -201,9 +201,9 @@ This project is available under the terms of the ISC license. See the
 [`LICENSE`](LICENSE) file for the copyright information and licensing terms.
 
 [result]: https://github.com/michaelbull/kotlin-result/blob/master/src/main/kotlin/com/github/michaelbull/result/Result.kt#L10
-[result-ok]: https://github.com/michaelbull/kotlin-result/blob/master/src/main/kotlin/com/github/michaelbull/result/Result.kt#L30
-[result-err]: https://github.com/michaelbull/kotlin-result/blob/master/src/main/kotlin/com/github/michaelbull/result/Result.kt#L35
-[result-of]: https://github.com/michaelbull/kotlin-result/blob/master/src/main/kotlin/com/github/michaelbull/result/Result.kt#L17
+[result-ok]: https://github.com/michaelbull/kotlin-result/blob/master/src/main/kotlin/com/github/michaelbull/result/Result.kt#L31
+[result-err]: https://github.com/michaelbull/kotlin-result/blob/master/src/main/kotlin/com/github/michaelbull/result/Result.kt#L36
+[result-runCatching]: https://github.com/michaelbull/kotlin-result/blob/master/src/main/kotlin/com/github/michaelbull/result/Factory.kt#L11
 [swalschin-rop]: https://fsharpforfunandprofit.com/rop/
 [wiki]: https://github.com/michaelbull/kotlin-result/wiki
 [unit-tests]: https://github.com/michaelbull/kotlin-result/tree/master/src/test/kotlin/com/github/michaelbull/result

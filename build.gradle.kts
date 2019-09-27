@@ -7,11 +7,18 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 description = "A Result monad for modelling success or failure operations."
 
+val SourceSet.kotlin: SourceDirectorySet
+    get() = withConvention(KotlinSourceSet::class) { kotlin }
+
+fun BintrayExtension.pkg(configure: BintrayExtension.PackageConfig.() -> Unit) {
+    pkg(delegateClosureOf(configure))
+}
+
 plugins {
     `maven-publish`
     kotlin("jvm") version ("1.3.50")
     id("org.jetbrains.dokka") version ("0.9.18")
-    id("com.github.ben-manes.versions") version ("0.22.0")
+    id("com.github.ben-manes.versions") version ("0.25.0")
     id("com.jfrog.bintray") version ("1.8.4")
     id("net.researchgate.release") version ("2.8.1")
 }
@@ -39,25 +46,10 @@ dependencies {
     testImplementation(kotlin("test"))
 }
 
-val SourceSet.kotlin: SourceDirectorySet
-    get() = withConvention(KotlinSourceSet::class) { kotlin }
-
-fun BintrayExtension.pkg(configure: BintrayExtension.PackageConfig.() -> Unit) {
-    pkg(delegateClosureOf(configure))
-}
-
-tasks.named<DependencyUpdatesTask>("dependencyUpdates") {
-    resolutionStrategy {
-        componentSelection {
-            all {
-                val rejected = listOf("alpha", "beta", "rc", "cr", "m", "eap").any {
-                    candidate.version.contains(it, ignoreCase = true)
-                }
-
-                if (rejected) {
-                    reject("Release candidate")
-                }
-            }
+tasks.withType<DependencyUpdatesTask> {
+    rejectVersionIf {
+        listOf("alpha", "beta", "rc", "cr", "m", "eap", "pr").any {
+            candidate.version.contains(it, ignoreCase = true)
         }
     }
 }

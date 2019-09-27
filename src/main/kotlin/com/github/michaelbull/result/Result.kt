@@ -8,6 +8,10 @@ package com.github.michaelbull.result
  * - Rust: [Result](https://doc.rust-lang.org/std/result/enum.Result.html)
  */
 sealed class Result<out V, out E> {
+
+    abstract operator fun component1(): V?
+    abstract operator fun component2(): E?
+
     companion object {
 
         /**
@@ -28,9 +32,45 @@ sealed class Result<out V, out E> {
 /**
  * Represents a successful [Result], containing a [value].
  */
-data class Ok<out V>(val value: V) : Result<V, Nothing>()
+class Ok<out V>(val value: V) : Result<V, Nothing>() {
+
+    override fun component1() = value
+    override fun component2() = null
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || this::class != other::class) return false
+
+        other as Ok<*>
+
+        if (value != other.value) return false
+
+        return true
+    }
+
+    override fun hashCode() = value.hashCode()
+    override fun toString() = "Ok($value)"
+}
 
 /**
  * Represents a failed [Result], containing an [error].
  */
-data class Err<out E>(val error: E) : Result<Nothing, E>()
+class Err<out E>(val error: E) : Result<Nothing, E>() {
+
+    override fun component1() = null
+    override fun component2() = error
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || this::class != other::class) return false
+
+        other as Err<*>
+
+        if (error != other.error) return false
+
+        return true
+    }
+
+    override fun hashCode() = error.hashCode()
+    override fun toString() = "Err($error)"
+}

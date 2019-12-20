@@ -1,6 +1,6 @@
 # kotlin-result
 
-[![Release](https://api.bintray.com/packages/michaelbull/maven/kotlin-result/images/download.svg)](https://bintray.com/michaelbull/maven/kotlin-result/_latestVersion) [![Build Status](https://travis-ci.org/michaelbull/kotlin-result.svg?branch=master)](https://travis-ci.org/michaelbull/kotlin-result) [![License](https://img.shields.io/github/license/michaelbull/kotlin-result.svg)](https://github.com/michaelbull/kotlin-result/blob/master/LICENSE)
+[![Release](https://api.bintray.com/packages/michaelbull/maven/kotlin-result/images/download.svg)](https://bintray.com/michaelbull/maven/kotlin-result/_latestVersion) [![Build Status](https://github.com/michaelbull/kotlin-result/workflows/ci/badge.svg)](https://github.com/michaelbull/kotlin-result/actions?query=workflow%3Aci) [![License](https://img.shields.io/github/license/michaelbull/kotlin-result.svg)](https://github.com/michaelbull/kotlin-result/blob/master/LICENSE)
 
 [`Result<V, E>`][result] is a monad for modelling success ([`Ok`][result-ok]) or
 failure ([`Err`][result-err]) operations.
@@ -19,14 +19,14 @@ dependencies {
 
 ## Introduction
 
-The [`Result`][result] monad has two subtypes, [`Ok<V>`][result-ok] 
+The [`Result`][result] monad has two subtypes, [`Ok<V>`][result-ok]
 representing success and containing a `value`, and [`Err<E>`][result-err],
-representing failure and containing an `error`. 
+representing failure and containing an `error`.
 
 Scott Wlaschin's article on [Railway Oriented Programming][swalschin-rop] is a great
 introduction to the benefits of modelling operations using the `Result` type.
 
-Mappings are available on the [wiki][wiki] to assist those with experience 
+Mappings are available on the [wiki][wiki] to assist those with experience
 using the `Result` type in other languages:
 
 - [Elm](https://github.com/michaelbull/kotlin-result/wiki/Elm)
@@ -37,7 +37,7 @@ using the `Result` type in other languages:
 ### Creating Results
 
 The idiomatic approach to modelling operations that may fail in Railway
-Oriented Programming is to avoid throwing an exception and instead make the 
+Oriented Programming is to avoid throwing an exception and instead make the
 return type of your function a `Result`.
 
 ```kotlin
@@ -51,17 +51,17 @@ fun checkPrivileges(user: User, command: Command): Result<Command, CommandError>
 ```
 
 To incorporate the `Result` type into an existing codebase that throws
-exceptions, you can wrap functions that may `throw` with 
+exceptions, you can wrap functions that may `throw` with
 [`runCatching`][result-runCatching]. This will execute the block of code and
 `catch` any `Throwable`, returning a `Result<T, Throwable>`.
 
 ```kotlin
-val result: Result<Customer, Throwable> = runCatching { 
-    customerDb.findById(id = 50) // could throw SQLException or similar 
+val result: Result<Customer, Throwable> = runCatching {
+    customerDb.findById(id = 50) // could throw SQLException or similar
 }
 ```
 
-Nullable types, such as the `find` method in the example below, can be 
+Nullable types, such as the `find` method in the example below, can be
 converted to a `Result` using the `toResultOr` extension function.
 
 ```kotlin
@@ -74,11 +74,11 @@ val result: Result<Customer, String> = customers
 
 Both success and failure results can be transformed within a stage of the
 railway track. The example below demonstrates how to transform an internal
-program error (`UnlockError`) into an exposed client error 
+program error (`UnlockError`) into an exposed client error
 (`IncorrectPassword`).
 
 ```kotlin
-val result: Result<Treasure, UnlockResponse> = 
+val result: Result<Treasure, UnlockResponse> =
     unlockVault("my-password") // returns Result<Treasure, UnlockError>
     .mapError { IncorrectPassword } // transform UnlockError into IncorrectPassword
 ```
@@ -86,7 +86,7 @@ val result: Result<Treasure, UnlockResponse> =
 ### Chaining
 
 Results can be chained to produce a "happy path" of execution. For example, the
-happy path for a user entering commands into an administrative console would 
+happy path for a user entering commands into an administrative console would
 consist of: the command being tokenized, the command being registered, the user
 having sufficient privileges, and the command executing the associated action.
 The example below uses the `checkPrivileges` function we defined earlier.
@@ -143,9 +143,9 @@ in a real world scenario.
 
 It hosts a [ktor][ktor] server on port 9000 with a `/customers` endpoint. The
 endpoint responds to both `GET` and `POST` requests with a provided `id`, e.g.
-`/customers/100`. Upserting a customer id of 42 is hardcoded to throw an 
-[`SQLException`][customer-42] to demonstrate how the `Result` type can [map 
-internal program errors][update-customer-error] to more appropriate 
+`/customers/100`. Upserting a customer id of 42 is hardcoded to throw an
+[`SQLException`][customer-42] to demonstrate how the `Result` type can [map
+internal program errors][update-customer-error] to more appropriate
 user-facing errors.
 
 ### Payloads

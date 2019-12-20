@@ -1,6 +1,0 @@
-language: java
-jdk:
-  - openjdk8
-
-notifications:
-  email: false

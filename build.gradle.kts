@@ -16,11 +16,11 @@ fun BintrayExtension.pkg(configure: BintrayExtension.PackageConfig.() -> Unit) {
 
 plugins {
     `maven-publish`
-    kotlin("jvm") version ("1.3.61")
-    id("org.jetbrains.dokka") version ("0.10.0")
-    id("com.github.ben-manes.versions") version ("0.27.0")
-    id("com.jfrog.bintray") version ("1.8.4")
-    id("net.researchgate.release") version ("2.8.1")
+    kotlin("jvm") version "1.3.61"
+    id("org.jetbrains.dokka") version "0.10.0"
+    id("com.github.ben-manes.versions") version "0.27.0"
+    id("com.jfrog.bintray") version "1.8.4"
+    id("net.researchgate.release") version "2.8.1"
 }
 
 allprojects {

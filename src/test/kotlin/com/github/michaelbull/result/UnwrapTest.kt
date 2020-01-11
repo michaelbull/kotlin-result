@@ -16,7 +16,7 @@ class UnwrapTest {
 
         @Test
         fun throwsExceptionIfErr() {
-            assertFailsWith<UnwrapException>("called Result.wrap on an Err value 5000") {
+            assertFailsWith<UnwrapException>("called Result.unwrap on an Err value 5000") {
                 @Suppress("IMPLICIT_NOTHING_AS_TYPE_PARAMETER")
                 Err(5000).unwrap()
             }

@@ -19,7 +19,7 @@ fun <V, E> Result<V, E>.unwrap(): V {
 
     return when (this) {
         is Ok -> value
-        is Err -> throw UnwrapException("called Result.wrap on an Err value $error")
+        is Err -> throw UnwrapException("called Result.unwrap on an Err value $error")
     }
 }
 

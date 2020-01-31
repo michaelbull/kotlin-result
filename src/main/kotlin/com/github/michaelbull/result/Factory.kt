@@ -21,7 +21,7 @@ inline fun <V> runCatching(block: () -> V): Result<V, Throwable> {
 }
 
 /**
- * Calls the specified function [block] with `this` value as its receiver and
+ * Calls the specified function [block] with [this] value as its receiver and
  * returns its encapsulated result if invocation was successful, catching and
  * encapsulating any thrown exception as a failure.
  */

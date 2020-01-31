@@ -62,7 +62,7 @@ inline fun <V, E, U> Result<V, E>.mapOr(default: U, transform: (V) -> U): U {
 /**
  * Maps this [Result<V, E>][Result] to [U] by applying either the [transform] function if this
  * [Result] is [Ok], or the [default] function if this [Result] is an [Err]. Both of these
- * functions must return the same type (`U`).
+ * functions must return the same type ([U]).
  *
  * - Rust: [Result.map_or_else](https://doc.rust-lang.org/std/result/enum.Result.html#method.map_or_else)
  */
@@ -95,9 +95,9 @@ inline infix fun <V, E, U> Result<Iterable<V>, E>.mapAll(transform: (V) -> Resul
 }
 
 /**
- * Maps this [Result<V, E>][Result] to `U` by applying either the [success] function if this
+ * Maps this [Result<V, E>][Result] to [U] by applying either the [success] function if this
  * [Result] is [Ok], or the [failure] function if this [Result] is an [Err]. Both of these
- * functions must return the same type (`U`).
+ * functions must return the same type ([U]).
  *
  * - Elm: [Result.Extra.mapBoth](http://package.elm-lang.org/packages/elm-community/result-extra/2.2.0/Result-Extra#mapBoth)
  * - Haskell: [Data.Either.either](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Either.html#v:either)
@@ -115,9 +115,9 @@ inline fun <V, E, U> Result<V, E>.mapBoth(success: (V) -> U, failure: (E) -> U):
 }
 
 /**
- * Maps this [Result<V, E>][Result] to `U` by applying either the [success] function if this
+ * Maps this [Result<V, E>][Result] to [U] by applying either the [success] function if this
  * [Result] is [Ok], or the [failure] function if this [Result] is an [Err]. Both of these
- * functions must return the same type (`U`).
+ * functions must return the same type ([U]).
  *
  * This is functionally equivalent to [mapBoth].
  *

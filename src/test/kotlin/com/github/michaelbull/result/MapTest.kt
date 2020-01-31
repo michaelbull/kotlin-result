@@ -66,6 +66,52 @@ class MapTest {
         }
     }
 
+    class MapOr {
+        @Test
+        fun returnsTransformedValueIfOk() {
+            val value = Ok("foo").mapOr(42, String::length)
+
+            assertEquals(
+                expected = 3,
+                actual = value
+            )
+        }
+
+        @Test
+        fun returnsDefaultValueIfErr() {
+            val value = Err("bar").mapOr(42, String::length)
+
+            assertEquals(
+                expected = 42,
+                actual = value
+            )
+        }
+    }
+
+    class MapOrElse {
+        private val k = 21
+
+        @Test
+        fun returnsTransformedValueIfOk() {
+            val value = Ok("foo").mapOrElse({ k * 2 }, String::length)
+
+            assertEquals(
+                expected = 3,
+                actual = value
+            )
+        }
+
+        @Test
+        fun returnsDefaultValueIfErr() {
+            val value = Err("bar").mapOrElse({ k * 2 }, String::length)
+
+            assertEquals(
+                expected = 42,
+                actual = value
+            )
+        }
+    }
+
     class MapBoth {
         @Test
         @Suppress("UNREACHABLE_CODE")

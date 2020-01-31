@@ -42,6 +42,43 @@ inline infix fun <V, E, F> Result<V, E>.mapError(transform: (E) -> F): Result<V,
 }
 
 /**
+ * Maps this [Result<V, E][Result] to [U] by either applying the [transform] function to the
+ * [value][Ok.value] if this [Result] is [Ok], or returning the [default] if this [Result] is an
+ * [Err].
+ *
+ * - Rust: [Result.map_or](https://doc.rust-lang.org/std/result/enum.Result.html#method.map_or)
+ */
+inline fun <V, E, U> Result<V, E>.mapOr(default: U, transform: (V) -> U): U {
+    contract {
+        callsInPlace(transform, InvocationKind.AT_MOST_ONCE)
+    }
+
+    return when (this) {
+        is Ok -> transform(value)
+        is Err -> default
+    }
+}
+
+/**
+ * Maps this [Result<V, E>][Result] to [U] by applying either the [transform] function if this
+ * [Result] is [Ok], or the [default] function if this [Result] is an [Err]. Both of these
+ * functions must return the same type (`U`).
+ *
+ * - Rust: [Result.map_or_else](https://doc.rust-lang.org/std/result/enum.Result.html#method.map_or_else)
+ */
+inline fun <V, E, U> Result<V, E>.mapOrElse(default: (E) -> U, transform: (V) -> U): U {
+    contract {
+        callsInPlace(default, InvocationKind.AT_MOST_ONCE)
+        callsInPlace(transform, InvocationKind.AT_MOST_ONCE)
+    }
+
+    return when (this) {
+        is Ok -> transform(value)
+        is Err -> default(error)
+    }
+}
+
+/**
  * Returns a [Result<List<U>, E>][Result] containing the results of applying the given [transform]
  * function to each element in the original collection, returning early with the first [Err] if a
  * transformation fails.

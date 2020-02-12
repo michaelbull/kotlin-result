@@ -109,6 +109,13 @@ publishing {
                     }
                 }
 
+                contributors {
+                    contributor {
+                        name.set("Kevin Herron")
+                        url.set("https://github.com/kevinherron")
+                    }
+                }
+
                 scm {
                     connection.set("scm:git:https://github.com/michaelbull/kotlin-result")
                     developerConnection.set("scm:git:git@github.com:michaelbull/kotlin-result.git")
@@ -123,13 +130,6 @@ publishing {
                 ciManagement {
                     system.set("GitHub")
                     url.set("https://github.com/michaelbull/kotlin-result/actions?query=workflow%3Aci")
-                }
-
-                contributors {
-                    contributor {
-                        name.set("Kevin Herron")
-                        url.set("https://github.com/kevinherron")
-                    }
                 }
             }
         }

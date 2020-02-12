@@ -1,6 +1,6 @@
 # kotlin-result
 
-[![Release](https://api.bintray.com/packages/michaelbull/maven/kotlin-result/images/download.svg)](https://bintray.com/michaelbull/maven/kotlin-result/_latestVersion) [![CI Status](https://github.com/michaelbull/kotlin-result/workflows/ci/badge.svg)](https://github.com/michaelbull/kotlin-result/actions?query=workflow%3Aci) [![License](https://img.shields.io/github/license/michaelbull/kotlin-result.svg)](https://github.com/michaelbull/kotlin-result/blob/master/LICENSE)
+[![Maven Central](https://img.shields.io/maven-central/v/com.michael-bull.kotlin-result/kotlin-result.svg)](https://search.maven.org/search?q=g:com.michael-bull.kotlin-result) [![CI Status](https://github.com/michaelbull/kotlin-result/workflows/ci/badge.svg)](https://github.com/michaelbull/kotlin-result/actions?query=workflow%3Aci) [![License](https://img.shields.io/github/license/michaelbull/kotlin-result.svg)](https://github.com/michaelbull/kotlin-result/blob/master/LICENSE)
 
 [`Result<V, E>`][result] is a monad for modelling success ([`Ok`][result-ok]) or
 failure ([`Err`][result-err]) operations.
@@ -9,11 +9,11 @@ failure ([`Err`][result-err]) operations.
 
 ```groovy
 repositories {
-    maven { url = 'https://dl.bintray.com/michaelbull/maven' }
+    mavenCentral()
 }
 
 dependencies {
-    compile 'com.michael-bull.kotlin-result:kotlin-result:1.1.4'
+    implementation("com.michael-bull.kotlin-result:kotlin-result:1.1.6")
 }
 ```
 

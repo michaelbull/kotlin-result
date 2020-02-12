@@ -1,25 +1,18 @@
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
-import com.jfrog.bintray.gradle.BintrayExtension
-import com.jfrog.bintray.gradle.tasks.BintrayUploadTask
 import org.jetbrains.dokka.gradle.DokkaTask
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
+val ossrhUsername: String? by ext
+val ossrhPassword: String? by ext
 
 description = "A Result monad for modelling success or failure operations."
 
-val SourceSet.kotlin: SourceDirectorySet
-    get() = withConvention(KotlinSourceSet::class) { kotlin }
-
-fun BintrayExtension.pkg(configure: BintrayExtension.PackageConfig.() -> Unit) {
-    pkg(delegateClosureOf(configure))
-}
-
 plugins {
     `maven-publish`
+    signing
     kotlin("jvm") version "1.3.61"
-    id("org.jetbrains.dokka") version "0.10.0"
+    id("org.jetbrains.dokka") version "0.10.1"
     id("com.github.ben-manes.versions") version "0.27.0"
-    id("com.jfrog.bintray") version "1.8.4"
     id("net.researchgate.release") version "2.8.1"
 }
 
@@ -75,42 +68,79 @@ val sourcesJar by tasks.registering(Jar::class) {
 }
 
 publishing {
+    repositories {
+        maven {
+            if (project.version.toString().endsWith("SNAPSHOT")) {
+                setUrl("https://oss.sonatype.org/content/repositories/snapshots")
+            } else {
+                setUrl("https://oss.sonatype.org/service/local/staging/deploy/maven2")
+            }
+
+            credentials {
+                username = ossrhUsername
+                password = ossrhPassword
+            }
+        }
+    }
+
     publications {
         register("mavenJava", MavenPublication::class) {
             from(components["java"])
             artifact(javadocJar.get())
             artifact(sourcesJar.get())
+
+            pom {
+                name.set(project.name)
+                description.set(project.description)
+                url.set("https://github.com/michaelbull/kotlin-result")
+                inceptionYear.set("2017")
+
+                licenses {
+                    license {
+                        name.set("ISC License")
+                        url.set("https://opensource.org/licenses/isc-license.txt")
+                    }
+                }
+
+                developers {
+                    developer {
+                        name.set("Michael Bull")
+                        url.set("https://www.michael-bull.com")
+                    }
+                }
+
+                scm {
+                    connection.set("scm:git:https://github.com/michaelbull/kotlin-result")
+                    developerConnection.set("scm:git:git@github.com:michaelbull/kotlin-result.git")
+                    url.set("https://github.com/michaelbull/kotlin-result")
+                }
+
+                issueManagement {
+                    system.set("GitHub")
+                    url.set("https://github.com/michaelbull/kotlin-result/issues")
+                }
+
+                ciManagement {
+                    system.set("GitHub")
+                    url.set("https://github.com/michaelbull/kotlin-result/actions?query=workflow%3Aci")
+                }
+
+                contributors {
+                    contributor {
+                        name.set("Kevin Herron")
+                        url.set("https://github.com/kevinherron")
+                    }
+                }
+            }
         }
     }
 }
 
-val bintrayUser: String? by project
-val bintrayKey: String? by project
-
-bintray {
-    user = bintrayUser
-    key = bintrayKey
-    setPublications("mavenJava")
-
-    pkg {
-        repo = "maven"
-        name = project.name
-        desc = project.description
-        websiteUrl = "https://github.com/michaelbull/kotlin-result"
-        issueTrackerUrl = "https://github.com/michaelbull/kotlin-result/issues"
-        vcsUrl = "git@github.com:michaelbull/kotlin-result.git"
-        githubRepo = "michaelbull/kotlin-result"
-        setLicenses("ISC")
-    }
+signing {
+    useGpgCmd()
+    sign(publishing.publications)
 }
 
-val bintrayUpload by tasks.existing(BintrayUploadTask::class) {
-    dependsOn("build")
-    dependsOn("generatePomFileForMavenJavaPublication")
-    dependsOn(sourcesJar)
-    dependsOn(javadocJar)
-}
-
-tasks.named("afterReleaseBuild") {
-    dependsOn(bintrayUpload)
+tasks.afterReleaseBuild {
+    dependsOn(tasks.publish)
 }

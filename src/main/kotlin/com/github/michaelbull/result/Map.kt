@@ -166,3 +166,19 @@ inline infix fun <V, E, U> Result<V, E>.flatMap(transform: (V) -> Result<U, E>):
 
     return andThen(transform)
 }
+
+/**
+ * If this [Result] is [Ok] and the [predicate] matches then returns the new [error][Err.error] otherwise the 
+ * unchanged [Result<V, E>][Result]
+ *
+ */
+inline fun <V, E> Result<V, E>.toError(predicate: (V) -> Boolean, error: (V) -> E): Result<V, E> {
+    return when (this) {
+        is Ok -> if (predicate(value)) {
+            Err(error(value))
+        } else {
+            this
+        }
+        is Err -> this
+    }
+}

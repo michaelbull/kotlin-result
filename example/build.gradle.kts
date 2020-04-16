@@ -13,7 +13,7 @@ repositories {
 }
 
 dependencies {
-    val ktorVersion = "1.2.6"
+    val ktorVersion = "1.3.2"
 
     implementation(rootProject)
     implementation(kotlin("stdlib-jdk8"))

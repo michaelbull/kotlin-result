@@ -10,9 +10,9 @@ description = "A Result monad for modelling success or failure operations."
 plugins {
     `maven-publish`
     signing
-    kotlin("jvm") version "1.3.61"
+    kotlin("jvm") version "1.3.72"
     id("org.jetbrains.dokka") version "0.10.1"
-    id("com.github.ben-manes.versions") version "0.27.0"
+    id("com.github.ben-manes.versions") version "0.28.0"
     id("net.researchgate.release") version "2.8.1"
 }
 
@@ -32,7 +32,7 @@ allprojects {
 
 dependencies {
     implementation(kotlin("stdlib"))
-    testImplementation("junit:junit:4.12")
+    testImplementation("junit:junit:4.13")
     testImplementation(kotlin("test-common"))
     testImplementation(kotlin("test-annotations-common"))
     testImplementation(kotlin("test-junit"))

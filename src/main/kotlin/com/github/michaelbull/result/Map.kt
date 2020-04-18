@@ -170,6 +170,8 @@ inline infix fun <V, E, U> Result<V, E>.flatMap(transform: (V) -> Result<U, E>):
 /**
  * Returns the [transformation][transform] of the [value][Ok.value] if this [Result] is [Ok]
  * and satisfies the given [predicate], otherwise this [Result].
+ *
+ * @see [takeIf]
  */
 inline fun <V, E> Result<V, E>.toErrorIf(predicate: (V) -> Boolean, transform: (V) -> E): Result<V, E> {
     contract {
@@ -179,6 +181,28 @@ inline fun <V, E> Result<V, E>.toErrorIf(predicate: (V) -> Boolean, transform: (
 
     return when (this) {
         is Ok -> if (predicate(value)) {
+            Err(transform(value))
+        } else {
+            this
+        }
+        is Err -> this
+    }
+}
+
+/**
+ * Returns the [transformation][transform] of the [value][Ok.value] if this [Result] is [Ok]
+ * and _does not_ satisfy the given [predicate], otherwise this [Result].
+ *
+ * @see [takeUnless]
+ */
+inline fun <V, E> Result<V, E>.toErrorUnless(predicate: (V) -> Boolean, transform: (V) -> E): Result<V, E> {
+    contract {
+        callsInPlace(predicate, InvocationKind.AT_MOST_ONCE)
+        callsInPlace(transform, InvocationKind.AT_MOST_ONCE)
+    }
+
+    return when (this) {
+        is Ok -> if (!predicate(value)) {
             Err(transform(value))
         } else {
             this

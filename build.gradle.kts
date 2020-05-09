@@ -14,12 +14,15 @@ plugins {
     id("org.jetbrains.dokka") version "0.10.1"
     id("com.github.ben-manes.versions") version "0.28.0"
     id("net.researchgate.release") version "2.8.1"
+    id("kotlinx.benchmark") version "0.2.0-dev-7"
+    id("org.jetbrains.kotlin.plugin.allopen") version "1.3.70"
 }
 
 allprojects {
     repositories {
         mavenCentral()
         jcenter()
+        maven("https://dl.bintray.com/kotlin/kotlinx")
     }
 
     tasks.withType<KotlinCompile> {
@@ -30,6 +33,28 @@ allprojects {
     }
 }
 
+allOpen {
+    annotation("org.openjdk.jmh.annotations.State")
+    annotation("org.openjdk.jmh.annotations.BenchmarkMode")
+}
+
+sourceSets.create("benchmark").java {
+    srcDir("src/benchmark/kotlin")
+}
+
+val benchmarkImplementation by configurations.getting {
+    extendsFrom(configurations.implementation.get())
+}
+
+benchmark {
+    targets {
+        register("benchmark")
+    }
+
+    // specify via regex to run specific classes, e.g
+    //configurations["main"].include("BindBenchmark|michaelbull.result.FlatMapBenchmark")
+}
+
 dependencies {
     implementation(kotlin("stdlib"))
     testImplementation("junit:junit:4.13")
@@ -37,6 +62,11 @@ dependencies {
     testImplementation(kotlin("test-annotations-common"))
     testImplementation(kotlin("test-junit"))
     testImplementation(kotlin("test"))
+
+    benchmarkImplementation(sourceSets.main.get().output + sourceSets.main.get().runtimeClasspath)
+    benchmarkImplementation("org.jetbrains.kotlinx:kotlinx.benchmark.runtime-jvm:0.2.0-dev-7")
+    benchmarkImplementation("com.natpryce:result4k:2.0.0")
+
 }
 
 tasks.withType<DependencyUpdatesTask> {

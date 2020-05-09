@@ -65,8 +65,6 @@ dependencies {
 
     benchmarkImplementation(sourceSets.main.get().output + sourceSets.main.get().runtimeClasspath)
     benchmarkImplementation("org.jetbrains.kotlinx:kotlinx.benchmark.runtime-jvm:0.2.0-dev-7")
-    benchmarkImplementation("com.natpryce:result4k:2.0.0")
-
 }
 
 tasks.withType<DependencyUpdatesTask> {

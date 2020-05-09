@@ -4,7 +4,6 @@ import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.getOrElse
-import com.github.michaelbull.result.bind.NoStackTraceException.BindFailure
 
 /**
  * Calls the specified function [block] with [ResultBindingImpl] as its receiver and returns a [Result] of either [Ok] with value [V] or [Err] with error [E].
@@ -38,9 +37,8 @@ internal class ResultBindingImpl<E> : ResultBinding<E> {
     internal companion object {
         inline fun <V, E> with(crossinline block: ResultBindingImpl<E>.() -> V): Result<V, E> {
             val context = ResultBindingImpl<E>()
-            val wrapResult: ResultBindingImpl<E>.() -> Result<V, E> = { Ok(block()) }
             return try {
-                with(context, wrapResult)
+                with(context) { Ok(block()) }
             } catch (e: BindFailure) {
                 context.error
             }

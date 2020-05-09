@@ -1,9 +1,8 @@
 package com.github.michaelbull.result.bind
 
-sealed class NoStackTraceException : Exception() {
+internal object BindFailure : Exception() {
+    // no stacktrace needed
     override fun fillInStackTrace(): Throwable {
         return this
     }
-
-    object BindFailure : NoStackTraceException()
 }

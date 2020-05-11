@@ -1,5 +1,8 @@
 package com.github.michaelbull.result
 
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
+
 /**
  * Calls the specified function [block] with [ResultBinding] as its receiver and returns its [Result].
  *
@@ -22,6 +25,10 @@ package com.github.michaelbull.result
  * @sample com.github.michaelbull.result.bind.ResultBindingTest
  */
 inline fun <V, E> binding(crossinline block: ResultBinding<E>.() -> V): Result<V, E> {
+    contract {
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+    }
+
     val receiver = ResultBindingImpl<E>()
 
     return try {

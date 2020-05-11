@@ -39,24 +39,22 @@ class BindingBenchmark {
 
     @Benchmark
     fun andThenSuccess(blackhole: Blackhole) {
-        val result =
-            provideX().andThen { first ->
-                provideY().andThen { second ->
-                    Ok(first + second)
-                }
+        val result = provideX().andThen { x ->
+            provideY().andThen { y ->
+                Ok(x + y)
             }
+        }
 
         blackhole.consume(result)
     }
 
     @Benchmark
     fun andThenFailure(blackhole: Blackhole) {
-        val result =
-            provideX().andThen { first ->
-                provideZ().andThen { second ->
-                    Ok(first + second)
-                }
+        val result = provideX().andThen { x ->
+            provideZ().andThen { z ->
+                Ok(x + z)
             }
+        }
 
         blackhole.consume(result)
     }

@@ -102,6 +102,40 @@ tokenize(command.toLowerCase())
     )
 ```
 
+### Binding (Monad Comprehension)
+
+The `binding` keyword allows multiple calls that each return a `Result` to be
+chained imperatively. When inside a `binding` block, the `.bind()` function is
+accessible on any `Result`. Each call to `bind` will attempt to unwrap the
+`Result` and store its value, returning early if any `Result` is an `Err`.
+
+In the example below, should `functionX()` return an `Err`, then execution will
+skip both `functionY()` and `functionZ()`, instead storing the `Err` from
+`functionX` in the variable named `sum`.
+
+```kotlin
+fun functionX(): Result<Int, DomainError> { ... }
+fun functionY(): Result<Int, DomainError> { ... }
+fun functionZ(): Result<Int, DomainError> { ... }
+
+val sum: Result<Int, ExampleErr> = binding {
+    val x = functionX().bind()
+    val y = functionY().bind()
+    val z = functionZ().bind()
+    x + y + z
+}
+
+println("The sum is $sum") // prints "The sum is Ok(100)"
+```
+
+The `binding` keyword primarily draws inspiration from
+[Bow's `binding` function][bow-bindings], however below is a list of other
+resources on the topic of monad comprehensions.
+
+- [Monad comprehensions - Arrow (Kotlin)][arrow-monad-comprehension]
+- [Monad comprehensions - Bow (Swift)][bow-monad-comprehension]
+- [For comprehensions - Scala][scala-for-comprehension]
+
 ## Inspiration
 
 Inspiration for this library has been drawn from other languages in which the
@@ -213,3 +247,8 @@ This project is available under the terms of the ISC license. See the
 [customer-42]: https://github.com/michaelbull/kotlin-result/blob/master/example/src/main/kotlin/com/github/michaelbull/result/example/service/InMemoryCustomerRepository.kt#L38
 [update-customer-error]: https://github.com/michaelbull/kotlin-result/blob/master/example/src/main/kotlin/com/github/michaelbull/result/example/service/CustomerService.kt#L50
 [github]: https://github.com/michaelbull/kotlin-result
+[bow-bindings]: https://bow-swift.io/docs/patterns/monad-comprehensions/#bindings
+[bow-monad-comprehension]: https://bow-swift.io/docs/patterns/monad-comprehensions
+[scala-for-comprehension]: https://docs.scala-lang.org/tour/for-comprehensions.html
+[arrow-monad-comprehension]: https://arrow-kt.io/docs/0.10/patterns/monad_comprehensions/
+[either-syntax]: https://arrow-kt.io/docs/0.10/apidocs/arrow-core-data/arrow.core/-either/#syntax

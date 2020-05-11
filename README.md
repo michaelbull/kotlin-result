@@ -115,6 +115,23 @@ val result: Result<Int, ExampleErr> = binding {
     x + y
 }
 ```
+When inside a `binding` block, the `.bind()` function is accessible on any `Result`. Calling
+`.bind()` will attempt to unwrap the `Result` and locally return its `value`. If
+the `Result` is an `Err`, the `binding` block will terminate with that bind and return that failed-to-bind `Err`:
+```kotlin
+fun provideX(): Result<Int, ExampleErr> { ... }
+fun provideY(x: Int): Result<Int, ExampleErr> { ... }
+fun provideThatFails(): Result<Int, ExampleErr> = Err(ExampleErr)
+
+val result: Result<Int, ExampleErr> = binding {
+    val x = provideX().bind()
+    val e = provideThatFails().bind() // block will terminate with this bind
+    val y = provideY(x).bind()
+    x + y
+}
+print(result) // Err(ExampleErr)
+```
+
 This syntax is inspired by languages such as scala that provide a similar idiom called a [for comprehension][for-comprehension].
 The generalised concept is called a [monad comprehension][monad-comprehension], which originates from the haskell programming language.
 The syntax in this library is inspired by arrow's implementation for [Either][either-syntax]

@@ -119,6 +119,11 @@ publishing {
                         name.set("Markus Padourek")
                         url.set("https://github.com/Globegitter")
                     }
+
+                    contributor {
+                        name.set("Tristan Hamilton")
+                        url.set("https://github.com/Munzey")
+                    }
                 }
 
                 scm {

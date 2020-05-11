@@ -16,7 +16,7 @@ class BindingBenchmark {
     private object Error
 
     @Benchmark
-    fun success(blackhole: Blackhole) {
+    fun bindingSuccess(blackhole: Blackhole) {
         val result = binding<Int, Error> {
             val x = provideX().bind()
             val y = provideY().bind()
@@ -27,12 +27,36 @@ class BindingBenchmark {
     }
 
     @Benchmark
-    fun failure(blackhole: Blackhole) {
+    fun bindingFailure(blackhole: Blackhole) {
         val result = binding<Int, Error> {
             val x = provideX().bind()
             val z = provideZ().bind()
             x + z
         }
+
+        blackhole.consume(result)
+    }
+
+    @Benchmark
+    fun andThenSuccess(blackhole: Blackhole) {
+        val result =
+            provideX().andThen { first ->
+                provideY().andThen { second ->
+                    Ok(first + second)
+                }
+            }
+
+        blackhole.consume(result)
+    }
+
+    @Benchmark
+    fun andThenFailure(blackhole: Blackhole) {
+        val result =
+            provideX().andThen { first ->
+                provideZ().andThen { second ->
+                    Ok(first + second)
+                }
+            }
 
         blackhole.consume(result)
     }

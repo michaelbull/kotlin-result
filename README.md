@@ -102,6 +102,23 @@ tokenize(command.toLowerCase())
     )
 ```
 
+### Binding (Monad Comprehension)
+
+The `binding` keyword is provided to allow an imperative-like style of working with the result type:
+```kotlin
+fun provideX(): Result<Int, ExampleErr> { ... }
+fun provideY(x: Int): Result<Int, ExampleErr> { ... }
+
+val result: Result<Int, ExampleErr> = binding {
+    val x = provideX().bind()
+    val y = provideY(x).bind()
+    x + y
+}
+```
+This syntax is inspired by languages such as scala that provide a similar idiom called a [for comprehension][for-comprehension].
+The generalised concept is called a [monad comprehension][monad-comprehension], which originates from the haskell programming language.
+The syntax in this library is inspired by arrow's implementation for [Either][either-syntax]
+and is very similar to the swift counterpart library [Bow][bow-monad-comprehension].
 ## Inspiration
 
 Inspiration for this library has been drawn from other languages in which the
@@ -213,3 +230,7 @@ This project is available under the terms of the ISC license. See the
 [customer-42]: https://github.com/michaelbull/kotlin-result/blob/master/example/src/main/kotlin/com/github/michaelbull/result/example/service/InMemoryCustomerRepository.kt#L38
 [update-customer-error]: https://github.com/michaelbull/kotlin-result/blob/master/example/src/main/kotlin/com/github/michaelbull/result/example/service/CustomerService.kt#L50
 [github]: https://github.com/michaelbull/kotlin-result
+[for-comprehension]: https://docs.scala-lang.org/tour/for-comprehensions.html
+[monad-comprehension]: https://arrow-kt.io/docs/0.10/patterns/monad_comprehensions/
+[either-syntax]: https://arrow-kt.io/docs/0.10/apidocs/arrow-core-data/arrow.core/-either/#syntax
+[bow-monad-comprehension]: https://bow-swift.io/docs/patterns/monad-comprehensions/

@@ -1,7 +1,6 @@
 package com.github.michaelbull.result.example.service
 
-import com.github.michaelbull.result.Result
-import com.github.michaelbull.result.andThen
+import com.github.michaelbull.result.*
 import com.github.michaelbull.result.example.model.domain.Customer
 import com.github.michaelbull.result.example.model.domain.CustomerCreated
 import com.github.michaelbull.result.example.model.domain.CustomerId
@@ -11,12 +10,6 @@ import com.github.michaelbull.result.example.model.domain.DatabaseTimeout
 import com.github.michaelbull.result.example.model.domain.DomainMessage
 import com.github.michaelbull.result.example.model.domain.EmailAddressChanged
 import com.github.michaelbull.result.example.model.entity.CustomerEntity
-import com.github.michaelbull.result.map
-import com.github.michaelbull.result.mapAll
-import com.github.michaelbull.result.mapBoth
-import com.github.michaelbull.result.mapError
-import com.github.michaelbull.result.runCatching
-import com.github.michaelbull.result.toResultOr
 import java.sql.SQLTimeoutException
 
 object CustomerService {
@@ -29,7 +22,7 @@ object CustomerService {
     }
 
     fun getById(id: CustomerId): Result<Customer, DomainMessage> {
-        return getAll().andThen { customers -> customers.findCustomer(id) }
+        return getAll().andThenRun{ findCustomer(id) }
     }
 
     fun upsert(customer: Customer): Result<DomainMessage?, DomainMessage> {

@@ -42,4 +42,57 @@ class AndTest {
             )
         }
     }
+
+    class AndThenRun {
+        @Test
+        fun returnsTransformedValueIfOk() {
+            assertEquals(
+                expected = 12,
+                actual = Ok(5).andThenRun { Ok(this + 7) }.get()
+            )
+        }
+
+        @Test
+        fun returnsErrorIfErr() {
+            assertSame(
+                expected = AndError,
+                actual = Ok(20).andThenRun { Ok(this + 43) }.andThenRun { Err(AndError) }.getError()!!
+            )
+        }
+
+        @Test
+        fun canBeCalledWithMethodCall() {
+            assertEquals(
+                expected = 3,
+                actual = Ok("abc").andThenRun { Ok(length) }.get()
+            )
+        }
+    }
+
+    class AndThenMap {
+        @Test
+        fun returnsTransformedValueIfOk() {
+            assertEquals(
+                expected = 12,
+                actual = Ok(5).andThenMap { this + 7 }.get()
+            )
+        }
+
+        @Test
+        fun returnsErrorIfErr() {
+            val functionWithError : (Int) -> Result <String, Any> =  { Err(AndError) }
+            assertSame(
+                expected = AndError,
+                actual = Ok(20).andThen(functionWithError).andThenMap { this + 43 }.getError()!!
+            )
+        }
+
+        @Test
+        fun canBeCalledWithMethodCall() {
+            assertEquals(
+                expected = 3,
+                actual = Ok("abc").andThenMap { length }.get()
+            )
+        }
+    }
 }

@@ -14,8 +14,8 @@ plugins {
     id("org.jetbrains.dokka") version "0.10.1"
     id("com.github.ben-manes.versions") version "0.28.0"
     id("net.researchgate.release") version "2.8.1"
-    id("kotlinx.benchmark") version "0.2.0-dev-7"
-    id("org.jetbrains.kotlin.plugin.allopen") version "1.3.70"
+    id("kotlinx.benchmark") version "0.2.0-dev-8"
+    id("org.jetbrains.kotlin.plugin.allopen") version "1.3.72"
 }
 
 allprojects {
@@ -61,7 +61,7 @@ dependencies {
     testImplementation(kotlin("test"))
 
     benchmarkImplementation(sourceSets.main.get().output + sourceSets.main.get().runtimeClasspath)
-    benchmarkImplementation("org.jetbrains.kotlinx:kotlinx.benchmark.runtime-jvm:0.2.0-dev-7")
+    benchmarkImplementation("org.jetbrains.kotlinx:kotlinx.benchmark.runtime-jvm:0.2.0-dev-8")
 }
 
 tasks.withType<DependencyUpdatesTask> {

@@ -38,11 +38,7 @@ inline fun <V, E> binding(crossinline block: ResultBinding<E>.() -> V): Result<V
     }
 }
 
-internal object BindException : Exception() {
-    override fun fillInStackTrace(): Throwable {
-        return this
-    }
-}
+internal expect object BindException : Exception
 
 interface ResultBinding<E> {
     fun <V> Result<V, E>.bind(): V

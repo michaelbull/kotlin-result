@@ -64,7 +64,18 @@ benchmark {
 kotlin {
     jvm {
         withJava()
+
+        mavenPublication {
+            artifact(javadocJar.get())
+        }
+
+        compilations.all {
+            kotlinOptions {
+                jvmTarget = "1.8"
+            }
+        }
     }
+
     sourceSets {
         val commonMain by getting {
             dependencies {
@@ -103,19 +114,6 @@ kotlin {
             languageSettings.apply {
                 useExperimentalAnnotation("kotlin.contracts.ExperimentalContracts")
             }
-        }
-
-    }
-
-    jvm().compilations.all {
-        kotlinOptions {
-            jvmTarget = "1.8"
-        }
-    }
-
-    jvm {
-        mavenPublication {
-            artifact(javadocJar.get())
         }
     }
 }

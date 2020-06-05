@@ -99,6 +99,12 @@ kotlin {
             }
         }
 
+        all {
+            languageSettings.apply {
+                useExperimentalAnnotation("kotlin.contracts.ExperimentalContracts")
+            }
+        }
+
     }
 
     jvm().compilations.all {
@@ -110,12 +116,6 @@ kotlin {
     jvm {
         mavenPublication {
             artifact(javadocJar.get())
-        }
-    }
-
-    sourceSets.all {
-        languageSettings.apply {
-            useExperimentalAnnotation("kotlin.contracts.ExperimentalContracts")
         }
     }
 }

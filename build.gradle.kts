@@ -60,6 +60,7 @@ benchmark {
 }
 
 kotlin {
+    ios()
     jvm {
         withJava()
 

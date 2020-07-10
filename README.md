@@ -118,7 +118,7 @@ fun functionX(): Result<Int, DomainError> { ... }
 fun functionY(): Result<Int, DomainError> { ... }
 fun functionZ(): Result<Int, DomainError> { ... }
 
-val sum: Result<Int, ExampleErr> = binding {
+val sum: Result<Int, DomainError> = binding {
     val x = functionX().bind()
     val y = functionY().bind()
     val z = functionZ().bind()

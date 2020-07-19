@@ -13,7 +13,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.michael-bull.kotlin-result:kotlin-result:1.1.7")
+    implementation("com.michael-bull.kotlin-result:kotlin-result:1.1.8")
 }
 ```
 

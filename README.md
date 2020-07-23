@@ -234,13 +234,13 @@ Bug reports and pull requests are welcome on [GitHub][github].
 This project is available under the terms of the ISC license. See the
 [`LICENSE`](LICENSE) file for the copyright information and licensing terms.
 
-[result]: https://github.com/michaelbull/kotlin-result/blob/master/src/main/kotlin/com/github/michaelbull/result/Result.kt#L10
-[result-ok]: https://github.com/michaelbull/kotlin-result/blob/master/src/main/kotlin/com/github/michaelbull/result/Result.kt#L31
-[result-err]: https://github.com/michaelbull/kotlin-result/blob/master/src/main/kotlin/com/github/michaelbull/result/Result.kt#L36
-[result-runCatching]: https://github.com/michaelbull/kotlin-result/blob/master/src/main/kotlin/com/github/michaelbull/result/Factory.kt#L11
+[result]: https://github.com/michaelbull/kotlin-result/blob/master/src/commonMain/kotlin/com/github/michaelbull/result/Result.kt#L10
+[result-ok]: https://github.com/michaelbull/kotlin-result/blob/master/src/commonMain/kotlin/com/github/michaelbull/result/Result.kt#L35
+[result-err]: https://github.com/michaelbull/kotlin-result/blob/master/src/commonMain/kotlin/com/github/michaelbull/result/Result.kt#L58
+[result-runCatching]: https://github.com/michaelbull/kotlin-result/blob/master/src/commonMain/kotlin/com/github/michaelbull/result/Factory.kt#L11
 [swalschin-rop]: https://fsharpforfunandprofit.com/rop/
 [wiki]: https://github.com/michaelbull/kotlin-result/wiki
-[unit-tests]: https://github.com/michaelbull/kotlin-result/tree/master/src/test/kotlin/com/github/michaelbull/result
+[unit-tests]: https://github.com/michaelbull/kotlin-result/tree/master/src/commonTest/kotlin/com/github/michaelbull/result
 [example]: https://github.com/michaelbull/kotlin-result/tree/master/example/src/main/kotlin/com/github/michaelbull/result/example
 [swalschin-example]: https://github.com/swlaschin/Railway-Oriented-Programming-Example
 [ktor]: http://ktor.io/

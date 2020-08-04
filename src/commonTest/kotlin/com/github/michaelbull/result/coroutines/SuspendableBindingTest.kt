@@ -81,7 +81,7 @@ class SuspendableBindingTest {
 
         suspend fun provideZ(): Result<Int, BindingError> {
             delay(1)
-            return Ok(2)
+            return Err(BindingError)
         }
 
         runBlockingTest {

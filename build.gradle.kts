@@ -57,6 +57,9 @@ benchmark {
     targets {
         register("jvmBenchmark")
     }
+
+    // specify via regex to run specific Benchmark classes, e.g. include("BindingBenchmark")
+    configurations["main"].include(".*")
 }
 
 kotlin {
@@ -91,7 +94,7 @@ kotlin {
             dependencies {
                 implementation(kotlin("test-common"))
                 implementation(kotlin("test-annotations-common"))
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-native:1.3.7")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-native:1.3.8")
             }
         }
 
@@ -112,6 +115,7 @@ kotlin {
             dependsOn(jvmMain)
             dependencies {
                 implementation("org.jetbrains.kotlinx:kotlinx.benchmark.runtime-jvm:0.2.0-dev-8")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.8")
             }
         }
     }

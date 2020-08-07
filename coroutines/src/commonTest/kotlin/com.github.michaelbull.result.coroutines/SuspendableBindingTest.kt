@@ -3,7 +3,6 @@ package com.github.michaelbull.result.coroutines
 import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
-import com.github.michaelbull.result.runBlockingTest
 import kotlinx.coroutines.delay
 import kotlin.test.Test
 import kotlin.test.assertEquals

@@ -1,6 +1,6 @@
 rootProject.name = "kotlin-result"
 
-include("example")
+include("example", "coroutines")
 
 pluginManagement {
     repositories {

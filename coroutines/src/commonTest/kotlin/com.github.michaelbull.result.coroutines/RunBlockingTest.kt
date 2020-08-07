@@ -1,4 +1,4 @@
-package com.github.michaelbull.result
+package com.github.michaelbull.result.coroutines
 
 import kotlinx.coroutines.CoroutineScope
 

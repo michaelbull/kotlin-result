@@ -136,6 +136,36 @@ resources on the topic of monad comprehensions.
 - [Monad comprehensions - Bow (Swift)][bow-monad-comprehension]
 - [For comprehensions - Scala][scala-for-comprehension]
 
+#### Coroutine Support
+
+Use of coroutines within a `binding` block requires an additional dependency:
+
+```kotlin
+dependencies {
+    implementation("com.michael-bull.kotlin-result:kotlin-result:1.1.8")
+    implementation("com.michael-bull.kotlin-result:kotlin-result-coroutines:1.1.8")
+}
+```
+
+This allows for asynchronous binds to operate so that if a bind were to fail,
+the binding block will return with the first failing async result:
+
+```kotlin
+
+suspend fun failsIn5ms(): Result<Int, DomainErrorA> { ... }
+suspend fun failsIn1ms(): Result<Int, DomainErrorB> { ... }
+
+runBlocking{
+    val result = binding<Int, BindingError> {
+        val x = async { failsIn5ms().bind() }
+        val y = async { failsIn1ms().bind() }
+        x.await() + y.await()
+    }
+
+    // result will be Err(DomainErrorB)
+}
+```
+
 ## Inspiration
 
 Inspiration for this library has been drawn from other languages in which the

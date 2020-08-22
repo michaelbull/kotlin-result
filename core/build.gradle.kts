@@ -1,10 +1,12 @@
 plugins {
     kotlin("multiplatform")
+    id("org.jetbrains.kotlin.plugin.allopen")
+    id("kotlinx.benchmark")
 }
 
-description = "kotlin-result library to support coroutines with the binding keyword."
-group="com.michael-bull.kotlin-result.coroutines"
-version="1.0.0-SNAPSHOT"
+description = "kotlin-result core library. A Result monad for modelling success or failure operations."
+group="com.michael-bull.kotlin-result.core"
+version="2.0.0-SNAPSHOT"
 
 val dokka by tasks.existing(org.jetbrains.dokka.gradle.DokkaTask::class) {
     outputFormat = "javadoc"
@@ -19,12 +21,34 @@ val javadocJar by tasks.registering(Jar::class) {
     from(dokka.get().outputDirectory)
 }
 
+allOpen {
+    annotation("org.openjdk.jmh.annotations.State")
+    annotation("org.openjdk.jmh.annotations.BenchmarkMode")
+}
+
+sourceSets.create("benchmark")
+
+benchmark {
+    targets {
+        register("jvmBenchmark")
+    }
+}
+
 kotlin {
     jvm {
+        withJava()
+
         mavenPublication {
             artifact(javadocJar.get())
         }
+
+        compilations.all {
+            kotlinOptions {
+                jvmTarget = "1.8"
+            }
+        }
     }
+
     sourceSets {
         all {
             languageSettings.apply {
@@ -35,8 +59,6 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation(kotlin("stdlib-common"))
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-native:1.3.8")
-                implementation(project(":core"))
             }
         }
 
@@ -44,7 +66,12 @@ kotlin {
             dependencies {
                 implementation(kotlin("test-common"))
                 implementation(kotlin("test-annotations-common"))
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-native:1.3.8")
+            }
+        }
+
+        val jvmMain by getting {
+            dependencies {
+                implementation(kotlin("stdlib-jdk8"))
             }
         }
 
@@ -52,16 +79,14 @@ kotlin {
             dependencies {
                 implementation(kotlin("test-junit"))
                 implementation(kotlin("test"))
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.8")
             }
         }
-    }
-}
 
-tasks {
-    named<Test>("jvmTest") {
-        filter {
-            isFailOnNoMatchingTests = false
+        val jvmBenchmark by getting {
+            dependsOn(jvmMain)
+            dependencies {
+                implementation("org.jetbrains.kotlinx:kotlinx.benchmark.runtime-jvm:0.2.0-dev-8")
+            }
         }
     }
 }

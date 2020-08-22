@@ -1,5 +1,4 @@
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
-import org.jetbrains.dokka.gradle.DokkaTask
 
 val ossrhUsername: String? by ext
 val ossrhPassword: String? by ext
@@ -25,19 +24,6 @@ tasks.withType<DependencyUpdatesTask> {
     }
 }
 
-val dokka by tasks.existing(DokkaTask::class) {
-    outputFormat = "javadoc"
-    outputDirectory = "$buildDir/docs/javadoc"
-}
-
-val javadocJar by tasks.registering(Jar::class) {
-    group = LifecycleBasePlugin.BUILD_GROUP
-    description = "Assembles a jar archive containing the Javadoc API documentation."
-    archiveClassifier.set("javadoc")
-    dependsOn(dokka)
-    from(dokka.get().outputDirectory)
-}
-
 allprojects {
     repositories {
         mavenCentral()
@@ -46,144 +32,81 @@ allprojects {
     }
 }
 
-allOpen {
-    annotation("org.openjdk.jmh.annotations.State")
-    annotation("org.openjdk.jmh.annotations.BenchmarkMode")
-}
+configure(subprojects.filter { it.name != "example" }) {
+    apply(plugin = "org.gradle.maven-publish")
+    apply(plugin = "org.jetbrains.dokka")
 
-sourceSets.create("benchmark")
+    val subproject = this
 
-benchmark {
-    targets {
-        register("jvmBenchmark")
-    }
-}
-
-kotlin {
-    jvm {
-        withJava()
-
-        mavenPublication {
-            artifact(javadocJar.get())
-        }
-
-        compilations.all {
-            kotlinOptions {
-                jvmTarget = "1.8"
-            }
-        }
-    }
-
-    sourceSets {
-        all {
-            languageSettings.apply {
-                useExperimentalAnnotation("kotlin.contracts.ExperimentalContracts")
-            }
-        }
-
-        val commonMain by getting {
-            dependencies {
-                implementation(kotlin("stdlib-common"))
-            }
-        }
-
-        val commonTest by getting {
-            dependencies {
-                implementation(kotlin("test-common"))
-                implementation(kotlin("test-annotations-common"))
-            }
-        }
-
-        val jvmMain by getting {
-            dependencies {
-                implementation(kotlin("stdlib-jdk8"))
-            }
-        }
-
-        val jvmTest by getting {
-            dependencies {
-                implementation(kotlin("test-junit"))
-                implementation(kotlin("test"))
-            }
-        }
-
-        val jvmBenchmark by getting {
-            dependsOn(jvmMain)
-            dependencies {
-                implementation("org.jetbrains.kotlinx:kotlinx.benchmark.runtime-jvm:0.2.0-dev-8")
-            }
-        }
-    }
-}
-
-publishing {
-    repositories {
-        maven {
-            if (project.version.toString().endsWith("SNAPSHOT")) {
-                setUrl("https://oss.sonatype.org/content/repositories/snapshots")
-            } else {
-                setUrl("https://oss.sonatype.org/service/local/staging/deploy/maven2")
-            }
-
-            credentials {
-                username = ossrhUsername
-                password = ossrhPassword
-            }
-        }
-    }
-
-    publications.withType<MavenPublication> {
-        pom {
-            name.set(project.name)
-            description.set(project.description)
-            url.set("https://github.com/michaelbull/kotlin-result")
-            inceptionYear.set("2017")
-
-            licenses {
-                license {
-                    name.set("ISC License")
-                    url.set("https://opensource.org/licenses/isc-license.txt")
-                }
-            }
-
-            developers {
-                developer {
-                    name.set("Michael Bull")
-                    url.set("https://www.michael-bull.com")
-                }
-            }
-
-            contributors {
-                contributor {
-                    name.set("Kevin Herron")
-                    url.set("https://github.com/kevinherron")
+    publishing {
+        repositories {
+            maven {
+                if (subproject.version.toString().endsWith("SNAPSHOT")) {
+                    setUrl("https://oss.sonatype.org/content/repositories/snapshots")
+                } else {
+                    setUrl("https://oss.sonatype.org/service/local/staging/deploy/maven2")
                 }
 
-                contributor {
-                    name.set("Markus Padourek")
-                    url.set("https://github.com/Globegitter")
-                }
-
-                contributor {
-                    name.set("Tristan Hamilton")
-                    url.set("https://github.com/Munzey")
+                credentials {
+                    username = ossrhUsername
+                    password = ossrhPassword
                 }
             }
+        }
 
-            scm {
-                connection.set("scm:git:https://github.com/michaelbull/kotlin-result")
-                developerConnection.set("scm:git:git@github.com:michaelbull/kotlin-result.git")
+        publications.withType<MavenPublication> {
+            pom {
+                name.set(subproject.group.toString())
+                description.set(subproject.description)
                 url.set("https://github.com/michaelbull/kotlin-result")
-            }
+                inceptionYear.set("2017")
 
-            issueManagement {
-                system.set("GitHub")
-                url.set("https://github.com/michaelbull/kotlin-result/issues")
-            }
+                licenses {
+                    license {
+                        name.set("ISC License")
+                        url.set("https://opensource.org/licenses/isc-license.txt")
+                    }
+                }
 
-            ciManagement {
-                system.set("GitHub")
-                url.set("https://github.com/michaelbull/kotlin-result/actions?query=workflow%3Aci")
+                developers {
+                    developer {
+                        name.set("Michael Bull")
+                        url.set("https://www.michael-bull.com")
+                    }
+                }
+
+                contributors {
+                    contributor {
+                        name.set("Kevin Herron")
+                        url.set("https://github.com/kevinherron")
+                    }
+
+                    contributor {
+                        name.set("Markus Padourek")
+                        url.set("https://github.com/Globegitter")
+                    }
+
+                    contributor {
+                        name.set("Tristan Hamilton")
+                        url.set("https://github.com/Munzey")
+                    }
+                }
+
+                scm {
+                    connection.set("scm:git:https://github.com/michaelbull/kotlin-result")
+                    developerConnection.set("scm:git:git@github.com:michaelbull/kotlin-result.git")
+                    url.set("https://github.com/michaelbull/kotlin-result")
+                }
+
+                issueManagement {
+                    system.set("GitHub")
+                    url.set("https://github.com/michaelbull/kotlin-result/issues")
+                }
+
+                ciManagement {
+                    system.set("GitHub")
+                    url.set("https://github.com/michaelbull/kotlin-result/actions?query=workflow%3Aci")
+                }
             }
         }
     }

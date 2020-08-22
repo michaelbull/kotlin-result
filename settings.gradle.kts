@@ -1,10 +1,10 @@
 rootProject.name = "kotlin-result"
 
-include("example", "coroutines")
+include("example", "coroutines", "core")
 
 pluginManagement {
     repositories {
-        maven("https://dl.bintray.com/kotlin/kotlinx" )
+        maven("https://dl.bintray.com/kotlin/kotlinx")
         gradlePluginPortal()
     }
 }

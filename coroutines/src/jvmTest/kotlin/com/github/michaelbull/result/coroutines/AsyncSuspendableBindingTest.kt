@@ -28,8 +28,8 @@ class AsyncSuspendableBindingTest {
 
         runBlocking {
             val result = binding<Int, BindingError> {
-                val x = async {provideX().bind()}
-                val y = async {provideY().bind()}
+                val x = async { provideX().bind() }
+                val y = async { provideY().bind() }
                 x.await() + y.await()
             }
             assertTrue(result is Ok)

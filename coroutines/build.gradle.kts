@@ -58,11 +58,3 @@ kotlin {
     }
 }
 
-tasks {
-    named<Test>("jvmTest") {
-        filter {
-            isFailOnNoMatchingTests = false
-        }
-    }
-}
-

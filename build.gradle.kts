@@ -41,7 +41,7 @@ configure(subprojects.filter { it.name != "example" }) {
     publishing {
         repositories {
             maven {
-                if (subproject.version.toString().endsWith("SNAPSHOT")) {
+                if (project.version.toString().endsWith("SNAPSHOT")) {
                     setUrl("https://oss.sonatype.org/content/repositories/snapshots")
                 } else {
                     setUrl("https://oss.sonatype.org/service/local/staging/deploy/maven2")
@@ -56,7 +56,7 @@ configure(subprojects.filter { it.name != "example" }) {
 
         publications.withType<MavenPublication> {
             pom {
-                name.set(subproject.group.toString())
+                name.set(subproject.name)
                 description.set(subproject.description)
                 url.set("https://github.com/michaelbull/kotlin-result")
                 inceptionYear.set("2017")

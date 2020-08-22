@@ -35,7 +35,7 @@ kotlin {
             dependencies {
                 implementation(kotlin("stdlib-common"))
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-native:1.3.8")
-                implementation(project(":core"))
+                implementation(project(":kotlin-result"))
             }
         }
 

@@ -4,7 +4,6 @@ plugins {
 
 description = "kotlin-result library to support coroutines with the binding keyword."
 group="com.michael-bull.kotlin-result.coroutines"
-version="1.0.0-SNAPSHOT"
 
 val dokka by tasks.existing(org.jetbrains.dokka.gradle.DokkaTask::class) {
     outputFormat = "javadoc"

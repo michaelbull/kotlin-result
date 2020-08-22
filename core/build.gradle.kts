@@ -5,8 +5,7 @@ plugins {
 }
 
 description = "kotlin-result core library. A Result monad for modelling success or failure operations."
-group="com.michael-bull.kotlin-result.core"
-version="2.0.0-SNAPSHOT"
+group="com.michael-bull.kotlin-result"
 
 val dokka by tasks.existing(org.jetbrains.dokka.gradle.DokkaTask::class) {
     outputFormat = "javadoc"

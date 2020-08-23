@@ -2,7 +2,7 @@ plugins {
     kotlin("multiplatform")
 }
 
-description = "kotlin-result library to support coroutines with the binding keyword."
+description = "support for coroutines with the kotlin-result core library"
 
 val dokka by tasks.existing(org.jetbrains.dokka.gradle.DokkaTask::class) {
     outputFormat = "javadoc"

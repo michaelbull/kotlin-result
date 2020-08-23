@@ -1,8 +1,9 @@
-package com.github.michaelbull.result.coroutines
+package com.github.michaelbull.result.coroutines.binding
 
 import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
+import com.github.michaelbull.result.coroutines.runBlockingTest
 import kotlinx.coroutines.delay
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -25,11 +26,12 @@ class SuspendableBindingTest {
         }
 
         runBlockingTest {
-            val result = binding<Int, BindingError> {
-                val x = provideX().bind()
-                val y = provideY().bind()
-                x + y
-            }
+            val result =
+                binding<Int, BindingError> {
+                    val x = provideX().bind()
+                    val y = provideY().bind()
+                    x + y
+                }
 
             assertTrue(result is Ok)
             assertEquals(
@@ -52,11 +54,12 @@ class SuspendableBindingTest {
         }
 
         runBlockingTest {
-            val result = binding<Int, BindingError> {
-                val x = provideX().bind()
-                val y = provideY(x.toInt()).bind()
-                y
-            }
+            val result =
+                binding<Int, BindingError> {
+                    val x = provideX().bind()
+                    val y = provideY(x.toInt()).bind()
+                    y
+                }
 
             assertTrue(result is Ok)
             assertEquals(
@@ -84,12 +87,13 @@ class SuspendableBindingTest {
         }
 
         runBlockingTest {
-            val result = binding<Int, BindingError> {
-                val x = provideX().bind()
-                val y = provideY().bind()
-                val z = provideZ().bind()
-                x + y + z
-            }
+            val result =
+                binding<Int, BindingError> {
+                    val x = provideX().bind()
+                    val y = provideY().bind()
+                    val z = provideZ().bind()
+                    x + y + z
+                }
 
             assertTrue(result is Err)
             assertEquals(
@@ -117,12 +121,13 @@ class SuspendableBindingTest {
         }
 
         runBlockingTest {
-            val result = binding<Int, BindingError> {
-                val x = provideX().bind()
-                val y = provideY().bind()
-                val z = provideZ().bind()
-                x + y.toInt() + z
-            }
+            val result =
+                binding<Int, BindingError> {
+                    val x = provideX().bind()
+                    val y = provideY().bind()
+                    val z = provideZ().bind()
+                    x + y.toInt() + z
+                }
 
             assertTrue(result is Err)
             assertEquals(

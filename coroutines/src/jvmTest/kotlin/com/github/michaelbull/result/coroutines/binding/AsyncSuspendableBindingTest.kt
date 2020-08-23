@@ -1,4 +1,4 @@
-package com.github.michaelbull.result.coroutines
+package com.github.michaelbull.result.coroutines.binding
 
 import com.github.michaelbull.result.*
 import kotlinx.coroutines.delay
@@ -28,10 +28,10 @@ class AsyncSuspendableBindingTest {
 
         runBlocking {
             val result = binding<Int, BindingError> {
-                val x = async { provideX().bind() }
-                val y = async { provideY().bind() }
-                x.await() + y.await()
-            }
+                    val x = async { provideX().bind() }
+                    val y = async { provideY().bind() }
+                    x.await() + y.await()
+                }
             assertTrue(result is Ok)
             assertEquals(
                 expected = 3,
@@ -59,11 +59,11 @@ class AsyncSuspendableBindingTest {
 
         runBlocking{
             val result = binding<Int, BindingError> {
-                val x = async { provideX().bind() }
-                val y = async { provideY().bind() }
-                val z = async { provideZ().bind() }
-                x.await() + y.await() + z.await()
-            }
+                    val x = async { provideX().bind() }
+                    val y = async { provideY().bind() }
+                    val z = async { provideZ().bind() }
+                    x.await() + y.await() + z.await()
+                }
 
             assertTrue(result is Err)
             assertEquals(

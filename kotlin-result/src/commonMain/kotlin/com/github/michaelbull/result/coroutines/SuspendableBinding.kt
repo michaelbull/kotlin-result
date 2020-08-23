@@ -1,4 +1,4 @@
-package com.github.michaelbull.result.coroutineslegacy
+package com.github.michaelbull.result.coroutines
 
 import com.github.michaelbull.result.BindException
 import com.github.michaelbull.result.Ok

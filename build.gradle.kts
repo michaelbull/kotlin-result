@@ -91,7 +91,6 @@ subprojects {
             publications.withType<MavenPublication> {
                 pom {
                     name.set(project.name)
-                    description.set(project.description)
                     url.set("https://github.com/michaelbull/kotlin-result")
                     inceptionYear.set("2017")
 

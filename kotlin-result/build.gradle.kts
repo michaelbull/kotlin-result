@@ -73,3 +73,10 @@ kotlin {
     }
 }
 
+publishing {
+    publications.withType<MavenPublication> {
+        pom {
+            description.set(project.description)
+        }
+    }
+}

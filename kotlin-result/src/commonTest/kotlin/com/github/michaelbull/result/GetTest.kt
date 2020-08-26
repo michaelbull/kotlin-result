@@ -106,4 +106,22 @@ class GetTest {
             )
         }
     }
+
+    class Merge {
+        @Test
+        fun returnsValueIfOk() {
+            assertEquals(
+                expected = listOf(1, 2, 3),
+                actual = Ok(listOf(1, 2, 3)).merge()
+            )
+        }
+
+        @Test
+        fun returnsErrorIfErr() {
+            assertEquals(
+                expected = setOf(4, 5, 6),
+                actual = Err(setOf(4, 5, 6)).merge()
+            )
+        }
+    }
 }

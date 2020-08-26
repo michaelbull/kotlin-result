@@ -120,3 +120,16 @@ inline infix fun <V, E> Result<V, E>.getErrorOrElse(transform: (V) -> E): E {
         is Err -> error
     }
 }
+
+/**
+ * Merges this [Result<V, E>][Result] to [U], returning the [value][Ok.value] if this [Result] is [Ok], otherwise the
+ * [error][Err.error].
+ *
+ * - Scala: [MergeableEither.merge](https://www.scala-lang.org/api/2.12.0/scala/util/Either$$MergeableEither.html#merge:A)
+ */
+fun <V : U, E : U, U> Result<V, E>.merge(): U {
+    return when (this) {
+        is Ok -> value
+        is Err -> error
+    }
+}

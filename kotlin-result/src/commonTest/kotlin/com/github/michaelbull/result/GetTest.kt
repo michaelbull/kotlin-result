@@ -111,16 +111,16 @@ class GetTest {
         @Test
         fun returnsValueIfOk() {
             assertEquals(
-                expected = listOf(1, 2, 3),
-                actual = Ok(listOf(1, 2, 3)).merge()
+                expected = setOf(4, 5, 6),
+                actual = Ok(listOf(1, 2, 3)).and(Ok(setOf(4, 5, 6))).merge()
             )
         }
 
         @Test
         fun returnsErrorIfErr() {
             assertEquals(
-                expected = setOf(4, 5, 6),
-                actual = Err(setOf(4, 5, 6)).merge()
+                expected = listOf(1, 2, 3),
+                actual = Err(listOf(1, 2, 3)).and(Err(setOf(4, 5, 6))).merge()
             )
         }
     }

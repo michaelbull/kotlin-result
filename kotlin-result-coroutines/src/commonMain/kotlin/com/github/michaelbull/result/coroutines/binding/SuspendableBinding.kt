@@ -43,7 +43,7 @@ internal class SuspendableResultBindingImpl<E> : SuspendableResultBinding<E> {
             is Ok -> value
             is Err -> {
                 mutex.withLock {
-                    if (::internalError.isInitialized.not()){
+                    if (::internalError.isInitialized.not()) {
                         internalError = this
                     }
                 }

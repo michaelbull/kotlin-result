@@ -38,11 +38,6 @@ fun <V, E> Result<V, E>.getError(): E? {
     }
 }
 
-@Deprecated("Use lazy-evaluating variant instead", ReplaceWith("getOr { default }"))
-infix fun <V, E> Result<V, E>.getOr(default: V): V {
-    return getOr { default }
-}
-
 /**
  * Returns the [value][Ok.value] if this [Result] is [Ok], otherwise [default].
  *
@@ -53,20 +48,20 @@ infix fun <V, E> Result<V, E>.getOr(default: V): V {
  * @param default The value to return if [Err].
  * @return The [value][Ok.value] if [Ok], otherwise [default].
  */
+infix fun <V, E> Result<V, E>.getOr(default: V): V {
+    return when (this) {
+        is Ok -> value
+        is Err -> default
+    }
+}
+
+@Deprecated("Use getOrElse instead", ReplaceWith("getOrElse { default() }"))
 inline infix fun <V, E> Result<V, E>.getOr(default: () -> V): V {
     contract {
         callsInPlace(default, InvocationKind.AT_MOST_ONCE)
     }
 
-    return when (this) {
-        is Ok -> value
-        is Err -> default()
-    }
-}
-
-@Deprecated("Use lazy-evaluating variant instead", ReplaceWith("getErrorOr { default }"))
-infix fun <V, E> Result<V, E>.getErrorOr(default: E): E {
-    return getErrorOr { default }
+    return getOrElse { default() }
 }
 
 /**
@@ -77,15 +72,20 @@ infix fun <V, E> Result<V, E>.getErrorOr(default: E): E {
  * @param default The error to return if [Ok].
  * @return The [error][Err.error] if [Err], otherwise [default].
  */
+infix fun <V, E> Result<V, E>.getErrorOr(default: E): E {
+    return when (this) {
+        is Ok -> default
+        is Err -> error
+    }
+}
+
+@Deprecated("Use getOrElse instead", ReplaceWith("getErrorOrElse { default() }"))
 inline infix fun <V, E> Result<V, E>.getErrorOr(default: () -> E): E {
     contract {
         callsInPlace(default, InvocationKind.AT_MOST_ONCE)
     }
 
-    return when (this) {
-        is Ok -> default()
-        is Err -> error
-    }
+    return getErrorOrElse { default() }
 }
 
 /**

@@ -3,25 +3,25 @@ package com.github.michaelbull.result
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
-@Deprecated("Use lazy-evaluating variant instead", ReplaceWith("and { result }"))
-infix fun <V, E> Result<V, E>.and(result: Result<V, E>): Result<V, E> {
-    return and { result }
-}
-
 /**
  * Returns [result] if this [Result] is [Ok], otherwise this [Err].
  *
  * - Rust: [Result.and](https://doc.rust-lang.org/std/result/enum.Result.html#method.and)
  */
+infix fun <V, E> Result<V, E>.and(result: Result<V, E>): Result<V, E> {
+    return when (this) {
+        is Ok -> result
+        is Err -> this
+    }
+}
+
+@Deprecated("Use andThen instead", ReplaceWith("andThen { result() }"))
 inline infix fun <V, E> Result<V, E>.and(result: () -> Result<V, E>): Result<V, E> {
     contract {
         callsInPlace(result, InvocationKind.AT_MOST_ONCE)
     }
 
-    return when (this) {
-        is Ok -> result()
-        is Err -> this
-    }
+    return andThen { result() }
 }
 
 /**

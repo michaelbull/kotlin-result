@@ -3,25 +3,25 @@ package com.github.michaelbull.result
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
-@Deprecated("Use lazy-evaluating variant instead", ReplaceWith("or { result }"))
-infix fun <V, E> Result<V, E>.or(result: Result<V, E>): Result<V, E> {
-    return or { result }
-}
-
 /**
  * Returns [result] if this [Result] is [Err], otherwise this [Ok].
  *
  * - Rust: [Result.or](https://doc.rust-lang.org/std/result/enum.Result.html#method.or)
  */
+infix fun <V, E> Result<V, E>.or(result: Result<V, E>): Result<V, E> {
+    return when (this) {
+        is Ok -> this
+        is Err -> result
+    }
+}
+
+@Deprecated("Use orElse instead", ReplaceWith("orElse { result() }"))
 inline infix fun <V, E> Result<V, E>.or(result: () -> Result<V, E>): Result<V, E> {
     contract {
         callsInPlace(result, InvocationKind.AT_MOST_ONCE)
     }
 
-    return when (this) {
-        is Ok -> this
-        is Err -> result()
-    }
+    return orElse { result() }
 }
 
 /**

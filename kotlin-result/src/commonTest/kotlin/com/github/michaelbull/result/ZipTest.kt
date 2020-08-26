@@ -31,7 +31,7 @@ class ZipTest {
         fun returnsErrIfOneOfTwoErr() {
             val result = zip(
                 { Ok(10) },
-                { Ok(20).and { Err("hello") } },
+                { Ok(20).and(Err("hello")) },
                 Int::plus
             )
 
@@ -46,8 +46,8 @@ class ZipTest {
         @Test
         fun returnsFirstErrIfBothErr() {
             val result = zip(
-                { Ok(10).and { Err("foo") } },
-                { Ok(20).and { Err("bar") } },
+                { Ok(10).and(Err("foo")) },
+                { Ok(20).and(Err("bar")) },
                 Int::plus
             )
 
@@ -80,7 +80,7 @@ class ZipTest {
         fun returnsErrIfOneOfThreeErr() {
             val result = zip(
                 { Ok("foo") },
-                { Ok(1).and { Err("bar") } },
+                { Ok(1).and(Err("bar")) },
                 { Ok(false) },
                 ::ZipData3
             )
@@ -97,8 +97,8 @@ class ZipTest {
         fun returnsFirstErrIfTwoOfThreeErr() {
             val result = zip(
                 { Ok("foo") },
-                { Ok(1).and { Err("bar") } },
-                { Ok(false).and { Err("baz") } },
+                { Ok(1).and(Err("bar")) },
+                { Ok(false).and(Err("baz")) },
                 ::ZipData3
             )
 
@@ -111,9 +111,9 @@ class ZipTest {
         @Test
         fun returnsFirstErrIfAllThreeErr() {
             val result = zip(
-                { Ok("foo").and { Err(1) } },
-                { Ok(1).and { Err(2) } },
-                { Ok(false).and { Err(3) } },
+                { Ok("foo").and(Err(1)) },
+                { Ok(1).and(Err(2)) },
+                { Ok(false).and(Err(3)) },
                 ::ZipData3
             )
 
@@ -147,9 +147,9 @@ class ZipTest {
         fun returnsFirstErrIfSomeOfFourErr() {
             val result = zip(
                 { Ok("hello") },
-                { Ok(2).and { Err(1) } },
+                { Ok(2).and(Err(1)) },
                 { Ok(false) },
-                { Ok(1.5).and { Err(2) } },
+                { Ok(1.5).and(Err(2)) },
                 ::ZipData4
             )
 
@@ -183,11 +183,11 @@ class ZipTest {
         @Test
         fun returnsFirstErrIfSomeOfFiveErr() {
             val result = zip(
-                { Ok("hello").and { Err(1) } },
+                { Ok("hello").and(Err(1)) },
                 { Ok(2) },
                 { Ok(false) },
                 { Ok(1.5) },
-                { Ok('a').and { Err(2) } },
+                { Ok('a').and(Err(2)) },
                 ::ZipData5
             )
 

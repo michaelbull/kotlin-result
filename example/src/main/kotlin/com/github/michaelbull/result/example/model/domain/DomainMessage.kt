@@ -20,11 +20,6 @@ object EmailRequired : DomainMessage()
 object EmailTooLong : DomainMessage()
 object EmailInvalid : DomainMessage()
 
-/* events */
-
-object CustomerCreated : DomainMessage()
-class EmailAddressChanged(val old: String, val new: String) : DomainMessage()
-
 /* exposed errors */
 
 object CustomerNotFound : DomainMessage()

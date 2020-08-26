@@ -1,11 +1,8 @@
 package com.github.michaelbull.result.example
 
-import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.andThen
-import com.github.michaelbull.result.example.model.domain.Customer
-import com.github.michaelbull.result.example.model.domain.CustomerCreated
-import com.github.michaelbull.result.example.model.domain.CustomerId
+import com.github.michaelbull.result.example.model.domain.Created
 import com.github.michaelbull.result.example.model.domain.CustomerIdMustBePositive
 import com.github.michaelbull.result.example.model.domain.CustomerNotFound
 import com.github.michaelbull.result.example.model.domain.CustomerRequired
@@ -16,15 +13,20 @@ import com.github.michaelbull.result.example.model.domain.EmailAddressChanged
 import com.github.michaelbull.result.example.model.domain.EmailInvalid
 import com.github.michaelbull.result.example.model.domain.EmailRequired
 import com.github.michaelbull.result.example.model.domain.EmailTooLong
+import com.github.michaelbull.result.example.model.domain.Event
+import com.github.michaelbull.result.example.model.domain.FirstNameChanged
 import com.github.michaelbull.result.example.model.domain.FirstNameRequired
 import com.github.michaelbull.result.example.model.domain.FirstNameTooLong
+import com.github.michaelbull.result.example.model.domain.LastNameChanged
 import com.github.michaelbull.result.example.model.domain.LastNameRequired
 import com.github.michaelbull.result.example.model.domain.LastNameTooLong
 import com.github.michaelbull.result.example.model.domain.SqlCustomerInvalid
 import com.github.michaelbull.result.example.model.dto.CustomerDto
+import com.github.michaelbull.result.example.model.entity.CustomerEntity
+import com.github.michaelbull.result.example.model.entity.CustomerId
+import com.github.michaelbull.result.example.repository.InMemoryCustomerRepository
 import com.github.michaelbull.result.example.service.CustomerService
 import com.github.michaelbull.result.mapBoth
-import com.github.michaelbull.result.mapError
 import com.github.michaelbull.result.toResultOr
 import io.ktor.application.Application
 import io.ktor.application.call
@@ -52,55 +54,48 @@ fun Application.main() {
         }
     }
 
+    val customers = setOf(
+        CustomerEntity(CustomerId(1L), "Michael", "Bull", "michael@example.com"),
+        CustomerEntity(CustomerId(2L), "Kevin", "Herron", "kevin@example.com"),
+        CustomerEntity(CustomerId(3L), "Markus", "Padourek", "markus@example.com"),
+        CustomerEntity(CustomerId(4L), "Tristan", "Hamilton", "tristan@example.com"),
+    )
+
+    val customersById = customers.associateBy(CustomerEntity::id).toMutableMap()
+    val customerRepository = InMemoryCustomerRepository(customersById)
+    val customerService = CustomerService(customerRepository)
+
     routing {
         get("/customers/{id}") {
-            call.parameters.readId()
-                .andThen(CustomerId.Companion::create)
-                .andThen(CustomerService::getById)
-                .mapError(::messageToResponse)
-                .mapBoth(
-                    success = { customer ->
-                        call.respond(HttpStatusCode.OK, CustomerDto.from(customer))
-                    },
-                    failure = { (status, message) ->
-                        call.respond(status, message)
-                    }
-                )
+            val (status, message) = call.parameters.readId()
+                .andThen(customerService::getById)
+                .mapBoth(::customerToResponse, ::messageToResponse)
+
+            call.respond(status, message)
         }
 
         post("/customers/{id}") {
-            call.parameters.readId()
-                .andThen { id ->
-                    val dto = call.receive<CustomerDto>()
-                    dto.id = id
-                    Ok(dto)
-                }
-                .andThen(Customer.Companion::from)
-                .andThen(CustomerService::upsert)
-                .mapError(::messageToResponse)
-                .mapBoth(
-                    success = { event ->
-                        if (event == null) {
-                            call.respond(HttpStatusCode.NotModified)
-                        } else {
-                            val (status, message) = messageToResponse(event)
-                            call.respond(status, message)
-                        }
-                    },
-                    failure = { (status, message) ->
-                        call.respond(status, message)
-                    }
-                )
+            val (status, message) = call.parameters.readId()
+                .andThen { customerService.save(it, call.receive()) }
+                .mapBoth(::eventToResponse, ::messageToResponse)
+
+            if (message != null) {
+                call.respond(status, message)
+            } else {
+                call.respond(status)
+            }
         }
     }
 
 }
 
 private fun Parameters.readId(): Result<Long, DomainMessage> {
-    return this["id"]
+    return get("id")
         ?.toLongOrNull()
         .toResultOr { CustomerRequired }
 }
+
+private fun customerToResponse(customer: CustomerDto) = HttpStatusCode.OK to customer
 
 private fun messageToResponse(message: DomainMessage) = when (message) {
     CustomerRequired,
@@ -112,23 +107,32 @@ private fun messageToResponse(message: DomainMessage) = when (message) {
     EmailRequired,
     EmailTooLong,
     EmailInvalid ->
-        Pair(HttpStatusCode.BadRequest, "There is an error in your request")
-
-// events
-    CustomerCreated ->
-        Pair(HttpStatusCode.Created, "Customer created")
-
-    is EmailAddressChanged ->
-        Pair(HttpStatusCode.OK, "Email address changed from ${message.old} to ${message.new}")
+        HttpStatusCode.BadRequest to "There is an error in your request"
 
 // exposed errors
     CustomerNotFound ->
-        Pair(HttpStatusCode.NotFound, "Unknown customer")
+        HttpStatusCode.NotFound to "Unknown customer"
 
 // internal errors
     SqlCustomerInvalid,
     DatabaseTimeout,
     is DatabaseError ->
-        Pair(HttpStatusCode.InternalServerError, "Internal server error occurred")
+        HttpStatusCode.InternalServerError to "Internal server error occurred"
+}
 
+private fun eventToResponse(event: Event?) = when (event) {
+    null ->
+        HttpStatusCode.NotModified to null
+
+    Created ->
+        HttpStatusCode.Created to "Customer created"
+
+    is FirstNameChanged ->
+        HttpStatusCode.OK to "First name changed from ${event.old} to ${event.new}"
+
+    is LastNameChanged ->
+        HttpStatusCode.OK to "First name changed from ${event.old} to ${event.new}"
+
+    is EmailAddressChanged ->
+        HttpStatusCode.OK to "Email address changed from ${event.old} to ${event.new}"
 }

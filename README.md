@@ -217,19 +217,18 @@ user-facing errors.
 #### Fetch customer information
 
 ```
-$ curl -i -X GET  'http://localhost:9000/customers/5'
+$ curl -i -X GET  'http://localhost:9000/customers/1'
 ```
 
 ```
 HTTP/1.1 200 OK
 Content-Type: application/json; charset=UTF-8
-Content-Length: 93
+Content-Length: 84
 
 {
-  "id": 5,
   "firstName": "Michael",
   "lastName": "Bull",
-  "email": "example@email.com"
+  "email": "michael@example.com"
 }
 ```
 
@@ -242,7 +241,7 @@ $ curl -i -X POST \
 '{
   "firstName": "Your",
   "lastName": "Name",
-  "email": "your@email.com"
+  "email": "email@example.com"
 }' \
  'http://localhost:9000/customers/200'
 ```

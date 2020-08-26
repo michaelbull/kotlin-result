@@ -15,14 +15,12 @@ repositories {
 }
 
 dependencies {
-    val ktorVersion = "1.4.0"
-
     implementation(project(":kotlin-result"))
     implementation(kotlin("stdlib-jdk8"))
-    implementation("ch.qos.logback:logback-classic:1.2.3")
-    implementation("io.ktor:ktor-server-core:$ktorVersion")
-    implementation("io.ktor:ktor-server-netty:$ktorVersion")
-    implementation("io.ktor:ktor-gson:$ktorVersion")
+    implementation("ch.qos.logback:logback-classic:${Versions.logback}")
+    implementation("io.ktor:ktor-server-core:${Versions.ktor}")
+    implementation("io.ktor:ktor-server-netty:${Versions.ktor}")
+    implementation("io.ktor:ktor-gson:${Versions.ktor}")
 }
 
 tasks.withType(KotlinCompile::class.java).all {

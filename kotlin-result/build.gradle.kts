@@ -67,7 +67,7 @@ kotlin {
         val jvmBenchmark by getting {
             dependsOn(jvmMain)
             dependencies {
-                implementation("org.jetbrains.kotlinx:kotlinx.benchmark.runtime-jvm:0.2.0-dev-8")
+                implementation("org.jetbrains.kotlinx:kotlinx.benchmark.runtime-jvm:${Versions.kotlinBenchmark}")
             }
         }
     }

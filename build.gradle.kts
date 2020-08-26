@@ -10,13 +10,13 @@ description = "A Result monad for modelling success or failure operations."
 
 plugins {
     base
-    id("com.github.ben-manes.versions") version "0.29.0"
+    id("com.github.ben-manes.versions") version Versions.versionsPlugin
 
-    kotlin("multiplatform") version "1.4.0" apply false
-    id("kotlinx.benchmark") version "0.2.0-dev-20" apply false
-    id("net.researchgate.release") version "2.8.1" apply false
-    id("org.jetbrains.dokka") version "0.10.1" apply false
-    id("org.jetbrains.kotlin.plugin.allopen") version "1.4.0" apply false
+    kotlin("multiplatform") version Versions.kotlin apply false
+    id("kotlinx.benchmark") version Versions.kotlinBenchmark apply false
+    id("net.researchgate.release") version Versions.releasePlugin apply false
+    id("org.jetbrains.dokka") version Versions.dokka apply false
+    id("org.jetbrains.kotlin.plugin.allopen") version Versions.kotlin apply false
 }
 
 tasks.withType<DependencyUpdatesTask> {

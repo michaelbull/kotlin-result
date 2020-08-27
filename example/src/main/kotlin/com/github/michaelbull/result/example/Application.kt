@@ -131,7 +131,7 @@ private fun eventToResponse(event: Event?) = when (event) {
         HttpStatusCode.OK to "First name changed from ${event.old} to ${event.new}"
 
     is LastNameChanged ->
-        HttpStatusCode.OK to "First name changed from ${event.old} to ${event.new}"
+        HttpStatusCode.OK to "Last name changed from ${event.old} to ${event.new}"
 
     is EmailAddressChanged ->
         HttpStatusCode.OK to "Email address changed from ${event.old} to ${event.new}"

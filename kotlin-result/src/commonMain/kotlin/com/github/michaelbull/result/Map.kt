@@ -11,7 +11,7 @@ import kotlin.contracts.contract
  * - Haskell: [Data.Bifunctor.first](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Bifunctor.html#v:first)
  * - Rust: [Result.map](https://doc.rust-lang.org/std/result/enum.Result.html#method.map)
  */
-inline infix fun <V, E, U> Result<V, E>.map(transform: (V) -> U): Result<U, E> {
+public inline infix fun <V, E, U> Result<V, E>.map(transform: (V) -> U): Result<U, E> {
     contract {
         callsInPlace(transform, InvocationKind.AT_MOST_ONCE)
     }
@@ -30,7 +30,7 @@ inline infix fun <V, E, U> Result<V, E>.map(transform: (V) -> U): Result<U, E> {
  * - Haskell: [Data.Bifunctor.right](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Bifunctor.html#v:second)
  * - Rust: [Result.map_err](https://doc.rust-lang.org/std/result/enum.Result.html#method.map_err)
  */
-inline infix fun <V, E, F> Result<V, E>.mapError(transform: (E) -> F): Result<V, F> {
+public inline infix fun <V, E, F> Result<V, E>.mapError(transform: (E) -> F): Result<V, F> {
     contract {
         callsInPlace(transform, InvocationKind.AT_MOST_ONCE)
     }
@@ -48,7 +48,7 @@ inline infix fun <V, E, F> Result<V, E>.mapError(transform: (E) -> F): Result<V,
  *
  * - Rust: [Result.map_or](https://doc.rust-lang.org/std/result/enum.Result.html#method.map_or)
  */
-inline fun <V, E, U> Result<V, E>.mapOr(default: U, transform: (V) -> U): U {
+public inline fun <V, E, U> Result<V, E>.mapOr(default: U, transform: (V) -> U): U {
     contract {
         callsInPlace(transform, InvocationKind.AT_MOST_ONCE)
     }
@@ -66,7 +66,7 @@ inline fun <V, E, U> Result<V, E>.mapOr(default: U, transform: (V) -> U): U {
  *
  * - Rust: [Result.map_or_else](https://doc.rust-lang.org/std/result/enum.Result.html#method.map_or_else)
  */
-inline fun <V, E, U> Result<V, E>.mapOrElse(default: (E) -> U, transform: (V) -> U): U {
+public inline fun <V, E, U> Result<V, E>.mapOrElse(default: (E) -> U, transform: (V) -> U): U {
     contract {
         callsInPlace(default, InvocationKind.AT_MOST_ONCE)
         callsInPlace(transform, InvocationKind.AT_MOST_ONCE)
@@ -83,7 +83,7 @@ inline fun <V, E, U> Result<V, E>.mapOrElse(default: (E) -> U, transform: (V) ->
  * function to each element in the original collection, returning early with the first [Err] if a
  * transformation fails.
  */
-inline infix fun <V, E, U> Result<Iterable<V>, E>.mapAll(transform: (V) -> Result<U, E>): Result<List<U>, E> {
+public inline infix fun <V, E, U> Result<Iterable<V>, E>.mapAll(transform: (V) -> Result<U, E>): Result<List<U>, E> {
     return map { iterable ->
         iterable.map { element ->
             when (val transformed = transform(element)) {
@@ -102,7 +102,7 @@ inline infix fun <V, E, U> Result<Iterable<V>, E>.mapAll(transform: (V) -> Resul
  * - Elm: [Result.Extra.mapBoth](http://package.elm-lang.org/packages/elm-community/result-extra/2.2.0/Result-Extra#mapBoth)
  * - Haskell: [Data.Either.either](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Either.html#v:either)
  */
-inline fun <V, E, U> Result<V, E>.mapBoth(success: (V) -> U, failure: (E) -> U): U {
+public inline fun <V, E, U> Result<V, E>.mapBoth(success: (V) -> U, failure: (E) -> U): U {
     contract {
         callsInPlace(success, InvocationKind.AT_MOST_ONCE)
         callsInPlace(failure, InvocationKind.AT_MOST_ONCE)
@@ -124,7 +124,7 @@ inline fun <V, E, U> Result<V, E>.mapBoth(success: (V) -> U, failure: (E) -> U):
  * - Elm: [Result.Extra.mapBoth](http://package.elm-lang.org/packages/elm-community/result-extra/2.2.0/Result-Extra#mapBoth)
  * - Haskell: [Data.Either.either](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Either.html#v:either)
  */
-inline fun <V, E, U> Result<V, E>.fold(success: (V) -> U, failure: (E) -> U): U {
+public inline fun <V, E, U> Result<V, E>.fold(success: (V) -> U, failure: (E) -> U): U {
     contract {
         callsInPlace(success, InvocationKind.AT_MOST_ONCE)
         callsInPlace(failure, InvocationKind.AT_MOST_ONCE)
@@ -139,7 +139,7 @@ inline fun <V, E, U> Result<V, E>.fold(success: (V) -> U, failure: (E) -> U): U 
  *
  * - Haskell: [Data.Bifunctor.Bimap](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Bifunctor.html#v:bimap)
  */
-inline fun <V, E, U, F> Result<V, E>.mapEither(success: (V) -> U, failure: (E) -> F): Result<U, F> {
+public inline fun <V, E, U, F> Result<V, E>.mapEither(success: (V) -> U, failure: (E) -> F): Result<U, F> {
     contract {
         callsInPlace(success, InvocationKind.AT_MOST_ONCE)
         callsInPlace(failure, InvocationKind.AT_MOST_ONCE)
@@ -159,7 +159,7 @@ inline fun <V, E, U, F> Result<V, E>.mapEither(success: (V) -> U, failure: (E) -
  *
  * - Scala: [Either.flatMap](http://www.scala-lang.org/api/2.12.0/scala/util/Either.html#flatMap[AA>:A,Y](f:B=>scala.util.Either[AA,Y]):scala.util.Either[AA,Y])
  */
-inline infix fun <V, E, U> Result<V, E>.flatMap(transform: (V) -> Result<U, E>): Result<U, E> {
+public inline infix fun <V, E, U> Result<V, E>.flatMap(transform: (V) -> Result<U, E>): Result<U, E> {
     contract {
         callsInPlace(transform, InvocationKind.AT_MOST_ONCE)
     }
@@ -173,7 +173,7 @@ inline infix fun <V, E, U> Result<V, E>.flatMap(transform: (V) -> Result<U, E>):
  *
  * @see [takeIf]
  */
-inline fun <V, E> Result<V, E>.toErrorIf(predicate: (V) -> Boolean, transform: (V) -> E): Result<V, E> {
+public inline fun <V, E> Result<V, E>.toErrorIf(predicate: (V) -> Boolean, transform: (V) -> E): Result<V, E> {
     contract {
         callsInPlace(predicate, InvocationKind.AT_MOST_ONCE)
         callsInPlace(transform, InvocationKind.AT_MOST_ONCE)
@@ -195,7 +195,7 @@ inline fun <V, E> Result<V, E>.toErrorIf(predicate: (V) -> Boolean, transform: (
  *
  * @see [takeUnless]
  */
-inline fun <V, E> Result<V, E>.toErrorUnless(predicate: (V) -> Boolean, transform: (V) -> E): Result<V, E> {
+public inline fun <V, E> Result<V, E>.toErrorUnless(predicate: (V) -> Boolean, transform: (V) -> E): Result<V, E> {
     contract {
         callsInPlace(predicate, InvocationKind.AT_MOST_ONCE)
         callsInPlace(transform, InvocationKind.AT_MOST_ONCE)

@@ -12,7 +12,7 @@ import kotlin.contracts.contract
 /**
  * Suspending variant of [binding][com.github.michaelbull.result.binding].
  */
-suspend inline fun <V, E> binding(crossinline block: suspend SuspendableResultBinding<E>.() -> V): Result<V, E> {
+public suspend inline fun <V, E> binding(crossinline block: suspend SuspendableResultBinding<E>.() -> V): Result<V, E> {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
     }
@@ -28,8 +28,8 @@ suspend inline fun <V, E> binding(crossinline block: suspend SuspendableResultBi
 
 internal object BindCancellationException : CancellationException(null)
 
-interface SuspendableResultBinding<E> {
-    suspend fun <V> Result<V, E>.bind(): V
+public interface SuspendableResultBinding<E> {
+    public suspend fun <V> Result<V, E>.bind(): V
 }
 
 @PublishedApi

@@ -38,12 +38,6 @@ kotlin {
             }
         }
 
-        val commonMain by getting {
-            dependencies {
-                implementation(kotlin("stdlib-common"))
-            }
-        }
-
         val commonTest by getting {
             dependencies {
                 implementation(kotlin("test-common"))
@@ -52,9 +46,6 @@ kotlin {
         }
 
         val jvmMain by getting {
-            dependencies {
-                implementation(kotlin("stdlib-jdk8"))
-            }
         }
 
         val jvmTest by getting {
@@ -67,7 +58,7 @@ kotlin {
         val jvmBenchmark by getting {
             dependsOn(jvmMain)
             dependencies {
-                implementation("org.jetbrains.kotlinx:kotlinx.benchmark.runtime-jvm:${Versions.kotlinBenchmark}")
+                implementation("org.jetbrains.kotlinx:kotlinx.benchmark.runtime:${Versions.kotlinBenchmark}")
             }
         }
     }

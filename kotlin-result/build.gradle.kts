@@ -45,9 +45,6 @@ kotlin {
             }
         }
 
-        val jvmMain by getting {
-        }
-
         val jvmTest by getting {
             dependencies {
                 implementation(kotlin("test-junit"))
@@ -56,7 +53,7 @@ kotlin {
         }
 
         val jvmBenchmark by getting {
-            dependsOn(jvmMain)
+            dependsOn(named("jvmMain").get())
             dependencies {
                 implementation("org.jetbrains.kotlinx:kotlinx.benchmark.runtime:${Versions.kotlinBenchmark}")
             }

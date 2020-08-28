@@ -8,7 +8,7 @@ import kotlin.contracts.contract
  * invocation was successful, catching and encapsulating any thrown exception
  * as a failure.
  */
-inline fun <V> runCatching(block: () -> V): Result<V, Throwable> {
+public inline fun <V> runCatching(block: () -> V): Result<V, Throwable> {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
     }
@@ -25,7 +25,7 @@ inline fun <V> runCatching(block: () -> V): Result<V, Throwable> {
  * returns its encapsulated result if invocation was successful, catching and
  * encapsulating any thrown exception as a failure.
  */
-inline infix fun <T, V> T.runCatching(block: T.() -> V): Result<V, Throwable> {
+public inline infix fun <T, V> T.runCatching(block: T.() -> V): Result<V, Throwable> {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
     }
@@ -41,7 +41,7 @@ inline infix fun <T, V> T.runCatching(block: T.() -> V): Result<V, Throwable> {
  * Converts a nullable of type [V] to a [Result]. Returns [Ok] if the value is
  * non-null, otherwise the supplied [error].
  */
-inline infix fun <V, E> V?.toResultOr(error: () -> E): Result<V, E> {
+public inline infix fun <V, E> V?.toResultOr(error: () -> E): Result<V, E> {
     contract {
         callsInPlace(error, InvocationKind.AT_MOST_ONCE)
     }

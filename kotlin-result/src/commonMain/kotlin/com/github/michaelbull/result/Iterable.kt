@@ -4,7 +4,7 @@ package com.github.michaelbull.result
  * Accumulates value starting with [initial] value and applying [operation] from left to right to
  * current accumulator value and each element.
  */
-inline fun <T, R, E> Iterable<T>.fold(initial: R, operation: (acc: R, T) -> Result<R, E>): Result<R, E> {
+public inline fun <T, R, E> Iterable<T>.fold(initial: R, operation: (acc: R, T) -> Result<R, E>): Result<R, E> {
     var accumulator = initial
 
     for (element in this) {
@@ -21,7 +21,7 @@ inline fun <T, R, E> Iterable<T>.fold(initial: R, operation: (acc: R, T) -> Resu
  * Accumulates value starting with [initial] value and applying [operation] from right to left to
  * each element and current accumulator value.
  */
-inline fun <T, R, E> List<T>.foldRight(initial: R, operation: (T, acc: R) -> Result<R, E>): Result<R, E> {
+public inline fun <T, R, E> List<T>.foldRight(initial: R, operation: (T, acc: R) -> Result<R, E>): Result<R, E> {
     var accumulator = initial
 
     if (!isEmpty()) {
@@ -42,7 +42,7 @@ inline fun <T, R, E> List<T>.foldRight(initial: R, operation: (T, acc: R) -> Res
  *
  * - Elm: [Result.Extra.combine](http://package.elm-lang.org/packages/elm-community/result-extra/2.2.0/Result-Extra#combine)
  */
-fun <V, E> combine(vararg results: Result<V, E>): Result<List<V>, E> {
+public fun <V, E> combine(vararg results: Result<V, E>): Result<List<V>, E> {
     return results.asIterable().combine()
 }
 
@@ -51,7 +51,7 @@ fun <V, E> combine(vararg results: Result<V, E>): Result<List<V>, E> {
  *
  * - Elm: [Result.Extra.combine](http://package.elm-lang.org/packages/elm-community/result-extra/2.2.0/Result-Extra#combine)
  */
-fun <V, E> Iterable<Result<V, E>>.combine(): Result<List<V>, E> {
+public fun <V, E> Iterable<Result<V, E>>.combine(): Result<List<V>, E> {
     return Ok(map {
         when (it) {
             is Ok -> it.value
@@ -66,7 +66,7 @@ fun <V, E> Iterable<Result<V, E>>.combine(): Result<List<V>, E> {
  *
  * - Haskell: [Data.Either.lefts](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Either.html#v:lefts)
  */
-fun <V, E> getAll(vararg results: Result<V, E>): List<V> {
+public fun <V, E> getAll(vararg results: Result<V, E>): List<V> {
     return results.asIterable().getAll()
 }
 
@@ -76,7 +76,7 @@ fun <V, E> getAll(vararg results: Result<V, E>): List<V> {
  *
  * - Haskell: [Data.Either.lefts](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Either.html#v:lefts)
  */
-fun <V, E> Iterable<Result<V, E>>.getAll(): List<V> {
+public fun <V, E> Iterable<Result<V, E>>.getAll(): List<V> {
     return filterIsInstance<Ok<V>>().map { it.value }
 }
 
@@ -86,7 +86,7 @@ fun <V, E> Iterable<Result<V, E>>.getAll(): List<V> {
  *
  * - Haskell: [Data.Either.rights](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Either.html#v:rights)
  */
-fun <V, E> getAllErrors(vararg results: Result<V, E>) = results.asIterable().getAllErrors()
+public fun <V, E> getAllErrors(vararg results: Result<V, E>): List<E> = results.asIterable().getAllErrors()
 
 /**
  * Extracts from an [Iterable] of [Results][Result] all the [Err] elements. All the [Err] elements
@@ -94,7 +94,7 @@ fun <V, E> getAllErrors(vararg results: Result<V, E>) = results.asIterable().get
  *
  * - Haskell: [Data.Either.rights](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Either.html#v:rights)
  */
-fun <V, E> Iterable<Result<V, E>>.getAllErrors(): List<E> {
+public fun <V, E> Iterable<Result<V, E>>.getAllErrors(): List<E> {
     return filterIsInstance<Err<E>>().map { it.error }
 }
 
@@ -105,7 +105,7 @@ fun <V, E> Iterable<Result<V, E>>.getAllErrors(): List<E> {
  *
  * - Haskell: [Data.Either.partitionEithers](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Either.html#v:partitionEithers)
  */
-fun <V, E> partition(vararg results: Result<V, E>): Pair<List<V>, List<E>> {
+public fun <V, E> partition(vararg results: Result<V, E>): Pair<List<V>, List<E>> {
     return results.asIterable().partition()
 }
 
@@ -116,7 +116,7 @@ fun <V, E> partition(vararg results: Result<V, E>): Pair<List<V>, List<E>> {
  *
  * - Haskell: [Data.Either.partitionEithers](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Either.html#v:partitionEithers)
  */
-fun <V, E> Iterable<Result<V, E>>.partition(): Pair<List<V>, List<E>> {
+public fun <V, E> Iterable<Result<V, E>>.partition(): Pair<List<V>, List<E>> {
     val values = mutableListOf<V>()
     val errors = mutableListOf<E>()
 
@@ -135,7 +135,7 @@ fun <V, E> Iterable<Result<V, E>>.partition(): Pair<List<V>, List<E>> {
  * function to each element in the original collection, returning early with the first [Err] if a
  * transformation fails.
  */
-inline fun <V, E, U> Iterable<V>.mapResult(
+public inline fun <V, E, U> Iterable<V>.mapResult(
     transform: (V) -> Result<U, E>
 ): Result<List<U>, E> {
     return Ok(map { element ->
@@ -151,7 +151,7 @@ inline fun <V, E, U> Iterable<V>.mapResult(
  * the results to the given [destination], returning early with the first [Err] if a
  * transformation fails.
  */
-inline fun <V, E, U, C : MutableCollection<in U>> Iterable<V>.mapResultTo(
+public inline fun <V, E, U, C : MutableCollection<in U>> Iterable<V>.mapResultTo(
     destination: C,
     transform: (V) -> Result<U, E>
 ): Result<C, E> {
@@ -168,7 +168,7 @@ inline fun <V, E, U, C : MutableCollection<in U>> Iterable<V>.mapResultTo(
  * given [transform] function to each element in the original collection, returning early with the
  * first [Err] if a transformation fails.
  */
-inline fun <V, E, U : Any> Iterable<V>.mapResultNotNull(
+public inline fun <V, E, U : Any> Iterable<V>.mapResultNotNull(
     transform: (V) -> Result<U, E>?
 ): Result<List<U>, E> {
     return Ok(mapNotNull { element ->
@@ -185,7 +185,7 @@ inline fun <V, E, U : Any> Iterable<V>.mapResultNotNull(
  * only the non-null results to the given [destination], returning early with the first [Err] if a
  * transformation fails.
  */
-inline fun <V, E, U : Any, C : MutableCollection<in U>> Iterable<V>.mapResultNotNullTo(
+public inline fun <V, E, U : Any, C : MutableCollection<in U>> Iterable<V>.mapResultNotNullTo(
     destination: C,
     transform: (V) -> Result<U, E>?
 ): Result<C, E> {
@@ -203,7 +203,7 @@ inline fun <V, E, U : Any, C : MutableCollection<in U>> Iterable<V>.mapResultNot
  * function to each element and its index in the original collection, returning early with the
  * first [Err] if a transformation fails.
  */
-inline fun <V, E, U> Iterable<V>.mapResultIndexed(
+public inline fun <V, E, U> Iterable<V>.mapResultIndexed(
     transform: (index: Int, V) -> Result<U, E>
 ): Result<List<U>, E> {
     return Ok(mapIndexed { index, element ->
@@ -219,7 +219,7 @@ inline fun <V, E, U> Iterable<V>.mapResultIndexed(
  * and appends the results to the given [destination], returning early with the first [Err] if a
  * transformation fails.
  */
-inline fun <V, E, U, C : MutableCollection<in U>> Iterable<V>.mapResultIndexedTo(
+public inline fun <V, E, U, C : MutableCollection<in U>> Iterable<V>.mapResultIndexedTo(
     destination: C,
     transform: (index: Int, V) -> Result<U, E>
 ): Result<C, E> {
@@ -236,7 +236,7 @@ inline fun <V, E, U, C : MutableCollection<in U>> Iterable<V>.mapResultIndexedTo
  * given [transform] function to each element and its index in the original collection, returning
  * early with the first [Err] if a transformation fails.
  */
-inline fun <V, E, U : Any> Iterable<V>.mapResultIndexedNotNull(
+public inline fun <V, E, U : Any> Iterable<V>.mapResultIndexedNotNull(
     transform: (index: Int, V) -> Result<U, E>?
 ): Result<List<U>, E> {
     return Ok(mapIndexedNotNull { index, element ->
@@ -253,7 +253,7 @@ inline fun <V, E, U : Any> Iterable<V>.mapResultIndexedNotNull(
  * and appends only the non-null results to the given [destination], returning early with the first
  * [Err] if a transformation fails.
  */
-inline fun <V, E, U : Any, C : MutableCollection<in U>> Iterable<V>.mapResultIndexedNotNullTo(
+public inline fun <V, E, U : Any, C : MutableCollection<in U>> Iterable<V>.mapResultIndexedNotNullTo(
     destination: C,
     transform: (index: Int, V) -> Result<U, E>?
 ): Result<C, E> {

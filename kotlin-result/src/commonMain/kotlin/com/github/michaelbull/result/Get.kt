@@ -9,7 +9,7 @@ import kotlin.contracts.contract
  * - Elm: [Result.toMaybe](http://package.elm-lang.org/packages/elm-lang/core/latest/Result#toMaybe)
  * - Rust: [Result.ok](https://doc.rust-lang.org/std/result/enum.Result.html#method.ok)
  */
-fun <V, E> Result<V, E>.get(): V? {
+public fun <V, E> Result<V, E>.get(): V? {
     contract {
         returnsNotNull() implies (this@get is Ok<V>)
         returns(null) implies (this@get is Err<E>)
@@ -26,7 +26,7 @@ fun <V, E> Result<V, E>.get(): V? {
  *
  * - Rust: [Result.err](https://doc.rust-lang.org/std/result/enum.Result.html#method.err)
  */
-fun <V, E> Result<V, E>.getError(): E? {
+public fun <V, E> Result<V, E>.getError(): E? {
     contract {
         returns(null) implies (this@getError is Ok<V>)
         returnsNotNull() implies (this@getError is Err<E>)
@@ -48,7 +48,7 @@ fun <V, E> Result<V, E>.getError(): E? {
  * @param default The value to return if [Err].
  * @return The [value][Ok.value] if [Ok], otherwise [default].
  */
-infix fun <V, E> Result<V, E>.getOr(default: V): V {
+public infix fun <V, E> Result<V, E>.getOr(default: V): V {
     return when (this) {
         is Ok -> value
         is Err -> default
@@ -56,7 +56,7 @@ infix fun <V, E> Result<V, E>.getOr(default: V): V {
 }
 
 @Deprecated("Use getOrElse instead", ReplaceWith("getOrElse { default() }"))
-inline infix fun <V, E> Result<V, E>.getOr(default: () -> V): V {
+public inline infix fun <V, E> Result<V, E>.getOr(default: () -> V): V {
     contract {
         callsInPlace(default, InvocationKind.AT_MOST_ONCE)
     }
@@ -72,7 +72,7 @@ inline infix fun <V, E> Result<V, E>.getOr(default: () -> V): V {
  * @param default The error to return if [Ok].
  * @return The [error][Err.error] if [Err], otherwise [default].
  */
-infix fun <V, E> Result<V, E>.getErrorOr(default: E): E {
+public infix fun <V, E> Result<V, E>.getErrorOr(default: E): E {
     return when (this) {
         is Ok -> default
         is Err -> error
@@ -80,7 +80,7 @@ infix fun <V, E> Result<V, E>.getErrorOr(default: E): E {
 }
 
 @Deprecated("Use getOrElse instead", ReplaceWith("getErrorOrElse { default() }"))
-inline infix fun <V, E> Result<V, E>.getErrorOr(default: () -> E): E {
+public inline infix fun <V, E> Result<V, E>.getErrorOr(default: () -> E): E {
     contract {
         callsInPlace(default, InvocationKind.AT_MOST_ONCE)
     }
@@ -95,7 +95,7 @@ inline infix fun <V, E> Result<V, E>.getErrorOr(default: () -> E): E {
  * - Elm: [Result.extract](http://package.elm-lang.org/packages/elm-community/result-extra/2.2.0/Result-Extra#extract)
  * - Rust: [Result.unwrap_or_else](https://doc.rust-lang.org/src/core/result.rs.html#735-740)
  */
-inline infix fun <V, E> Result<V, E>.getOrElse(transform: (E) -> V): V {
+public inline infix fun <V, E> Result<V, E>.getOrElse(transform: (E) -> V): V {
     contract {
         callsInPlace(transform, InvocationKind.AT_MOST_ONCE)
     }
@@ -110,7 +110,7 @@ inline infix fun <V, E> Result<V, E>.getOrElse(transform: (E) -> V): V {
  * Returns the [error][Err.error] if this [Result] is [Err], otherwise the
  * [transformation][transform] of the [value][Ok.value].
  */
-inline infix fun <V, E> Result<V, E>.getErrorOrElse(transform: (V) -> E): E {
+public inline infix fun <V, E> Result<V, E>.getErrorOrElse(transform: (V) -> E): E {
     contract {
         callsInPlace(transform, InvocationKind.AT_MOST_ONCE)
     }
@@ -127,7 +127,7 @@ inline infix fun <V, E> Result<V, E>.getErrorOrElse(transform: (V) -> E): E {
  *
  * - Scala: [MergeableEither.merge](https://www.scala-lang.org/api/2.12.0/scala/util/Either$$MergeableEither.html#merge:A)
  */
-fun <V : U, E : U, U> Result<V, E>.merge(): U {
+public fun <V : U, E : U, U> Result<V, E>.merge(): U {
     return when (this) {
         is Ok -> value
         is Err -> error

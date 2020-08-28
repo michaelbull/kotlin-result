@@ -11,7 +11,7 @@ private typealias Producer<T, E> = () -> Result<T, E>
  *
  * - Elm: http://package.elm-lang.org/packages/elm-lang/core/latest/Result#map2
  */
-inline fun <T1, T2, E, V> zip(
+public inline fun <T1, T2, E, V> zip(
     result1: Producer<T1, E>,
     result2: Producer<T2, E>,
     transform: (T1, T2) -> V
@@ -35,7 +35,7 @@ inline fun <T1, T2, E, V> zip(
  *
  * - Elm: http://package.elm-lang.org/packages/elm-lang/core/latest/Result#map3
  */
-inline fun <T1, T2, T3, E, V> zip(
+public inline fun <T1, T2, T3, E, V> zip(
     result1: Producer<T1, E>,
     result2: Producer<T2, E>,
     result3: Producer<T3, E>,
@@ -63,7 +63,7 @@ inline fun <T1, T2, T3, E, V> zip(
  *
  * - Elm: http://package.elm-lang.org/packages/elm-lang/core/latest/Result#map4
  */
-inline fun <T1, T2, T3, T4, E, V> zip(
+public inline fun <T1, T2, T3, T4, E, V> zip(
     result1: Producer<T1, E>,
     result2: Producer<T2, E>,
     result3: Producer<T3, E>,
@@ -95,7 +95,7 @@ inline fun <T1, T2, T3, T4, E, V> zip(
  *
  * - Elm: http://package.elm-lang.org/packages/elm-lang/core/latest/Result#map5
  */
-inline fun <T1, T2, T3, T4, T5, E, V> zip(
+public inline fun <T1, T2, T3, T4, T5, E, V> zip(
     result1: Producer<T1, E>,
     result2: Producer<T2, E>,
     result3: Producer<T3, E>,

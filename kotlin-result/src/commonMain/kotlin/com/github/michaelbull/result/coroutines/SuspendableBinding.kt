@@ -17,7 +17,7 @@ import kotlin.contracts.contract
         "Please import the kotlin-result-coroutines library to continue using this feature.",
     level = DeprecationLevel.WARNING
 )
-suspend inline fun <V, E> binding(crossinline block: suspend ResultBinding<E>.() -> V): Result<V, E> {
+public suspend inline fun <V, E> binding(crossinline block: suspend ResultBinding<E>.() -> V): Result<V, E> {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
     }

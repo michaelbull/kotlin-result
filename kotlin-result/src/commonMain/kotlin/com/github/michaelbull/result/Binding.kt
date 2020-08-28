@@ -24,7 +24,7 @@ import kotlin.contracts.contract
  *
  * @sample com.github.michaelbull.result.BindingTest
  */
-inline fun <V, E> binding(crossinline block: ResultBinding<E>.() -> V): Result<V, E> {
+public inline fun <V, E> binding(crossinline block: ResultBinding<E>.() -> V): Result<V, E> {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
     }
@@ -40,8 +40,8 @@ inline fun <V, E> binding(crossinline block: ResultBinding<E>.() -> V): Result<V
 
 internal expect object BindException : Exception
 
-interface ResultBinding<E> {
-    fun <V> Result<V, E>.bind(): V
+public interface ResultBinding<E> {
+    public fun <V> Result<V, E>.bind(): V
 }
 
 @PublishedApi

@@ -6,7 +6,7 @@ package com.github.michaelbull.result
  *
  * - Rust: [Result.iter](https://doc.rust-lang.org/std/result/enum.Result.html#method.iter)
  */
-fun <V, E> Result<V, E>.iterator(): Iterator<V> {
+public fun <V, E> Result<V, E>.iterator(): Iterator<V> {
     return ResultIterator(this)
 }
 
@@ -16,7 +16,7 @@ fun <V, E> Result<V, E>.iterator(): Iterator<V> {
  *
  * - Rust: [Result.iter_mut](https://doc.rust-lang.org/std/result/enum.Result.html#method.iter_mut)
  */
-fun <V, E> Result<V, E>.mutableIterator(): MutableIterator<V> {
+public fun <V, E> Result<V, E>.mutableIterator(): MutableIterator<V> {
     return ResultIterator(this)
 }
 

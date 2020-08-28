@@ -6,7 +6,7 @@ import kotlin.contracts.contract
 /**
  * Invokes an [action] if this [Result] is [Ok].
  */
-inline infix fun <V, E> Result<V, E>.onSuccess(action: (V) -> Unit): Result<V, E> {
+public inline infix fun <V, E> Result<V, E>.onSuccess(action: (V) -> Unit): Result<V, E> {
     contract {
         callsInPlace(action, InvocationKind.AT_MOST_ONCE)
     }
@@ -21,7 +21,7 @@ inline infix fun <V, E> Result<V, E>.onSuccess(action: (V) -> Unit): Result<V, E
 /**
  * Invokes an [action] if this [Result] is [Err].
  */
-inline infix fun <V, E> Result<V, E>.onFailure(action: (E) -> Unit): Result<V, E> {
+public inline infix fun <V, E> Result<V, E>.onFailure(action: (E) -> Unit): Result<V, E> {
     contract {
         callsInPlace(action, InvocationKind.AT_MOST_ONCE)
     }

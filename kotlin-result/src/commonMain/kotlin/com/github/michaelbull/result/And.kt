@@ -8,7 +8,7 @@ import kotlin.contracts.contract
  *
  * - Rust: [Result.and](https://doc.rust-lang.org/std/result/enum.Result.html#method.and)
  */
-infix fun <V, E> Result<V, E>.and(result: Result<V, E>): Result<V, E> {
+public infix fun <V, E> Result<V, E>.and(result: Result<V, E>): Result<V, E> {
     return when (this) {
         is Ok -> result
         is Err -> this
@@ -16,7 +16,7 @@ infix fun <V, E> Result<V, E>.and(result: Result<V, E>): Result<V, E> {
 }
 
 @Deprecated("Use andThen instead", ReplaceWith("andThen { result() }"))
-inline infix fun <V, E> Result<V, E>.and(result: () -> Result<V, E>): Result<V, E> {
+public inline infix fun <V, E> Result<V, E>.and(result: () -> Result<V, E>): Result<V, E> {
     contract {
         callsInPlace(result, InvocationKind.AT_MOST_ONCE)
     }
@@ -31,7 +31,7 @@ inline infix fun <V, E> Result<V, E>.and(result: () -> Result<V, E>): Result<V, 
  * - Elm: [Result.andThen](http://package.elm-lang.org/packages/elm-lang/core/latest/Result#andThen)
  * - Rust: [Result.and_then](https://doc.rust-lang.org/std/result/enum.Result.html#method.and_then)
  */
-inline infix fun <V, E, U> Result<V, E>.andThen(transform: (V) -> Result<U, E>): Result<U, E> {
+public inline infix fun <V, E, U> Result<V, E>.andThen(transform: (V) -> Result<U, E>): Result<U, E> {
     contract {
         callsInPlace(transform, InvocationKind.AT_MOST_ONCE)
     }

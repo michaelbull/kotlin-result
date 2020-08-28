@@ -64,6 +64,8 @@ subprojects {
             }
 
             configure<KotlinMultiplatformExtension> {
+                explicitApi()
+
                 jvm {
                     mavenPublication {
                         artifact(javadocJar.get())

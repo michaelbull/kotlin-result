@@ -3,7 +3,7 @@ package com.github.michaelbull.result
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
-class UnwrapException(message: String) : Exception(message)
+public class UnwrapException(message: String) : Exception(message)
 
 /**
  * Unwraps a [Result], yielding the [value][Ok.value].
@@ -12,7 +12,7 @@ class UnwrapException(message: String) : Exception(message)
  *
  * @throws UnwrapException if the [Result] is an [Err], with a message containing the [error][Err.error].
  */
-fun <V, E> Result<V, E>.unwrap(): V {
+public fun <V, E> Result<V, E>.unwrap(): V {
     contract {
         returns() implies (this@unwrap is Ok<V>)
     }
@@ -24,7 +24,7 @@ fun <V, E> Result<V, E>.unwrap(): V {
 }
 
 @Deprecated("Use lazy-evaluating variant instead", ReplaceWith("expect { message }"))
-infix fun <V, E> Result<V, E>.expect(message: String): V {
+public infix fun <V, E> Result<V, E>.expect(message: String): V {
     contract {
         returns() implies (this@expect is Ok<V>)
     }
@@ -40,7 +40,7 @@ infix fun <V, E> Result<V, E>.expect(message: String): V {
  * @param message The message to include in the [UnwrapException] if the [Result] is an [Err].
  * @throws UnwrapException if the [Result] is an [Err], with the specified [message].
  */
-inline infix fun <V, E> Result<V, E>.expect(message: () -> Any): V {
+public inline infix fun <V, E> Result<V, E>.expect(message: () -> Any): V {
     contract {
         callsInPlace(message, InvocationKind.AT_MOST_ONCE)
         returns() implies (this@expect is Ok<V>)
@@ -59,7 +59,7 @@ inline infix fun <V, E> Result<V, E>.expect(message: () -> Any): V {
  *
  * @throws UnwrapException if the [Result] is [Ok], with a message containing the [value][Ok.value].
  */
-fun <V, E> Result<V, E>.unwrapError(): E {
+public fun <V, E> Result<V, E>.unwrapError(): E {
     contract {
         returns() implies (this@unwrapError is Err<E>)
     }
@@ -71,7 +71,7 @@ fun <V, E> Result<V, E>.unwrapError(): E {
 }
 
 @Deprecated("Use lazy-evaluating variant instead", ReplaceWith("expectError { message }"))
-infix fun <V, E> Result<V, E>.expectError(message: String): E {
+public infix fun <V, E> Result<V, E>.expectError(message: String): E {
     contract {
         returns() implies (this@expectError is Err<E>)
     }
@@ -87,7 +87,7 @@ infix fun <V, E> Result<V, E>.expectError(message: String): E {
  * @param message The message to include in the [UnwrapException] if the [Result] is [Ok].
  * @throws UnwrapException if the [Result] is [Ok], with the specified [message].
  */
-inline infix fun <V, E> Result<V, E>.expectError(message: () -> Any): E {
+public inline infix fun <V, E> Result<V, E>.expectError(message: () -> Any): E {
     contract {
         callsInPlace(message, InvocationKind.AT_MOST_ONCE)
         returns() implies (this@expectError is Err<E>)

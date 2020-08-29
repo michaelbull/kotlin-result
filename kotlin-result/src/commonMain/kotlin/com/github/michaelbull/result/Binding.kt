@@ -21,8 +21,6 @@ import kotlin.contracts.contract
  *   x + y
  * }
  * ```
- *
- * @sample com.github.michaelbull.result.BindingTest
  */
 public inline fun <V, E> binding(crossinline block: ResultBinding<E>.() -> V): Result<V, E> {
     contract {

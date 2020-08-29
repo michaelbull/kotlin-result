@@ -14,7 +14,6 @@ plugins {
 
     kotlin("multiplatform") version Versions.kotlin apply false
     id("kotlinx.benchmark") version Versions.kotlinBenchmark apply false
-    id("net.researchgate.release") version Versions.releasePlugin apply false
     id("org.jetbrains.dokka") version Versions.dokka apply false
     id("org.jetbrains.kotlin.plugin.allopen") version Versions.kotlin apply false
 }
@@ -37,15 +36,7 @@ allprojects {
 
 subprojects {
     plugins.withType<MavenPublishPlugin> {
-        apply(plugin = "net.researchgate.release")
         apply(plugin = "org.gradle.signing")
-
-        val afterReleaseBuild by tasks.existing(DefaultTask::class)
-        val publish by tasks.existing(Task::class)
-
-        afterReleaseBuild {
-            dependsOn(publish)
-        }
 
         plugins.withType<KotlinMultiplatformPluginWrapper> {
             apply(plugin = "org.jetbrains.dokka")

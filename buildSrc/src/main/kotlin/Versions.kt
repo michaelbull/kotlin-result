@@ -5,6 +5,5 @@ object Versions {
     const val kotlinCoroutines = "1.3.9"
     const val ktor = "1.4.0"
     const val logback = "1.2.3"
-    const val releasePlugin = "2.8.1"
     const val versionsPlugin = "0.29.0"
 }

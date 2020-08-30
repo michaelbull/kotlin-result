@@ -116,6 +116,11 @@ subprojects {
                             name.set("Tristan Hamilton")
                             url.set("https://github.com/Munzey")
                         }
+
+                        contributor {
+                            name.set("Joseph Van der Wee")
+                            url.set("https://github.com/jvanderwee")
+                        }
                     }
 
                     scm {

@@ -263,17 +263,17 @@ Bug reports and pull requests are welcome on [GitHub][github].
 This project is available under the terms of the ISC license. See the
 [`LICENSE`](LICENSE) file for the copyright information and licensing terms.
 
-[result]: https://github.com/michaelbull/kotlin-result/blob/master/src/commonMain/kotlin/com/github/michaelbull/result/Result.kt#L10
-[result-ok]: https://github.com/michaelbull/kotlin-result/blob/master/src/commonMain/kotlin/com/github/michaelbull/result/Result.kt#L35
-[result-err]: https://github.com/michaelbull/kotlin-result/blob/master/src/commonMain/kotlin/com/github/michaelbull/result/Result.kt#L58
-[result-runCatching]: https://github.com/michaelbull/kotlin-result/blob/master/src/commonMain/kotlin/com/github/michaelbull/result/Factory.kt#L11
+[result]: https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/Result.kt#L10
+[result-ok]: https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/Result.kt#L35
+[result-err]: https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/Result.kt#L58
+[result-runCatching]: https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/Factory.kt#L11
 [swalschin-rop]: https://fsharpforfunandprofit.com/rop/
 [wiki]: https://github.com/michaelbull/kotlin-result/wiki
-[unit-tests]: https://github.com/michaelbull/kotlin-result/tree/master/src/commonTest/kotlin/com/github/michaelbull/result
+[unit-tests]: https://github.com/michaelbull/kotlin-result/tree/master/kotlin-result/src/commonTest/kotlin/com/github/michaelbull/result
 [example]: https://github.com/michaelbull/kotlin-result/tree/master/example/src/main/kotlin/com/github/michaelbull/result/example
 [swalschin-example]: https://github.com/swlaschin/Railway-Oriented-Programming-Example
 [ktor]: http://ktor.io/
-[customer-42]: https://github.com/michaelbull/kotlin-result/blob/master/example/src/main/kotlin/com/github/michaelbull/result/example/service/InMemoryCustomerRepository.kt#L38
+[customer-42]: https://github.com/michaelbull/kotlin-result/blob/master/example/src/main/kotlin/com/github/michaelbull/result/example/repository/InMemoryCustomerRepository.kt#L38
 [update-customer-error]: https://github.com/michaelbull/kotlin-result/blob/master/example/src/main/kotlin/com/github/michaelbull/result/example/service/CustomerService.kt#L50
 [github]: https://github.com/michaelbull/kotlin-result
 [bow-bindings]: https://bow-swift.io/docs/patterns/monad-comprehensions/#bindings

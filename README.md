@@ -197,7 +197,7 @@ Improvements on the existing solutions include:
 - Consistent naming with existing Result libraries from other languages (e.g.
     `map`, `mapError`, `mapBoth`, `mapEither`, `and`, `andThen`, `or`, `orElse`,
     `unwrap`)
-- Extensive test suite with over 50 [unit tests][unit-tests] covering every library method
+- Extensive test suite with almost 100 [unit tests][unit-tests] covering every library method
 
 ## Example
 

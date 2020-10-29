@@ -33,6 +33,12 @@ kotlin {
                 implementation(kotlin("test"))
             }
         }
+
+        val jsTest by getting {
+            dependencies {
+                implementation(kotlin("test-js"))
+            }
+        }
     }
 }
 

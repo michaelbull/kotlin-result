@@ -62,6 +62,11 @@ subprojects {
                         artifact(javadocJar.get())
                     }
                 }
+
+                js {
+                    browser()
+                    nodejs()
+                }
             }
         }
 

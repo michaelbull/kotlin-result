@@ -44,7 +44,7 @@ class AsyncSuspendableBindingTest {
     }
 
     @Test
-    fun returnsAnyErrIfBindingFailed() {
+    fun returnsAnyErrIfBindingFailed(): dynamic {
         suspend fun provideX(): Result<Int, BindingError> {
             delay(1)
             return Ok(1)
@@ -60,7 +60,7 @@ class AsyncSuspendableBindingTest {
             return Err(BindingError.BindingErrorB)
         }
 
-        runBlockingTest {
+        return runBlockingTest {
             val result = binding<Int, BindingError> {
                 val x = async { provideX().bind() }
                 val y = async { provideY().bind() }

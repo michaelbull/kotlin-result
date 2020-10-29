@@ -42,4 +42,33 @@ class AsyncSuspendableBindingTest {
             )
         }
     }
+
+    @Test
+    fun returnsAnyErrIfBindingFailed() {
+        suspend fun provideX(): Result<Int, BindingError> {
+            delay(1)
+            return Ok(1)
+        }
+
+        suspend fun provideY(): Result<Int, BindingError.BindingErrorA> {
+            delay(2)
+            return Err(BindingError.BindingErrorA)
+        }
+
+        suspend fun provideZ(): Result<Int, BindingError.BindingErrorB> {
+            delay(1)
+            return Err(BindingError.BindingErrorB)
+        }
+
+        runBlockingTest {
+            val result = binding<Int, BindingError> {
+                val x = async { provideX().bind() }
+                val y = async { provideY().bind() }
+                val z = async { provideZ().bind() }
+                x.await() + y.await() + z.await()
+            }
+
+            assertTrue(result is Err)
+        }
+    }
 }

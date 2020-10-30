@@ -14,31 +14,14 @@ import kotlin.contracts.contract
 
 /**
  * Suspending variant of [binding][com.github.michaelbull.result.binding].
+ * Wraps the suspendable block in a new coroutine scope.
+ * This scope is cancelled once a failing bind is encountered, allowing deferred child jobs to be eagerly cancelled.
  */
 public suspend inline fun <V, E> binding(crossinline block: suspend SuspendableResultBinding<E>.() -> V): Result<V, E> {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
     }
-    val receiver = SuspendableResultBindingImpl<E>(eagerlyCancel = false)
-
-    return try {
-        with(receiver) { Ok(block()) }
-    } catch (ex: BindCancellationException) {
-        receiver.internalError
-    }
-}
-
-/**
- * For use with [kotlinx.coroutines.async] wrapped binds. Eagerly cancels all deferred jobs once a failing bind is encountered.
- * A Suspending variant of [binding][com.github.michaelbull.result.binding] that wraps the suspendable block in a new coroutine scope.
- * When any bind fails in this scope, the coroutine scope will be cancelled which in turn cancels its children.
- * This can be useful in cases where long running or computation heavy async suspending calls are not needed to complete once the first binding fails.
- */
-public suspend inline fun <V, E> eagerlyCancelBinding(crossinline block: suspend SuspendableResultBinding<E>.() -> V): Result<V, E> {
-    contract {
-        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
-    }
-    val receiver = SuspendableResultBindingImpl<E>(eagerlyCancel = true)
+    val receiver = SuspendableResultBindingImpl<E>()
 
     return try {
         coroutineScope {
@@ -57,7 +40,7 @@ public interface SuspendableResultBinding<E> {
 }
 
 @PublishedApi
-internal class SuspendableResultBindingImpl<E>(private val eagerlyCancel: Boolean) : SuspendableResultBinding<E> {
+internal class SuspendableResultBindingImpl<E> : SuspendableResultBinding<E> {
 
     private val mutex = Mutex()
     lateinit var internalError: Err<E>
@@ -72,9 +55,7 @@ internal class SuspendableResultBindingImpl<E>(private val eagerlyCancel: Boolea
                         internalError = this
                     }
                 }
-                if (eagerlyCancel) {
-                    coroutineScope?.cancel(BindCancellationException)
-                }
+                coroutineScope?.cancel(BindCancellationException)
                 throw BindCancellationException
             }
         }

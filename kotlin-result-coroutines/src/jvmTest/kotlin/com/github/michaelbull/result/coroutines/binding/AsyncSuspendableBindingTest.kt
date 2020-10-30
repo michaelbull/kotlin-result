@@ -79,18 +79,18 @@ class AsyncSuspendableBindingTest {
     }
 
     @Test
-    fun returnsAllStateChangedIfAnyAsyncBindFailsWhenNotEagerlyCancellingBinding() {
+    fun returnsStateChangedForOnlyTheFirstAsyncBindFailWhenEagerlyCancellingBinding() {
         var xStateChange = false
         var yStateChange = false
         var zStateChange = false
         suspend fun provideX(): Result<Int, BindingError> {
-            delay(3)
+            delay(20)
             xStateChange = true
             return Ok(1)
         }
 
         suspend fun provideY(): Result<Int, BindingError.BindingErrorA> {
-            delay(2)
+            delay(10)
             yStateChange = true
             return Err(BindingError.BindingErrorA)
         }
@@ -103,48 +103,6 @@ class AsyncSuspendableBindingTest {
 
         runBlocking {
             val result = binding<Int, BindingError> {
-                val x = async { provideX().bind() }
-                val y = async { provideY().bind() }
-                val z = async { provideZ().bind() }
-                x.await() + y.await() + z.await()
-            }
-
-            assertTrue(result is Err)
-            assertEquals(
-                expected = BindingError.BindingErrorB,
-                actual = result.error
-            )
-            assertTrue(xStateChange)
-            assertTrue(yStateChange)
-            assertTrue(zStateChange)
-        }
-    }
-
-    @Test
-    fun returnsStateChangedForOnlyTheFirstAsyncBindFailWhenEagerlyCancellingBinding() {
-        var xStateChange = false
-        var yStateChange = false
-        var zStateChange = false
-        suspend fun provideX(): Result<Int, BindingError> {
-            delay(3)
-            xStateChange = true
-            return Ok(1)
-        }
-
-        suspend fun provideY(): Result<Int, BindingError.BindingErrorA> {
-            delay(2)
-            yStateChange = true
-            return Err(BindingError.BindingErrorA)
-        }
-
-        suspend fun provideZ(): Result<Int, BindingError.BindingErrorB> {
-            delay(1)
-            zStateChange = true
-            return Err(BindingError.BindingErrorB)
-        }
-
-        runBlocking {
-            val result = eagerlyCancelBinding<Int, BindingError> {
                 val x = async { provideX().bind() }
                 val y = async { provideY().bind() }
                 val z = async { provideZ().bind() }

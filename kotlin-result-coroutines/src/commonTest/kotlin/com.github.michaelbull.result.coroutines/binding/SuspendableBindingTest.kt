@@ -102,7 +102,7 @@ class SuspendableBindingTest {
     }
 
     @Test
-    fun returnsStateChangedUntilFirstBindFailedWhenBindingSetToNotCancelEagerly() {
+    fun returnsStateChangedUntilFirstBindFailed() {
         var xStateChange = false
         var yStateChange = false
         var zStateChange = false
@@ -125,49 +125,7 @@ class SuspendableBindingTest {
         }
 
         runBlockingTest {
-            val result = binding<Int, BindingError>(eagerlyCancel = false) {
-                val x = provideX().bind()
-                val y = provideY().bind()
-                val z = provideZ().bind()
-                x + y + z
-            }
-
-            assertTrue(result is Err)
-            assertEquals(
-                expected = BindingError,
-                actual = result.error
-            )
-            assertTrue(xStateChange)
-            assertTrue(yStateChange)
-            assertFalse(zStateChange)
-        }
-    }
-
-    @Test
-    fun returnsStateChangedUntilFirstBindFailedWhenBindingSetToCancelEagerly() {
-        var xStateChange = false
-        var yStateChange = false
-        var zStateChange = false
-        suspend fun provideX(): Result<Int, BindingError> {
-            delay(1)
-            xStateChange = true
-            return Ok(1)
-        }
-
-        suspend fun provideY(): Result<Int, BindingError> {
-            delay(10)
-            yStateChange = true
-            return Err(BindingError)
-        }
-
-        suspend fun provideZ(): Result<Int, BindingError> {
-            delay(1)
-            zStateChange = true
-            return Err(BindingError)
-        }
-
-        runBlockingTest {
-            val result = binding<Int, BindingError>(eagerlyCancel = true) {
+            val result = binding<Int, BindingError> {
                 val x = provideX().bind()
                 val y = provideY().bind()
                 val z = provideZ().bind()

@@ -79,7 +79,7 @@ class AsyncSuspendableBindingTest {
     }
 
     @Test
-    fun returnsAllStateChangedIfAnyBindFailedWhenBindingSetToNotCancelEagerly() {
+    fun returnsAllStateChangedIfAnyAsyncBindFailsWhenNotEagerlyCancellingBinding() {
         var xStateChange = false
         var yStateChange = false
         var zStateChange = false
@@ -102,7 +102,7 @@ class AsyncSuspendableBindingTest {
         }
 
         runBlocking {
-            val result = binding<Int, BindingError>(eagerlyCancel = false) {
+            val result = binding<Int, BindingError> {
                 val x = async { provideX().bind() }
                 val y = async { provideY().bind() }
                 val z = async { provideZ().bind() }
@@ -121,7 +121,7 @@ class AsyncSuspendableBindingTest {
     }
 
     @Test
-    fun returnsStateChangedForOnlyTheFirstBindFailedWhenBindingSetToCancelEagerly() {
+    fun returnsStateChangedForOnlyTheFirstAsyncBindFailWhenEagerlyCancellingBinding() {
         var xStateChange = false
         var yStateChange = false
         var zStateChange = false
@@ -144,7 +144,7 @@ class AsyncSuspendableBindingTest {
         }
 
         runBlocking {
-            val result = binding<Int, BindingError>(eagerlyCancel = true) {
+            val result = eagerlyCancelBinding<Int, BindingError> {
                 val x = async { provideX().bind() }
                 val y = async { provideY().bind() }
                 val z = async { provideZ().bind() }

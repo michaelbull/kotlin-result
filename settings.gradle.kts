@@ -3,7 +3,8 @@ rootProject.name = "kotlin-result"
 include(
     "example",
     "kotlin-result",
-    "kotlin-result-coroutines"
+    "kotlin-result-coroutines",
+    "benchmarks"
 )
 
 pluginManagement {

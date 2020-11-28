@@ -3,21 +3,6 @@ description = "A Result monad for modelling success or failure operations."
 plugins {
     `maven-publish`
     kotlin("multiplatform")
-    id("org.jetbrains.kotlin.plugin.allopen")
-    id("kotlinx.benchmark")
-}
-
-allOpen {
-    annotation("org.openjdk.jmh.annotations.State")
-    annotation("org.openjdk.jmh.annotations.BenchmarkMode")
-}
-
-sourceSets.create("benchmark")
-
-benchmark {
-    targets {
-        register("jvmBenchmark")
-    }
 }
 
 kotlin {
@@ -54,12 +39,6 @@ kotlin {
             }
         }
 
-        val jvmBenchmark by getting {
-            dependsOn(jvmMain)
-            dependencies {
-                implementation("org.jetbrains.kotlinx:kotlinx.benchmark.runtime:${Versions.kotlinBenchmark}")
-            }
-        }
     }
 }
 

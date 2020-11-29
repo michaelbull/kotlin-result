@@ -83,13 +83,13 @@ class AsyncSuspendableBindingTest {
         var yStateChange = false
         var zStateChange = false
         suspend fun provideX(): Result<Int, BindingError> {
-            delay(10)
+            delay(20)
             xStateChange = true
             return Ok(1)
         }
 
         suspend fun provideY(): Result<Int, BindingError.BindingErrorA> {
-            delay(20)
+            delay(10)
             yStateChange = true
             return Err(BindingError.BindingErrorA)
         }

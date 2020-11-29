@@ -26,7 +26,7 @@ class SuspendableBindingTest {
             return Ok(2)
         }
 
-        runBlockingTest {
+        return runBlockingTest {
             val result = binding<Int, BindingError> {
                 val x = provideX().bind()
                 val y = provideY().bind()
@@ -53,7 +53,7 @@ class SuspendableBindingTest {
             return Ok(x + 2)
         }
 
-        runBlockingTest {
+        return runBlockingTest {
             val result = binding<Int, BindingError> {
                 val x = provideX().bind()
                 val y = provideY(x.toInt()).bind()
@@ -85,7 +85,7 @@ class SuspendableBindingTest {
             return Ok(2)
         }
 
-        runBlockingTest {
+        return runBlockingTest {
             val result = binding<Int, BindingError> {
                 val x = provideX().bind()
                 val y = provideY().bind()
@@ -160,7 +160,7 @@ class SuspendableBindingTest {
             return Ok(2)
         }
 
-        runBlockingTest {
+        return runBlockingTest {
             val result = binding<Int, BindingError> {
                 val x = provideX().bind()
                 val y = provideY().bind()

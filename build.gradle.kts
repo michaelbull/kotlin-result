@@ -67,6 +67,8 @@ subprojects {
                     browser()
                     nodejs()
                 }
+
+                ios()
             }
         }
 

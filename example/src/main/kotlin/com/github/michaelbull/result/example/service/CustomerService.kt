@@ -1,69 +1,126 @@
 package com.github.michaelbull.result.example.service
 
+import com.github.michaelbull.result.Err
+import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.andThen
+import com.github.michaelbull.result.example.model.domain.Created
 import com.github.michaelbull.result.example.model.domain.Customer
-import com.github.michaelbull.result.example.model.domain.CustomerCreated
-import com.github.michaelbull.result.example.model.domain.CustomerId
+import com.github.michaelbull.result.example.model.domain.CustomerIdMustBePositive
 import com.github.michaelbull.result.example.model.domain.CustomerNotFound
+import com.github.michaelbull.result.example.model.domain.CustomerRequired
 import com.github.michaelbull.result.example.model.domain.DatabaseError
 import com.github.michaelbull.result.example.model.domain.DatabaseTimeout
 import com.github.michaelbull.result.example.model.domain.DomainMessage
 import com.github.michaelbull.result.example.model.domain.EmailAddressChanged
+import com.github.michaelbull.result.example.model.domain.Event
+import com.github.michaelbull.result.example.model.domain.FirstNameChanged
+import com.github.michaelbull.result.example.model.domain.LastNameChanged
+import com.github.michaelbull.result.example.model.dto.CustomerDto
 import com.github.michaelbull.result.example.model.entity.CustomerEntity
+import com.github.michaelbull.result.example.model.entity.CustomerId
+import com.github.michaelbull.result.example.repository.CustomerRepository
+import com.github.michaelbull.result.getOrElse
 import com.github.michaelbull.result.map
-import com.github.michaelbull.result.mapAll
-import com.github.michaelbull.result.mapBoth
 import com.github.michaelbull.result.mapError
 import com.github.michaelbull.result.runCatching
 import com.github.michaelbull.result.toResultOr
+import com.github.michaelbull.result.zip
 import java.sql.SQLTimeoutException
 
-object CustomerService {
-    private val repository = InMemoryCustomerRepository()
+class CustomerService(
+    private val repository: CustomerRepository
+) {
 
-    fun getAll(): Result<Collection<Customer>, DomainMessage> {
-        return runCatching(repository::findAll)
-            .mapError(::exceptionToDomainMessage)
-            .mapAll(Customer.Companion::from)
+    fun getById(id: Long): Result<CustomerDto, DomainMessage> {
+        return parseCustomerId(id)
+            .andThen(::findById)
+            .map(::entityToDto)
     }
 
-    fun getById(id: CustomerId): Result<Customer, DomainMessage> {
-        return getAll().andThen { customers -> customers.findCustomer(id) }
+    fun save(id: Long, dto: CustomerDto): Result<Event?, DomainMessage> {
+        return parseCustomerId(id)
+            .andThen { upsert(it, dto) }
     }
 
-    fun upsert(customer: Customer): Result<DomainMessage?, DomainMessage> {
-        val entity = CustomerEntity.from(customer)
-        return getById(customer.id).mapBoth(
-            success = { existing -> updateCustomer(entity, existing, customer) },
-            failure = { createCustomer(entity) }
+    private fun parseCustomerId(id: Long?) = when {
+        id == null -> Err(CustomerRequired)
+        id < 1 -> Err(CustomerIdMustBePositive)
+        else -> Ok(CustomerId(id))
+    }
+
+    private fun entityToDto(entity: CustomerEntity): CustomerDto {
+        return CustomerDto(
+            firstName = entity.firstName,
+            lastName = entity.lastName,
+            email = entity.email
         )
     }
 
-    private fun updateCustomer(entity: CustomerEntity, old: Customer, new: Customer) =
-        runCatching { repository.update(entity) }
-            .map { differenceBetween(old, new) }
-            .mapError(::exceptionToDomainMessage)
-
-    private fun createCustomer(entity: CustomerEntity) =
-        runCatching { repository.insert(entity) }
-            .map { CustomerCreated }
-            .mapError(::exceptionToDomainMessage)
-
-    private fun Collection<Customer>.findCustomer(id: CustomerId): Result<Customer, CustomerNotFound> {
-        return find { it.id == id }.toResultOr { CustomerNotFound }
+    private fun findById(id: CustomerId): Result<CustomerEntity, CustomerNotFound> {
+        return repository.findById(id)
+            .toResultOr { CustomerNotFound }
     }
 
-    private fun differenceBetween(old: Customer, new: Customer): EmailAddressChanged? {
-        return if (new.email != old.email) {
-            EmailAddressChanged(old.email.address, new.email.address)
+    private fun upsert(id: CustomerId, dto: CustomerDto): Result<Event?, DomainMessage> {
+        val existingCustomer = repository.findById(id)
+
+        return if (existingCustomer != null) {
+            update(existingCustomer, dto)
         } else {
-            null
+            insert(id, dto)
         }
+    }
+
+    private fun update(entity: CustomerEntity, dto: CustomerDto): Result<Event?, DomainMessage> {
+        val validated = validate(dto).getOrElse { return Err(it) }
+
+        val updated = entity.copy(
+            firstName = validated.name.first,
+            lastName = validated.name.last,
+            email = validated.email.address
+        )
+
+        return runCatching { repository.save(updated) }
+            .map { compare(entity, updated) }
+            .mapError(::exceptionToDomainMessage)
+    }
+
+    private fun insert(id: CustomerId, dto: CustomerDto): Result<Created, DomainMessage> {
+        val entity = createEntity(id, dto).getOrElse { return Err(it) }
+
+        return runCatching { repository.save(entity) }
+            .map { Created }
+            .mapError(::exceptionToDomainMessage)
+    }
+
+    private fun validate(dto: CustomerDto): Result<Customer, DomainMessage> {
+        return zip(
+            { PersonalNameParser.parse(dto.firstName, dto.lastName) },
+            { EmailAddressParser.parse(dto.email) },
+            ::Customer
+        )
+    }
+
+    private fun createEntity(id: CustomerId, dto: CustomerDto): Result<CustomerEntity, DomainMessage> {
+        return zip(
+            { PersonalNameParser.parse(dto.firstName, dto.lastName) },
+            { EmailAddressParser.parse(dto.email) },
+            { (first, last), (address) -> CustomerEntity(id, first, last, address) }
+        )
     }
 
     private fun exceptionToDomainMessage(t: Throwable) = when (t) {
         is SQLTimeoutException -> DatabaseTimeout
         else -> DatabaseError(t.message)
+    }
+
+    private fun compare(old: CustomerEntity, new: CustomerEntity): Event? {
+        return when {
+            new.firstName != old.firstName -> FirstNameChanged(old.firstName, new.firstName)
+            new.lastName != old.lastName -> LastNameChanged(old.lastName, new.lastName)
+            new.email != old.email -> EmailAddressChanged(old.email, new.email)
+            else -> null
+        }
     }
 }

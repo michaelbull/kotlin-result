@@ -1,5 +1,7 @@
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 import org.jetbrains.dokka.gradle.DokkaTask
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginWrapper
 
 val ossrhUsername: String? by ext
 val ossrhPassword: String? by ext
@@ -7,35 +9,21 @@ val ossrhPassword: String? by ext
 description = "A Result monad for modelling success or failure operations."
 
 plugins {
-    `maven-publish`
-    signing
-    kotlin("multiplatform") version "1.3.72"
-    id("org.jetbrains.dokka") version "0.10.1"
-    id("com.github.ben-manes.versions") version "0.28.0"
-    id("net.researchgate.release") version "2.8.1"
-    id("kotlinx.benchmark") version "0.2.0-dev-8"
-    id("org.jetbrains.kotlin.plugin.allopen") version "1.3.72"
+    base
+    id("com.github.ben-manes.versions") version Versions.versionsPlugin
+
+    kotlin("multiplatform") version Versions.kotlin apply false
+    id("kotlinx.benchmark") version Versions.kotlinBenchmark apply false
+    id("org.jetbrains.dokka") version Versions.dokka apply false
+    id("org.jetbrains.kotlin.plugin.allopen") version Versions.kotlin apply false
 }
 
 tasks.withType<DependencyUpdatesTask> {
     rejectVersionIf {
-        listOf("alpha", "beta", "rc", "cr", "m", "eap", "pr").any {
+        listOf("alpha", "beta", "rc", "cr", "m", "eap", "pr", "dev").any {
             candidate.version.contains(it, ignoreCase = true)
         }
     }
-}
-
-val dokka by tasks.existing(DokkaTask::class) {
-    outputFormat = "javadoc"
-    outputDirectory = "$buildDir/docs/javadoc"
-}
-
-val javadocJar by tasks.registering(Jar::class) {
-    group = LifecycleBasePlugin.BUILD_GROUP
-    description = "Assembles a jar archive containing the Javadoc API documentation."
-    archiveClassifier.set("javadoc")
-    dependsOn(dokka)
-    from(dokka.get().outputDirectory)
 }
 
 allprojects {
@@ -46,155 +34,122 @@ allprojects {
     }
 }
 
-allOpen {
-    annotation("org.openjdk.jmh.annotations.State")
-    annotation("org.openjdk.jmh.annotations.BenchmarkMode")
-}
+subprojects {
+    plugins.withType<MavenPublishPlugin> {
+        apply(plugin = "org.gradle.signing")
 
-sourceSets.create("benchmark")
+        plugins.withType<KotlinMultiplatformPluginWrapper> {
+            apply(plugin = "org.jetbrains.dokka")
 
-benchmark {
-    targets {
-        register("jvmBenchmark")
-    }
-}
-
-kotlin {
-    ios()
-    jvm {
-        withJava()
-
-        mavenPublication {
-            artifact(javadocJar.get())
-        }
-
-        compilations.all {
-            kotlinOptions {
-                jvmTarget = "1.8"
+            val dokka by tasks.existing(DokkaTask::class) {
+                outputFormat = "javadoc"
+                outputDirectory = "$buildDir/docs/javadoc"
             }
-        }
-    }
 
-    sourceSets {
-        all {
-            languageSettings.apply {
-                useExperimentalAnnotation("kotlin.contracts.ExperimentalContracts")
+            val javadocJar by tasks.registering(Jar::class) {
+                group = LifecycleBasePlugin.BUILD_GROUP
+                description = "Assembles a jar archive containing the Javadoc API documentation."
+                archiveClassifier.set("javadoc")
+                dependsOn(dokka)
+                from(dokka.get().outputDirectory)
             }
-        }
 
-        val commonMain by getting {
-            dependencies {
-                implementation(kotlin("stdlib-common"))
+            configure<KotlinMultiplatformExtension> {
+                explicitApi()
+
+                jvm {
+                    mavenPublication {
+                        artifact(javadocJar.get())
+                    }
+                }
+
+                js {
+                    browser()
+                    nodejs()
+                }
             }
         }
 
-        val commonTest by getting {
-            dependencies {
-                implementation(kotlin("test-common"))
-                implementation(kotlin("test-annotations-common"))
-            }
-        }
+        configure<PublishingExtension> {
+            repositories {
+                maven {
+                    if (project.version.toString().endsWith("SNAPSHOT")) {
+                        setUrl("https://oss.sonatype.org/content/repositories/snapshots")
+                    } else {
+                        setUrl("https://oss.sonatype.org/service/local/staging/deploy/maven2")
+                    }
 
-        val jvmMain by getting {
-            dependencies {
-                implementation(kotlin("stdlib-jdk8"))
-            }
-        }
-
-        val jvmTest by getting {
-            dependencies {
-                implementation(kotlin("test-junit"))
-                implementation(kotlin("test"))
-            }
-        }
-
-        val jvmBenchmark by getting {
-            dependsOn(jvmMain)
-            dependencies {
-                implementation("org.jetbrains.kotlinx:kotlinx.benchmark.runtime-jvm:0.2.0-dev-8")
-            }
-        }
-    }
-}
-
-publishing {
-    repositories {
-        maven {
-            if (project.version.toString().endsWith("SNAPSHOT")) {
-                setUrl("https://oss.sonatype.org/content/repositories/snapshots")
-            } else {
-                setUrl("https://oss.sonatype.org/service/local/staging/deploy/maven2")
-            }
-
-            credentials {
-                username = ossrhUsername
-                password = ossrhPassword
-            }
-        }
-    }
-
-    publications.withType<MavenPublication> {
-        pom {
-            name.set(project.name)
-            description.set(project.description)
-            url.set("https://github.com/michaelbull/kotlin-result")
-            inceptionYear.set("2017")
-
-            licenses {
-                license {
-                    name.set("ISC License")
-                    url.set("https://opensource.org/licenses/isc-license.txt")
+                    credentials {
+                        username = ossrhUsername
+                        password = ossrhPassword
+                    }
                 }
             }
 
-            developers {
-                developer {
-                    name.set("Michael Bull")
-                    url.set("https://www.michael-bull.com")
+            publications.withType<MavenPublication> {
+                pom {
+                    name.set(project.name)
+                    url.set("https://github.com/michaelbull/kotlin-result")
+                    inceptionYear.set("2017")
+
+                    licenses {
+                        license {
+                            name.set("ISC License")
+                            url.set("https://opensource.org/licenses/isc-license.txt")
+                        }
+                    }
+
+                    developers {
+                        developer {
+                            name.set("Michael Bull")
+                            url.set("https://www.michael-bull.com")
+                        }
+                    }
+
+                    contributors {
+                        contributor {
+                            name.set("Kevin Herron")
+                            url.set("https://github.com/kevinherron")
+                        }
+
+                        contributor {
+                            name.set("Markus Padourek")
+                            url.set("https://github.com/Globegitter")
+                        }
+
+                        contributor {
+                            name.set("Tristan Hamilton")
+                            url.set("https://github.com/Munzey")
+                        }
+
+                        contributor {
+                            name.set("Joseph Van der Wee")
+                            url.set("https://github.com/jvanderwee")
+                        }
+                    }
+
+                    scm {
+                        connection.set("scm:git:https://github.com/michaelbull/kotlin-result")
+                        developerConnection.set("scm:git:git@github.com:michaelbull/kotlin-result.git")
+                        url.set("https://github.com/michaelbull/kotlin-result")
+                    }
+
+                    issueManagement {
+                        system.set("GitHub")
+                        url.set("https://github.com/michaelbull/kotlin-result/issues")
+                    }
+
+                    ciManagement {
+                        system.set("GitHub")
+                        url.set("https://github.com/michaelbull/kotlin-result/actions?query=workflow%3Aci")
+                    }
                 }
             }
 
-            contributors {
-                contributor {
-                    name.set("Kevin Herron")
-                    url.set("https://github.com/kevinherron")
-                }
-
-                contributor {
-                    name.set("Markus Padourek")
-                    url.set("https://github.com/Globegitter")
-                }
-
-                contributor {
-                    name.set("Tristan Hamilton")
-                    url.set("https://github.com/Munzey")
-                }
-            }
-
-            scm {
-                connection.set("scm:git:https://github.com/michaelbull/kotlin-result")
-                developerConnection.set("scm:git:git@github.com:michaelbull/kotlin-result.git")
-                url.set("https://github.com/michaelbull/kotlin-result")
-            }
-
-            issueManagement {
-                system.set("GitHub")
-                url.set("https://github.com/michaelbull/kotlin-result/issues")
-            }
-
-            ciManagement {
-                system.set("GitHub")
-                url.set("https://github.com/michaelbull/kotlin-result/actions?query=workflow%3Aci")
+            configure<SigningExtension> {
+                useGpgCmd()
+                sign(publications)
             }
         }
     }
-}
-
-signing {
-    useGpgCmd()
-    sign(publishing.publications)
-}
-
-tasks.afterReleaseBuild {
-    dependsOn(tasks.publish)
 }

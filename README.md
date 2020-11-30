@@ -13,7 +13,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.michael-bull.kotlin-result:kotlin-result:1.1.7")
+    implementation("com.michael-bull.kotlin-result:kotlin-result:1.1.9")
 }
 ```
 
@@ -118,7 +118,7 @@ fun functionX(): Result<Int, DomainError> { ... }
 fun functionY(): Result<Int, DomainError> { ... }
 fun functionZ(): Result<Int, DomainError> { ... }
 
-val sum: Result<Int, ExampleErr> = binding {
+val sum: Result<Int, DomainError> = binding {
     val x = functionX().bind()
     val y = functionY().bind()
     val z = functionZ().bind()
@@ -135,6 +135,36 @@ resources on the topic of monad comprehensions.
 - [Monad comprehensions - Arrow (Kotlin)][arrow-monad-comprehension]
 - [Monad comprehensions - Bow (Swift)][bow-monad-comprehension]
 - [For comprehensions - Scala][scala-for-comprehension]
+
+#### Coroutine Support
+
+Use of coroutines within a `binding` block requires an additional dependency:
+
+```kotlin
+dependencies {
+    implementation("com.michael-bull.kotlin-result:kotlin-result:1.1.9")
+    implementation("com.michael-bull.kotlin-result:kotlin-result-coroutines:1.1.9")
+}
+```
+
+This allows for asynchronous binds to operate so that if a bind were to fail,
+the binding block will return with the first failing async result:
+
+```kotlin
+
+suspend fun failsIn5ms(): Result<Int, DomainErrorA> { ... }
+suspend fun failsIn1ms(): Result<Int, DomainErrorB> { ... }
+
+runBlocking{
+    val result = binding<Int, BindingError> {
+        val x = async { failsIn5ms().bind() }
+        val y = async { failsIn1ms().bind() }
+        x.await() + y.await()
+    }
+
+    // result will be Err(DomainErrorB)
+}
+```
 
 ## Inspiration
 
@@ -167,7 +197,7 @@ Improvements on the existing solutions include:
 - Consistent naming with existing Result libraries from other languages (e.g.
     `map`, `mapError`, `mapBoth`, `mapEither`, `and`, `andThen`, `or`, `orElse`,
     `unwrap`)
-- Extensive test suite with over 50 [unit tests][unit-tests] covering every library method
+- Extensive test suite with almost 100 [unit tests][unit-tests] covering every library method
 
 ## Example
 
@@ -187,19 +217,18 @@ user-facing errors.
 #### Fetch customer information
 
 ```
-$ curl -i -X GET  'http://localhost:9000/customers/5'
+$ curl -i -X GET  'http://localhost:9000/customers/1'
 ```
 
 ```
 HTTP/1.1 200 OK
 Content-Type: application/json; charset=UTF-8
-Content-Length: 93
+Content-Length: 84
 
 {
-  "id": 5,
   "firstName": "Michael",
   "lastName": "Bull",
-  "email": "example@email.com"
+  "email": "michael@example.com"
 }
 ```
 
@@ -212,7 +241,7 @@ $ curl -i -X POST \
 '{
   "firstName": "Your",
   "lastName": "Name",
-  "email": "your@email.com"
+  "email": "email@example.com"
 }' \
  'http://localhost:9000/customers/200'
 ```
@@ -234,17 +263,17 @@ Bug reports and pull requests are welcome on [GitHub][github].
 This project is available under the terms of the ISC license. See the
 [`LICENSE`](LICENSE) file for the copyright information and licensing terms.
 
-[result]: https://github.com/michaelbull/kotlin-result/blob/master/src/main/kotlin/com/github/michaelbull/result/Result.kt#L10
-[result-ok]: https://github.com/michaelbull/kotlin-result/blob/master/src/main/kotlin/com/github/michaelbull/result/Result.kt#L31
-[result-err]: https://github.com/michaelbull/kotlin-result/blob/master/src/main/kotlin/com/github/michaelbull/result/Result.kt#L36
-[result-runCatching]: https://github.com/michaelbull/kotlin-result/blob/master/src/main/kotlin/com/github/michaelbull/result/Factory.kt#L11
+[result]: https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/Result.kt#L10
+[result-ok]: https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/Result.kt#L35
+[result-err]: https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/Result.kt#L58
+[result-runCatching]: https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/Factory.kt#L11
 [swalschin-rop]: https://fsharpforfunandprofit.com/rop/
 [wiki]: https://github.com/michaelbull/kotlin-result/wiki
-[unit-tests]: https://github.com/michaelbull/kotlin-result/tree/master/src/test/kotlin/com/github/michaelbull/result
+[unit-tests]: https://github.com/michaelbull/kotlin-result/tree/master/kotlin-result/src/commonTest/kotlin/com/github/michaelbull/result
 [example]: https://github.com/michaelbull/kotlin-result/tree/master/example/src/main/kotlin/com/github/michaelbull/result/example
 [swalschin-example]: https://github.com/swlaschin/Railway-Oriented-Programming-Example
 [ktor]: http://ktor.io/
-[customer-42]: https://github.com/michaelbull/kotlin-result/blob/master/example/src/main/kotlin/com/github/michaelbull/result/example/service/InMemoryCustomerRepository.kt#L38
+[customer-42]: https://github.com/michaelbull/kotlin-result/blob/master/example/src/main/kotlin/com/github/michaelbull/result/example/repository/InMemoryCustomerRepository.kt#L38
 [update-customer-error]: https://github.com/michaelbull/kotlin-result/blob/master/example/src/main/kotlin/com/github/michaelbull/result/example/service/CustomerService.kt#L50
 [github]: https://github.com/michaelbull/kotlin-result
 [bow-bindings]: https://bow-swift.io/docs/patterns/monad-comprehensions/#bindings

@@ -45,13 +45,17 @@ subprojects {
         plugins.withType<KotlinMultiplatformPluginWrapper> {
             apply(plugin = "org.jetbrains.dokka")
 
-            val dokkaJavadoc by tasks.existing(DokkaTask::class)
+            val dokka by tasks.existing(DokkaTask::class) {
+                outputFormat = "javadoc"
+                outputDirectory = "$buildDir/docs/javadoc"
+            }
 
             val javadocJar by tasks.registering(Jar::class) {
                 group = LifecycleBasePlugin.BUILD_GROUP
                 description = "Assembles a jar archive containing the Javadoc API documentation."
                 archiveClassifier.set("javadoc")
-                from(dokkaJavadoc)
+                dependsOn(dokka)
+                from(dokka.get().outputDirectory)
             }
 
             configure<KotlinMultiplatformExtension> {

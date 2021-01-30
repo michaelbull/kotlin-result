@@ -3,8 +3,12 @@ import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginWrapper
 
-val ossrhUsername: String? by ext
-val ossrhPassword: String? by ext
+val ossrhUsername: String? by project
+val ossrhPassword: String? by project
+
+val signingKeyId: String? by project // must be the last 8 digits of the key
+val signingKey: String? by project
+val signingPassword: String? by project
 
 description = "A Result monad for modelling success or failure operations."
 
@@ -147,7 +151,7 @@ subprojects {
             }
 
             configure<SigningExtension> {
-                useGpgCmd()
+                useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
                 sign(publications)
             }
         }

@@ -38,7 +38,7 @@ library. Feel free to open a pull request on [GitHub][github] if you would like
 to include yours.
 
 - [[EN] The Result Monad - Adam Bennett](https://adambennett.dev/2020/05/the-result-monad/)
-- [[EN] A functional Approach to Exception Handling - Tristan Hamilton](https://youtu.be/bEC_t8dH23c?t=132)
+- [[EN] A Functional Approach to Exception Handling - Tristan Hamilton](https://youtu.be/bEC_t8dH23c?t=132)
 - [[EN] kotlin: A functional gold mine - Mark Bucciarelli](http://markbucciarelli.com/posts/2020-01-04_kotlin_functional_gold_mine.html)
 - [[EN] Railway Oriented Programming - Scott Wlaschin](https://fsharpforfunandprofit.com/rop/)
 - [[JP] KotlinでResult型使うならkotlin-resultを使おう](https://note.com/yasukotelin/n/n6d9e352c344c)

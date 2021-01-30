@@ -44,7 +44,7 @@ to include yours.
 - [[JP] KotlinでResult型使うならkotlin-resultを使おう](https://note.com/yasukotelin/n/n6d9e352c344c)
 - [[JP] kotlinのコードにReturn Resultを組み込む](https://nnao45.hatenadiary.com/entry/2019/11/30/224820)
 
-### Creating Results
+## Getting Started
 
 The idiomatic approach to modelling operations that may fail in Railway
 Oriented Programming is to avoid throwing an exception and instead make the

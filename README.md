@@ -13,7 +13,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.michael-bull.kotlin-result:kotlin-result:1.1.9")
+    implementation("com.michael-bull.kotlin-result:kotlin-result:1.1.10")
 }
 ```
 
@@ -142,8 +142,8 @@ Use of coroutines within a `binding` block requires an additional dependency:
 
 ```kotlin
 dependencies {
-    implementation("com.michael-bull.kotlin-result:kotlin-result:1.1.9")
-    implementation("com.michael-bull.kotlin-result:kotlin-result-coroutines:1.1.9")
+    implementation("com.michael-bull.kotlin-result:kotlin-result:1.1.10")
+    implementation("com.michael-bull.kotlin-result:kotlin-result-coroutines:1.1.10")
 }
 ```
 

@@ -23,9 +23,6 @@ The [`Result`][result] monad has two subtypes, [`Ok<V>`][result-ok]
 representing success and containing a `value`, and [`Err<E>`][result-err],
 representing failure and containing an `error`.
 
-Scott Wlaschin's article on [Railway Oriented Programming][swalschin-rop] is a great
-introduction to the benefits of modelling operations using the `Result` type.
-
 Mappings are available on the [wiki][wiki] to assist those with experience
 using the `Result` type in other languages:
 
@@ -33,6 +30,19 @@ using the `Result` type in other languages:
 - [Haskell](https://github.com/michaelbull/kotlin-result/wiki/Haskell)
 - [Rust](https://github.com/michaelbull/kotlin-result/wiki/Rust)
 - [Scala](https://github.com/michaelbull/kotlin-result/wiki/Scala)
+
+## Read More
+
+Below is a collection of videos & articles authored on the subject of this
+library. Feel free to open a pull request on [GitHub][github] if you would like
+to include yours.
+
+- [[EN] The Result Monad - Adam Bennett](https://adambennett.dev/2020/05/the-result-monad/)
+- [[EN] A functional Approach to Exception Handling - Tristan Hamilton](https://youtu.be/bEC_t8dH23c?t=132)
+- [[EN] kotlin: A functional gold mine - Mark Bucciarelli](http://markbucciarelli.com/posts/2020-01-04_kotlin_functional_gold_mine.html)
+- [[EN] Railway Oriented Programming - Scott Wlaschin](https://fsharpforfunandprofit.com/rop/)
+- [[JP] KotlinでResult型使うならkotlin-resultを使おう](https://note.com/yasukotelin/n/n6d9e352c344c)
+- [[JP] kotlinのコードにReturn Resultを組み込む](https://nnao45.hatenadiary.com/entry/2019/11/30/224820)
 
 ### Creating Results
 
@@ -267,7 +277,6 @@ This project is available under the terms of the ISC license. See the
 [result-ok]: https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/Result.kt#L35
 [result-err]: https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/Result.kt#L58
 [result-runCatching]: https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/Factory.kt#L11
-[swalschin-rop]: https://fsharpforfunandprofit.com/rop/
 [wiki]: https://github.com/michaelbull/kotlin-result/wiki
 [unit-tests]: https://github.com/michaelbull/kotlin-result/tree/master/kotlin-result/src/commonTest/kotlin/com/github/michaelbull/result
 [example]: https://github.com/michaelbull/kotlin-result/tree/master/example/src/main/kotlin/com/github/michaelbull/result/example

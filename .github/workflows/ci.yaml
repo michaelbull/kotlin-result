@@ -31,7 +31,7 @@ jobs:
 
   publish:
     needs: check
-    if: github.ref == 'master' && github.event_name != 'pull_request' && needs.check.result == 'success'
+    if: github.ref == 'refs/heads/master' && github.event_name == 'push' && needs.check.result == 'success'
     runs-on: ubuntu-latest
 
     steps:

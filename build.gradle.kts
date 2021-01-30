@@ -126,6 +126,21 @@ subprojects {
                             name.set("Joseph Van der Wee")
                             url.set("https://github.com/jvanderwee")
                         }
+
+                        contributor {
+                            name.set("Gregory Inouye")
+                            url.set("https://github.com/gregoryinouye")
+                        }
+
+                        contributor {
+                            name.set("Thomas Oddsund")
+                            url.set("https://github.com/oddsund")
+                        }
+
+                        contributor {
+                            name.set("Jan Müller")
+                            url.set("https://github.com/DerYeger")
+                        }
                     }
 
                     scm {

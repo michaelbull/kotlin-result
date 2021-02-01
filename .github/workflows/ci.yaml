@@ -32,7 +32,7 @@ jobs:
   publish:
     needs: check
     if: github.ref == 'refs/heads/master' && github.event_name == 'push' && needs.check.result == 'success'
-    runs-on: ubuntu-latest
+    runs-on: macOS-latest
 
     steps:
       - uses: actions/checkout@v2

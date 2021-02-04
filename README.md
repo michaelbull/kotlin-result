@@ -148,7 +148,7 @@ resources on the topic of monad comprehensions.
 
 #### Coroutine Support
 
-Use of coroutines within a `binding` block requires an additional dependency:
+Use of suspending functions within a `binding` block requires an additional dependency:
 
 ```kotlin
 dependencies {
@@ -157,8 +157,10 @@ dependencies {
 }
 ```
 
-This allows for asynchronous binds to operate so that if a bind were to fail,
-the binding block will return with the first failing async result:
+Given this enables coroutines to be started inside of a binding block,
+the functionality also adds some interesting use cases:
+
+#### Binding as an async flow controller
 
 ```kotlin
 
@@ -174,6 +176,36 @@ runBlocking{
 
     // result will be Err(DomainErrorB)
 }
+```
+
+The coroutine implementation of binding has been designed so that the first
+failing bind encountered will cancel all children coroutines within the scope
+of the binding block.
+
+In the above example, if the `failsIn...` functions were implemented in a
+suspending way, then it is possible for `failsIn5ms` to be cancelled before
+completing execution - i.e. at its next cancellation point.
+
+This could allow for easy cancellation of compute heavy suspending functions that are
+no longer needed to continue executing once an error is encountered.
+You could even use it to simply cancel a set of fire-and-forget processes
+that no longer need to run once a failure is encountered:
+
+
+```kotlin
+suspend fun getBody(url:Url): Result<Response, NetworkError>
+
+val urls : List<Url>
+
+runBlocking {
+    binding<Unit, NetworkError> {
+        urls.forEach {
+            launch(Dispatchers.IO) { logResponse(getBody(it).bind()) }
+        }
+        //stops logging url response bodies as soon as a bind fails
+    }
+}
+
 ```
 
 ## Inspiration

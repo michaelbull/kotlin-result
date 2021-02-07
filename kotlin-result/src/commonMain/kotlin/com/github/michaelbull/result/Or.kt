@@ -78,7 +78,7 @@ public inline fun <V, E> Result<V, E>.recoverIf(predicate: (E) -> Boolean, trans
 
 /**
  * Returns the [transformation][transform] of the [error][Err.error] if this [Result] is [Err]
- * and _does not_ satisfies the given [predicate], otherwise this [Result].
+ * and _does not_ satisfy the given [predicate], otherwise this [Result].
  */
 public inline fun <V, E> Result<V, E>.recoverUnless(predicate: (E) -> Boolean, transform: (E) -> V): Result<V, E> {
     contract {

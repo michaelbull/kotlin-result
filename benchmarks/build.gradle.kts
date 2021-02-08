@@ -14,6 +14,7 @@ allOpen {
 benchmark {
     targets {
         register("jvm")
+        register("js")
     }
 }
 
@@ -24,6 +25,10 @@ kotlin {
                 jvmTarget = "1.8"
             }
         }
+    }
+
+    js {
+        nodejs()
     }
 
     sourceSets {

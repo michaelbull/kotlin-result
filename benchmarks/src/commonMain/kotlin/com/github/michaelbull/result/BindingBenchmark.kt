@@ -9,6 +9,7 @@ import kotlinx.benchmark.Blackhole
 import kotlinx.benchmark.State
 import kotlinx.benchmark.Scope
 
+@State(Scope.Benchmark)
 @BenchmarkMode(Mode.Throughput)
 @OutputTimeUnit(BenchmarkTimeUnit.MILLISECONDS)
 class BindingBenchmark {
@@ -59,7 +60,6 @@ class BindingBenchmark {
         blackhole.consume(result)
     }
 
-    @State(Scope.Benchmark)
     private companion object {
         private fun provideX(): Result<Int, Error> = Ok(1)
         private fun provideY(): Result<Int, Error> = Ok(2)

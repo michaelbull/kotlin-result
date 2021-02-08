@@ -11,18 +11,14 @@ allOpen {
     annotation("org.openjdk.jmh.annotations.BenchmarkMode")
 }
 
-sourceSets.create("benchmark")
-
 benchmark {
     targets {
-        register("jvmBenchmark")
+        register("jvm")
     }
 }
 
 kotlin {
     jvm {
-        withJava()
-
         compilations.all {
             kotlinOptions {
                 jvmTarget = "1.8"
@@ -31,13 +27,7 @@ kotlin {
     }
 
     sourceSets {
-        all {
-            languageSettings.apply {
-                useExperimentalAnnotation("kotlin.contracts.ExperimentalContracts")
-            }
-        }
-
-        val jvmBenchmark by getting {
+        val commonMain by getting {
             dependencies {
                 implementation(project(":kotlin-result"))
                 implementation("org.jetbrains.kotlinx:kotlinx.benchmark.runtime:${Versions.kotlinBenchmark}")

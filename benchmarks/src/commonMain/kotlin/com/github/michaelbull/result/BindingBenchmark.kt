@@ -1,16 +1,16 @@
 package com.github.michaelbull.result
 
-import org.openjdk.jmh.annotations.Benchmark
-import org.openjdk.jmh.annotations.BenchmarkMode
-import org.openjdk.jmh.annotations.Mode
-import org.openjdk.jmh.annotations.OutputTimeUnit
-import org.openjdk.jmh.annotations.Scope
-import org.openjdk.jmh.annotations.State
-import org.openjdk.jmh.infra.Blackhole
-import java.util.concurrent.TimeUnit
+import kotlinx.benchmark.BenchmarkMode
+import kotlinx.benchmark.Mode
+import kotlinx.benchmark.OutputTimeUnit
+import kotlinx.benchmark.BenchmarkTimeUnit
+import kotlinx.benchmark.Benchmark
+import kotlinx.benchmark.Blackhole
+import kotlinx.benchmark.State
+import kotlinx.benchmark.Scope
 
 @BenchmarkMode(Mode.Throughput)
-@OutputTimeUnit(TimeUnit.MILLISECONDS)
+@OutputTimeUnit(BenchmarkTimeUnit.MILLISECONDS)
 class BindingBenchmark {
 
     private object Error
@@ -59,7 +59,7 @@ class BindingBenchmark {
         blackhole.consume(result)
     }
 
-    @State(Scope.Thread)
+    @State(Scope.Benchmark)
     private companion object {
         private fun provideX(): Result<Int, Error> = Ok(1)
         private fun provideY(): Result<Int, Error> = Ok(2)

@@ -3,9 +3,9 @@ package com.github.michaelbull.result.coroutines.binding
 import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
+import com.github.michaelbull.result.coroutines.runBlockingTest
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -19,7 +19,7 @@ class AsyncSuspendableBindingTest {
     }
 
     @Test
-    fun returnsOkIfAllBindsSuccessful() {
+    fun returnsOkIfAllBindsSuccessful(): dynamic {
         suspend fun provideX(): Result<Int, BindingError> {
             delay(100)
             return Ok(1)
@@ -30,13 +30,12 @@ class AsyncSuspendableBindingTest {
             return Ok(2)
         }
 
-        runBlocking {
+        return runBlockingTest {
             val result = binding<Int, BindingError> {
                 val x = async { provideX().bind() }
                 val y = async { provideY().bind() }
                 x.await() + y.await()
             }
-
             assertTrue(result is Ok)
             assertEquals(
                 expected = 3,
@@ -46,14 +45,14 @@ class AsyncSuspendableBindingTest {
     }
 
     @Test
-    fun returnsFirstErrIfBindingFailed() {
+    fun returnsFirstErrIfBindingFailed(): dynamic {
         suspend fun provideX(): Result<Int, BindingError> {
-            delay(3)
+            delay(10)
             return Ok(1)
         }
 
         suspend fun provideY(): Result<Int, BindingError.BindingErrorA> {
-            delay(2)
+            delay(20)
             return Err(BindingError.BindingErrorA)
         }
 
@@ -62,7 +61,7 @@ class AsyncSuspendableBindingTest {
             return Err(BindingError.BindingErrorB)
         }
 
-        runBlocking {
+        return runBlockingTest {
             val result = binding<Int, BindingError> {
                 val x = async { provideX().bind() }
                 val y = async { provideY().bind() }
@@ -79,7 +78,7 @@ class AsyncSuspendableBindingTest {
     }
 
     @Test
-    fun returnsStateChangedForOnlyTheFirstAsyncBindFailWhenEagerlyCancellingBinding() {
+    fun returnsStateChangedForOnlyTheFirstAsyncBindFailWhenEagerlyCancellingBinding(): dynamic {
         var xStateChange = false
         var yStateChange = false
         var zStateChange = false
@@ -101,11 +100,12 @@ class AsyncSuspendableBindingTest {
             return Err(BindingError.BindingErrorB)
         }
 
-        runBlocking {
+        return runBlockingTest {
             val result = binding<Int, BindingError> {
                 val x = async { provideX().bind() }
                 val y = async { provideY().bind() }
                 val z = async { provideZ().bind() }
+
                 x.await() + y.await() + z.await()
             }
 

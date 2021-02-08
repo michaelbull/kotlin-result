@@ -7,6 +7,7 @@ import com.github.michaelbull.result.coroutines.runBlockingTest
 import kotlinx.coroutines.delay
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class SuspendableBindingTest {
@@ -25,7 +26,7 @@ class SuspendableBindingTest {
             return Ok(2)
         }
 
-        runBlockingTest {
+        return runBlockingTest {
             val result = binding<Int, BindingError> {
                 val x = provideX().bind()
                 val y = provideY().bind()
@@ -52,7 +53,7 @@ class SuspendableBindingTest {
             return Ok(x + 2)
         }
 
-        runBlockingTest {
+        return runBlockingTest {
             val result = binding<Int, BindingError> {
                 val x = provideX().bind()
                 val y = provideY(x.toInt()).bind()
@@ -84,6 +85,45 @@ class SuspendableBindingTest {
             return Ok(2)
         }
 
+        return runBlockingTest {
+            val result = binding<Int, BindingError> {
+                val x = provideX().bind()
+                val y = provideY().bind()
+                val z = provideZ().bind()
+                x + y + z
+            }
+
+            assertTrue(result is Err)
+            assertEquals(
+                expected = BindingError,
+                actual = result.error
+            )
+        }
+    }
+
+    @Test
+    fun returnsStateChangedUntilFirstBindFailed() {
+        var xStateChange = false
+        var yStateChange = false
+        var zStateChange = false
+        suspend fun provideX(): Result<Int, BindingError> {
+            delay(1)
+            xStateChange = true
+            return Ok(1)
+        }
+
+        suspend fun provideY(): Result<Int, BindingError> {
+            delay(10)
+            yStateChange = true
+            return Err(BindingError)
+        }
+
+        suspend fun provideZ(): Result<Int, BindingError> {
+            delay(1)
+            zStateChange = true
+            return Err(BindingError)
+        }
+
         runBlockingTest {
             val result = binding<Int, BindingError> {
                 val x = provideX().bind()
@@ -97,6 +137,9 @@ class SuspendableBindingTest {
                 expected = BindingError,
                 actual = result.error
             )
+            assertTrue(xStateChange)
+            assertTrue(yStateChange)
+            assertFalse(zStateChange)
         }
     }
 
@@ -117,7 +160,7 @@ class SuspendableBindingTest {
             return Ok(2)
         }
 
-        runBlockingTest {
+        return runBlockingTest {
             val result = binding<Int, BindingError> {
                 val x = provideX().bind()
                 val y = provideY().bind()

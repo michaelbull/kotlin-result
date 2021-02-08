@@ -3,8 +3,12 @@ import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginWrapper
 
-val ossrhUsername: String? by ext
-val ossrhPassword: String? by ext
+val ossrhUsername: String? by project
+val ossrhPassword: String? by project
+
+val signingKeyId: String? by project // must be the last 8 digits of the key
+val signingKey: String? by project
+val signingPassword: String? by project
 
 description = "A Result monad for modelling success or failure operations."
 
@@ -59,6 +63,11 @@ subprojects {
                     mavenPublication {
                         artifact(javadocJar.get())
                     }
+                }
+
+                js {
+                    browser()
+                    nodejs()
                 }
             }
         }
@@ -119,6 +128,21 @@ subprojects {
                             name.set("Joseph Van der Wee")
                             url.set("https://github.com/jvanderwee")
                         }
+
+                        contributor {
+                            name.set("Gregory Inouye")
+                            url.set("https://github.com/gregoryinouye")
+                        }
+
+                        contributor {
+                            name.set("Thomas Oddsund")
+                            url.set("https://github.com/oddsund")
+                        }
+
+                        contributor {
+                            name.set("Jan Müller")
+                            url.set("https://github.com/DerYeger")
+                        }
                     }
 
                     scm {
@@ -140,7 +164,7 @@ subprojects {
             }
 
             configure<SigningExtension> {
-                useGpgCmd()
+                useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
                 sign(publications)
             }
         }

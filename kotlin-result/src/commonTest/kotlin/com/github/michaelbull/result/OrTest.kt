@@ -59,4 +59,96 @@ class OrTest {
             )
         }
     }
+
+    class RecoverIf {
+        @Test
+        fun returnsValueIfOk() {
+            assertEquals(
+                expected = 3000,
+                actual = (Ok(3000) as Result<Int, Int>).recoverIf(
+                    { it == 4000 },
+                    { 2000 }
+                ).get()
+            )
+        }
+
+        @Test
+        fun returnsTransformedErrorAsOkIfErrAndPredicateMatch() {
+            assertEquals(
+                expected = 2000,
+                actual = Err(4000).recoverIf(
+                    { it == 4000 },
+                    { 2000 }
+                ).get()
+            )
+        }
+
+        @Test
+        fun doesNotReturnTransformedErrorAsOkIfErrAndPredicateDoesNotMatch() {
+            assertEquals(
+                expected = null,
+                actual = Err(4000).recoverIf(
+                    { it == 3000 },
+                    { 2000 }
+                ).get()
+            )
+        }
+
+        @Test
+        fun returnErrIfErrAndPredicateDoesNotMatch() {
+            assertEquals(
+                expected = 4000,
+                actual = Err(4000).recoverIf(
+                    { it == 3000 },
+                    { 2000 }
+                ).getError()
+            )
+        }
+    }
+
+    class RecoverUnless {
+        @Test
+        fun returnsValueIfOk() {
+            assertEquals(
+                expected = 3000,
+                actual = (Ok(3000) as Result<Int, Int>).recoverUnless(
+                    { it == 4000 },
+                    { 2000 }
+                ).get()
+            )
+        }
+
+        @Test
+        fun returnsTransformedErrorAsOkIfErrAndPredicateDoesNotMatch() {
+            assertEquals(
+                expected = 2000,
+                actual = Err(4000).recoverUnless(
+                    { it == 3000 },
+                    { 2000 }
+                ).get()
+            )
+        }
+
+        @Test
+        fun doesNotReturnTransformedErrorAsOkIfErrAndPredicateMatches() {
+            assertEquals(
+                expected = null,
+                actual = Err(4000).recoverUnless(
+                    { it == 4000 },
+                    { 2000 }
+                ).get()
+            )
+        }
+
+        @Test
+        fun returnErrIfErrAndPredicateDoesMatch() {
+            assertEquals(
+                expected = 4000,
+                actual = Err(4000).recoverUnless(
+                    { it == 4000 },
+                    { 2000 }
+                ).getError()
+            )
+        }
+    }
 }

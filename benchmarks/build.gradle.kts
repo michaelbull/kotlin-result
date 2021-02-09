@@ -14,7 +14,8 @@ allOpen {
 benchmark {
     targets {
         register("jvm")
-        register("js")
+        // TODO: enable js benchmarking once https://github.com/Kotlin/kotlinx-benchmark/issues/28 is fixed.
+        //register("js")
     }
 }
 

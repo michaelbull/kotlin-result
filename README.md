@@ -13,7 +13,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.michael-bull.kotlin-result:kotlin-result:1.1.10")
+    implementation("com.michael-bull.kotlin-result:kotlin-result:1.1.11")
 }
 ```
 
@@ -153,8 +153,8 @@ dependency:
 
 ```kotlin
 dependencies {
-    implementation("com.michael-bull.kotlin-result:kotlin-result:1.1.10")
-    implementation("com.michael-bull.kotlin-result:kotlin-result-coroutines:1.1.10")
+    implementation("com.michael-bull.kotlin-result:kotlin-result:1.1.11")
+    implementation("com.michael-bull.kotlin-result:kotlin-result-coroutines:1.1.11")
 }
 ```
 

@@ -3,7 +3,6 @@ package com.github.michaelbull.result.coroutines.binding
 import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
-import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -27,16 +26,13 @@ public suspend inline fun <V, E> binding(crossinline block: suspend SuspendableR
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
     }
     lateinit var receiver: SuspendableResultBindingImpl<E>
-    return coroutineScope {
-        val parentJob = async {
+    return try {
+        coroutineScope {
             receiver = SuspendableResultBindingImpl(this.coroutineContext)
             with(receiver) { Ok(block()) }
         }
-        try {
-            parentJob.await()
-        } catch (ex: BindCancellationException) {
-            receiver.internalError
-        }
+    } catch (ex: BindCancellationException) {
+        receiver.internalError
     }
 }
 

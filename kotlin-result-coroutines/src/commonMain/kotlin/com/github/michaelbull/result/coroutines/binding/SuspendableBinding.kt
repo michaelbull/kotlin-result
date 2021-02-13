@@ -15,8 +15,8 @@ import kotlin.coroutines.CoroutineContext
 
 /**
  * Suspending variant of [binding][com.github.michaelbull.result.binding].
- * Wraps the suspendable block in an async job, inheriting the parent coroutine context.
- * This async job is cancelled once a failing bind is encountered, eagerly cancelling all children.
+ * The suspendable block runs in a new Coroutine Scope inheriting the parent coroutine context.
+ * This new scope is cancelled once a failing bind is encountered, eagerly cancelling all children.
  */
 public suspend inline fun <V, E> binding(crossinline block: suspend SuspendableResultBinding<E>.() -> V): Result<V, E> {
     contract {

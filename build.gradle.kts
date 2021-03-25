@@ -67,7 +67,7 @@ subprojects {
                     }
                 }
 
-                js {
+                js(BOTH) {
                     browser()
                     nodejs()
                 }

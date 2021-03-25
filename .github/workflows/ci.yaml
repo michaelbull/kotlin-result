@@ -8,7 +8,7 @@ jobs:
 
     strategy:
       matrix:
-        os: [ ubuntu-latest, macos-latest ]
+        os: [ ubuntu-latest, macos-latest, windows-latest ]
 
     steps:
       - uses: actions/checkout@v2
@@ -31,16 +31,30 @@ jobs:
         with:
           java-version: 1.8
 
-      - run: ./gradlew check
+      - run: ./gradlew linuxX64Test
         if: matrix.os == 'ubuntu-latest'
 
-      - run: ./gradlew iosX64Test
+      - run: ./gradlew mingwX64Test
+        if: matrix.os == 'windows-latest'
+
+      - run: ./gradlew check
         if: matrix.os == 'macos-latest'
 
   publish:
     needs: check
     if: github.ref == 'refs/heads/master' && github.event_name == 'push' && needs.check.result == 'success'
-    runs-on: macos-latest
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ ubuntu-latest, macos-latest, windows-latest ]
+
+    env:
+      ORG_GRADLE_PROJECT_ossrhUsername: ${{ secrets.OSSRH_USERNAME }}
+      ORG_GRADLE_PROJECT_ossrhPassword: ${{ secrets.OSSRH_PASSWORD }}
+      ORG_GRADLE_PROJECT_signingKeyId: ${{ secrets.SIGNING_KEY_ID }}
+      ORG_GRADLE_PROJECT_signingKey: ${{ secrets.SIGNING_KEY }}
+      ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.SIGNING_PASSWORD }}
 
     steps:
       - uses: actions/checkout@v2
@@ -63,10 +77,11 @@ jobs:
         with:
           java-version: 1.8
 
+      - run: ./gradlew publishLinuxX64PublicationToMavenRepository
+        if: matrix.os == 'ubuntu-latest'
+
+      - run: ./gradlew publishMingwX64PublicationToMavenRepository
+        if: matrix.os == 'windows-latest'
+
       - run: ./gradlew publish
-        env:
-          ORG_GRADLE_PROJECT_ossrhUsername: ${{ secrets.OSSRH_USERNAME }}
-          ORG_GRADLE_PROJECT_ossrhPassword: ${{ secrets.OSSRH_PASSWORD }}
-          ORG_GRADLE_PROJECT_signingKeyId: ${{ secrets.SIGNING_KEY_ID }}
-          ORG_GRADLE_PROJECT_signingKey: ${{ secrets.SIGNING_KEY }}
-          ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.SIGNING_PASSWORD }}
+        if: matrix.os == 'macos-latest'

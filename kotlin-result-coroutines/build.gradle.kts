@@ -39,6 +39,30 @@ kotlin {
                 implementation(kotlin("test-js"))
             }
         }
+
+        val nativeTest by creating {
+            dependsOn(commonTest)
+        }
+
+        val linuxX64Test by getting {
+            dependsOn(nativeTest)
+        }
+
+        val mingwX64Test by getting {
+            dependsOn(nativeTest)
+        }
+
+        val macosX64Test by getting {
+            dependsOn(nativeTest)
+        }
+
+        val iosX64Test by getting {
+            dependsOn(nativeTest)
+        }
+
+        val iosArm64Test by getting {
+            dependsOn(nativeTest)
+        }
     }
 }
 

@@ -73,6 +73,9 @@ subprojects {
                 }
 
                 ios()
+                linuxX64()
+                mingwX64()
+                macosX64()
             }
         }
 

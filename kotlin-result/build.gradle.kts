@@ -21,6 +21,10 @@ kotlin {
             }
         }
 
+        val commonMain by getting {
+
+        }
+
         val commonTest by getting {
             dependencies {
                 implementation(kotlin("test-common"))
@@ -39,6 +43,30 @@ kotlin {
             dependencies {
                 implementation(kotlin("test-js"))
             }
+        }
+
+        val nativeMain by creating {
+            dependsOn(commonMain)
+        }
+
+        val linuxX64Main by getting {
+            dependsOn(nativeMain)
+        }
+
+        val mingwX64Main by getting {
+            dependsOn(nativeMain)
+        }
+
+        val macosX64Main by getting {
+            dependsOn(nativeMain)
+        }
+
+        val iosX64Main by getting {
+            dependsOn(nativeMain)
+        }
+
+        val iosArm64Main by getting {
+            dependsOn(nativeMain)
         }
     }
 }

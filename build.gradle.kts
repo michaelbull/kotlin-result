@@ -150,6 +150,16 @@ subprojects {
                             name.set("Jan Müller")
                             url.set("https://github.com/DerYeger")
                         }
+
+                        contributor {
+                            name.set("avently")
+                            url.set("https://github.com/avently")
+                        }
+
+                        contributor {
+                            name.set("gsteckman")
+                            url.set("https://github.com/gsteckman")
+                        }
                     }
 
                     scm {

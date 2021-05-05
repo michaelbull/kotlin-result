@@ -9,11 +9,6 @@ application {
     mainClass.set("io.ktor.server.netty.EngineMain")
 }
 
-repositories {
-    maven(url = "http://dl.bintray.com/kotlin/ktor")
-    maven(url = "https://dl.bintray.com/kotlin/kotlinx")
-}
-
 dependencies {
     implementation(project(":kotlin-result"))
     implementation(kotlin("stdlib-jdk8"))

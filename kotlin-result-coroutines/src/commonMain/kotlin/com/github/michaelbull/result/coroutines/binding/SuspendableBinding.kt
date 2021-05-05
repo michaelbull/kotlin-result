@@ -5,27 +5,31 @@ import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
+import kotlin.coroutines.CoroutineContext
 
 /**
  * Suspending variant of [binding][com.github.michaelbull.result.binding].
- * Wraps the suspendable block in a new coroutine scope.
- * This scope is cancelled once a failing bind is encountered, allowing deferred child jobs to be eagerly cancelled.
+ * The suspendable [block] runs in a new [CoroutineScope], inheriting the parent [CoroutineContext].
+ * This new scope is [cancelled][CoroutineScope.cancel] once a failing bind is encountered, eagerly cancelling all
+ * child [jobs][Job].
  */
 public suspend inline fun <V, E> binding(crossinline block: suspend SuspendableResultBinding<E>.() -> V): Result<V, E> {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
     }
-    val receiver = SuspendableResultBindingImpl<E>()
+
+    lateinit var receiver: SuspendableResultBindingImpl<E>
 
     return try {
         coroutineScope {
-            receiver.coroutineScope = this@coroutineScope
+            receiver = SuspendableResultBindingImpl(this.coroutineContext)
             with(receiver) { Ok(block()) }
         }
     } catch (ex: BindCancellationException) {
@@ -35,27 +39,27 @@ public suspend inline fun <V, E> binding(crossinline block: suspend SuspendableR
 
 internal object BindCancellationException : CancellationException(null)
 
-public interface SuspendableResultBinding<E> {
+public interface SuspendableResultBinding<E> : CoroutineScope {
     public suspend fun <V> Result<V, E>.bind(): V
 }
 
 @PublishedApi
-internal class SuspendableResultBindingImpl<E> : SuspendableResultBinding<E> {
+internal class SuspendableResultBindingImpl<E>(
+    override val coroutineContext: CoroutineContext
+) : SuspendableResultBinding<E> {
 
     private val mutex = Mutex()
     lateinit var internalError: Err<E>
-    var coroutineScope: CoroutineScope? = null
 
     override suspend fun <V> Result<V, E>.bind(): V {
         return when (this) {
             is Ok -> value
-            is Err -> {
-                mutex.withLock {
-                    if (::internalError.isInitialized.not()) {
-                        internalError = this
-                    }
+            is Err -> mutex.withLock {
+                if (::internalError.isInitialized.not()) {
+                    internalError = this
+                    this@SuspendableResultBindingImpl.cancel(BindCancellationException)
                 }
-                coroutineScope?.cancel(BindCancellationException)
+
                 throw BindCancellationException
             }
         }

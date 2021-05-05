@@ -6,5 +6,8 @@ import kotlinx.coroutines.promise
 
 import kotlin.coroutines.CoroutineContext
 
-actual fun runBlockingTest(context: CoroutineContext, testBody: suspend CoroutineScope.() -> Unit): dynamic =
-    GlobalScope.promise(context) { testBody(this) }
+actual fun runBlockingTest(context: CoroutineContext, testBody: suspend CoroutineScope.() -> Unit): dynamic {
+    return GlobalScope.promise(context) {
+        testBody(this)
+    }
+}

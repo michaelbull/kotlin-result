@@ -5,7 +5,7 @@ import kotlinx.coroutines.runBlocking
 import kotlin.coroutines.CoroutineContext
 
 actual fun runBlockingTest(context: CoroutineContext, testBody: suspend CoroutineScope.() -> Unit) {
-    runBlocking {
+    return runBlocking {
         testBody(this)
     }
 }

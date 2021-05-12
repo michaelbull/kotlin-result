@@ -42,7 +42,7 @@ public inline infix fun <V, E, F> Result<V, E>.mapError(transform: (E) -> F): Re
 }
 
 /**
- * Maps this [Result<V, E][Result] to [U] by either applying the [transform] function to the
+ * Maps this [Result<V, E>][Result] to [U] by either applying the [transform] function to the
  * [value][Ok.value] if this [Result] is [Ok], or returning the [default] if this [Result] is an
  * [Err].
  *

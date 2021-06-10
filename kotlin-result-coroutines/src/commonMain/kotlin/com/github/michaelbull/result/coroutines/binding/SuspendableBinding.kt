@@ -37,7 +37,7 @@ public suspend inline fun <V, E> binding(crossinline block: suspend SuspendableR
     }
 }
 
-internal object BindCancellationException : CancellationException(null)
+internal object BindCancellationException : CancellationException(null as String?)
 
 public interface SuspendableResultBinding<E> : CoroutineScope {
     public suspend fun <V> Result<V, E>.bind(): V

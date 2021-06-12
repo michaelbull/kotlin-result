@@ -160,6 +160,16 @@ subprojects {
                             name.set("gsteckman")
                             url.set("https://github.com/gsteckman")
                         }
+
+                        contributor {
+                            name.set("Mathias Guelton")
+                            url.set("https://github.com/mguelton")
+                        }
+
+                        contributor {
+                            name.set("Jordan Bergin")
+                            url.set("https://github.com/MrBergin")
+                        }
                     }
 
                     scm {

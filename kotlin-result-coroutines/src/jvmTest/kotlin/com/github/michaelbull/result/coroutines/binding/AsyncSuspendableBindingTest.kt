@@ -3,19 +3,19 @@ package com.github.michaelbull.result.coroutines.binding
 import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
-import kotlinx.coroutines.CoroutineName
-import kotlinx.coroutines.asCoroutineDispatcher
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
-import java.util.concurrent.Executors
-import kotlin.coroutines.CoroutineContext
+import kotlinx.coroutines.test.TestCoroutineDispatcher
+import kotlinx.coroutines.test.runBlockingTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
+@ExperimentalCoroutinesApi
 class AsyncSuspendableBindingTest {
 
     private sealed class BindingError {
@@ -35,7 +35,7 @@ class AsyncSuspendableBindingTest {
             return Ok(2)
         }
 
-        runBlocking {
+        runBlockingTest {
             val result = binding<Int, BindingError> {
                 val x = async { provideX().bind() }
                 val y = async { provideY().bind() }
@@ -67,7 +67,7 @@ class AsyncSuspendableBindingTest {
             return Err(BindingError.BindingErrorB)
         }
 
-        runBlocking {
+        runBlockingTest {
             val result = binding<Int, BindingError> {
                 val x = async { provideX().bind() }
                 val y = async { provideY().bind() }
@@ -95,18 +95,19 @@ class AsyncSuspendableBindingTest {
         }
 
         suspend fun provideY(): Result<Int, BindingError.BindingErrorB> {
-            // as this test uses a new thread for each coroutine, we want to set this delay to a high enough number that
-            // there isn't any chance of a jvm run actually completing this suspending function in this thread first
-            // otherwise the assertions might fail.
-            delay(100)
+            delay(3)
             yStateChange = true
             return Err(BindingError.BindingErrorB)
         }
 
+        val dispatcherA = TestCoroutineDispatcher()
+        val dispatcherB = TestCoroutineDispatcher()
+
         runBlocking {
             val result = binding<Int, BindingError> {
-                val x = async(newThread("ThreadA")) { provideX().bind() }
-                val y = async(newThread("ThreadB")) { provideY().bind() }
+                val x = async(dispatcherA) { provideX().bind() }
+                val y = async(dispatcherB) { provideY().bind() }
+                dispatcherA.advanceTimeBy(2)
                 x.await() + y.await()
             }
 
@@ -144,11 +145,17 @@ class AsyncSuspendableBindingTest {
             return Err(BindingError.BindingErrorB)
         }
 
+        val dispatcherA = TestCoroutineDispatcher()
+        val dispatcherB = TestCoroutineDispatcher()
+        val dispatcherC = TestCoroutineDispatcher()
+
         runBlocking {
             val result = binding<Unit, BindingError> {
-                launch(newThread("Thread A")) { provideX().bind() }
-                launch(newThread("Thread B")) { provideY().bind() }
-                launch(newThread("Thread C")) { provideZ().bind() }
+                launch(dispatcherA) { provideX().bind() }
+                dispatcherA.advanceTimeBy(20)
+                launch(dispatcherB) { provideY().bind() }
+                dispatcherB.advanceTimeBy(20)
+                launch(dispatcherC) { provideZ().bind() }
             }
 
             assertTrue(result is Err)
@@ -160,9 +167,5 @@ class AsyncSuspendableBindingTest {
             assertTrue(yStateChange)
             assertFalse(zStateChange)
         }
-    }
-
-    private fun newThread(name: String): CoroutineContext {
-        return Executors.newSingleThreadExecutor().asCoroutineDispatcher() + CoroutineName(name)
     }
 }

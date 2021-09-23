@@ -2,7 +2,7 @@ description = "Benchmarks for kotlin-result."
 
 plugins {
     kotlin("multiplatform")
-    id("kotlinx.benchmark")
+    id("org.jetbrains.kotlinx.benchmark")
     id("org.jetbrains.kotlin.plugin.allopen")
 }
 
@@ -37,7 +37,7 @@ kotlin {
             dependencies {
                 implementation(project(":kotlin-result"))
                 implementation(project(":kotlin-result-coroutines"))
-                implementation("org.jetbrains.kotlinx:kotlinx.benchmark.runtime:${Versions.kotlinBenchmark}")
+                implementation("org.jetbrains.kotlinx:kotlinx-benchmark-runtime:${Versions.kotlinBenchmark}")
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.kotlinCoroutines}")
             }
         }

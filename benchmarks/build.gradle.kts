@@ -2,7 +2,7 @@ description = "Benchmarks for kotlin-result."
 
 plugins {
     kotlin("multiplatform")
-    id("kotlinx.benchmark")
+    id("org.jetbrains.kotlinx.benchmark")
     id("org.jetbrains.kotlin.plugin.allopen")
 }
 

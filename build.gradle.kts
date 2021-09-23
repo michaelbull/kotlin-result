@@ -17,7 +17,7 @@ plugins {
     id("com.github.ben-manes.versions") version Versions.versionsPlugin
 
     kotlin("multiplatform") version Versions.kotlin apply false
-    id("kotlinx.benchmark") version Versions.kotlinBenchmark apply false
+    id("org.jetbrains.kotlinx.benchmark") version Versions.kotlinBenchmark apply false
     id("org.jetbrains.dokka") version Versions.dokka apply false
     id("org.jetbrains.kotlin.plugin.allopen") version Versions.kotlin apply false
 }

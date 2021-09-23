@@ -9,7 +9,8 @@ include(
 
 pluginManagement {
     repositories {
-        maven("https://dl.bintray.com/kotlin/kotlinx")
+        // https://github.com/Kotlin/kotlinx-benchmark/issues/42
+        mavenCentral()
         gradlePluginPortal()
     }
 }

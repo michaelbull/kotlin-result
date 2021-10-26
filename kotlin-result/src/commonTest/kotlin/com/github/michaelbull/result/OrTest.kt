@@ -181,4 +181,62 @@ class OrTest {
             )
         }
     }
+
+    class ThrowIf {
+        @Test
+        fun returnsValueIfOk() {
+            assertEquals(
+                expected = Ok(200),
+                actual = Ok(200).throwIf { true }
+            )
+        }
+
+        @Test
+        fun returnsErrIfPredicateDoesNotMatch() {
+            val error = RuntimeException("throw if")
+
+            assertEquals(
+                expected = Err(error),
+                actual = Err(error).throwIf { false }
+            )
+        }
+
+        @Test
+        fun throwsErrIfPredicateMatches() {
+            val error = RuntimeException("throw if")
+
+            assertFailsWith<RuntimeException>(error.message) {
+                Err(error).throwIf { true }
+            }
+        }
+    }
+
+    class ThrowUnless {
+        @Test
+        fun returnsValueIfOk() {
+            assertEquals(
+                expected = Ok(500),
+                actual = Ok(500).throwUnless { false }
+            )
+        }
+
+        @Test
+        fun returnsErrIfPredicateMatches() {
+            val error = RuntimeException("example")
+
+            assertEquals(
+                expected = Err(error),
+                actual = Err(error).throwUnless { true }
+            )
+        }
+
+        @Test
+        fun throwsErrIfPredicateDoesNotMatch() {
+            val error = RuntimeException("throw unless")
+
+            assertFailsWith<RuntimeException>(error.message) {
+                Err(error).throwUnless { false }
+            }
+        }
+    }
 }

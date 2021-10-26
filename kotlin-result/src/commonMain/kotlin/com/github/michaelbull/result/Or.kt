@@ -105,3 +105,45 @@ public inline fun <V, E> Result<V, E>.recoverUnless(predicate: (E) -> Boolean, t
         }
     }
 }
+
+/**
+ * Throws the [error][Err.error] if this [Result] is an [Err]
+ * and satisfies the given [predicate], otherwise this [Result].
+ *
+ * @see [takeIf]
+ */
+public inline fun <V, E : Throwable> Result<V, E>.throwIf(predicate: (E) -> Boolean): Result<V, E> {
+    contract {
+        callsInPlace(predicate, InvocationKind.AT_MOST_ONCE)
+    }
+
+    return when (this) {
+        is Ok -> this
+        is Err -> if (predicate(error)) {
+            throw error
+        } else {
+            this
+        }
+    }
+}
+
+/**
+ * Throws the [error][Err.error] if this [Result] is an [Err]
+ * and _does not_ satisfy the given [predicate], otherwise this [Result].
+ *
+ * @see [takeUnless]
+ */
+public inline fun <V, E : Throwable> Result<V, E>.throwUnless(predicate: (E) -> Boolean): Result<V, E> {
+    contract {
+        callsInPlace(predicate, InvocationKind.AT_MOST_ONCE)
+    }
+
+    return when (this) {
+        is Ok -> this
+        is Err -> if (!predicate(error)) {
+            throw error
+        } else {
+            this
+        }
+    }
+}

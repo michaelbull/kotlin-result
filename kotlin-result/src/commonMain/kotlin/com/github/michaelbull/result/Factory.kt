@@ -4,9 +4,9 @@ import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
 /**
- * Calls the specified function [block] and returns its encapsulated result if
- * invocation was successful, catching and encapsulating any thrown exception
- * as a failure.
+ * Calls the specified function [block] and returns its encapsulated result if invocation was
+ * successful, catching any [Throwable] exception that was thrown from the [block] function
+ * execution and encapsulating it as a failure.
  */
 public inline fun <V> runCatching(block: () -> V): Result<V, Throwable> {
     contract {
@@ -21,9 +21,9 @@ public inline fun <V> runCatching(block: () -> V): Result<V, Throwable> {
 }
 
 /**
- * Calls the specified function [block] with [this] value as its receiver and
- * returns its encapsulated result if invocation was successful, catching and
- * encapsulating any thrown exception as a failure.
+ * Calls the specified function [block] with [this] value as its receiver and returns its
+ * encapsulated result if invocation was successful, catching any [Throwable] exception that was
+ * thrown from the [block] function execution and encapsulating it as a failure.
  */
 public inline infix fun <T, V> T.runCatching(block: T.() -> V): Result<V, Throwable> {
     contract {

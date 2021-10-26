@@ -1,5 +1,5 @@
 object Versions {
-    const val dokka = "0.10.1"
+    const val dokka = "1.5.31"
     const val kotlin = "1.5.31"
     const val kotlinBenchmark = "0.3.1"
     const val kotlinCoroutines = "1.5.0"

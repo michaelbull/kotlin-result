@@ -2,6 +2,7 @@ package com.github.michaelbull.result
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
 class OrTest {
     private object OrError
@@ -42,20 +43,41 @@ class OrTest {
         }
     }
 
+    class OrElseThrow {
+        @Test
+        fun returnsValueIfOk() {
+            assertEquals(
+                expected = Ok(5000),
+                actual = Ok(5000).orElseThrow()
+            )
+        }
+
+        @Test
+        fun returnsTransformedValueIfErr() {
+            val error = RuntimeException("or else throw")
+
+            fun provideError(): Result<String, Throwable> {
+                return Err(error)
+            }
+
+            assertFailsWith<RuntimeException>(error.message, provideError()::orElseThrow)
+        }
+    }
+
     class Recover {
         @Test
         fun returnsValueIfOk() {
             assertEquals(
-                expected = 3000,
-                actual = Ok(3000).recover { 4000 }.get()
+                expected = Ok(3000),
+                actual = Ok(3000).recover { 4000 }
             )
         }
 
         @Test
         fun returnsTransformedValueIfErr() {
             assertEquals(
-                expected = 2000,
-                actual = Err(4000).recover { 2000 }.get()
+                expected = Ok(2000),
+                actual = Err(4000).recover { 2000 }
             )
         }
     }
@@ -63,45 +85,49 @@ class OrTest {
     class RecoverIf {
         @Test
         fun returnsValueIfOk() {
+            fun predicate(int: Int): Boolean {
+                return int == 4000
+            }
+
             assertEquals(
-                expected = 3000,
-                actual = (Ok(3000) as Result<Int, Int>).recoverIf(
-                    { it == 4000 },
-                    { 2000 }
-                ).get()
+                expected = Ok(3000),
+                actual = Ok(3000).recoverIf(::predicate) { 2000 }
             )
         }
 
         @Test
         fun returnsTransformedErrorAsOkIfErrAndPredicateMatch() {
+            fun predicate(int: Int): Boolean {
+                return int == 4000
+            }
+
             assertEquals(
-                expected = 2000,
-                actual = Err(4000).recoverIf(
-                    { it == 4000 },
-                    { 2000 }
-                ).get()
+                expected = Ok(2000),
+                actual = Err(4000).recoverIf(::predicate) { 2000 }
             )
         }
 
         @Test
         fun doesNotReturnTransformedErrorAsOkIfErrAndPredicateDoesNotMatch() {
+            fun predicate(int: Int): Boolean {
+                return int == 3000
+            }
+
             assertEquals(
-                expected = null,
-                actual = Err(4000).recoverIf(
-                    { it == 3000 },
-                    { 2000 }
-                ).get()
+                expected = Err(4000),
+                actual = Err(4000).recoverIf(::predicate) { 2000 }
             )
         }
 
         @Test
         fun returnErrIfErrAndPredicateDoesNotMatch() {
+            fun predicate(int: Int): Boolean {
+                return int == 3000
+            }
+
             assertEquals(
-                expected = 4000,
-                actual = Err(4000).recoverIf(
-                    { it == 3000 },
-                    { 2000 }
-                ).getError()
+                expected = Err(4000),
+                actual = Err(4000).recoverIf(::predicate) { 2000 }
             )
         }
     }
@@ -109,45 +135,49 @@ class OrTest {
     class RecoverUnless {
         @Test
         fun returnsValueIfOk() {
+            fun predicate(int: Int): Boolean {
+                return int == 4000
+            }
+
             assertEquals(
-                expected = 3000,
-                actual = (Ok(3000) as Result<Int, Int>).recoverUnless(
-                    { it == 4000 },
-                    { 2000 }
-                ).get()
+                expected = Ok(3000),
+                actual = Ok(3000).recoverUnless(::predicate) { 2000 }
             )
         }
 
         @Test
         fun returnsTransformedErrorAsOkIfErrAndPredicateDoesNotMatch() {
+            fun predicate(int: Int): Boolean {
+                return int == 3000
+            }
+
             assertEquals(
-                expected = 2000,
-                actual = Err(4000).recoverUnless(
-                    { it == 3000 },
-                    { 2000 }
-                ).get()
+                expected = Ok(2000),
+                actual = Err(4000).recoverUnless(::predicate) { 2000 }
             )
         }
 
         @Test
         fun doesNotReturnTransformedErrorAsOkIfErrAndPredicateMatches() {
+            fun predicate(int: Int): Boolean {
+                return int == 4000
+            }
+
             assertEquals(
-                expected = null,
-                actual = Err(4000).recoverUnless(
-                    { it == 4000 },
-                    { 2000 }
-                ).get()
+                expected = Err(4000),
+                actual = Err(4000).recoverUnless(::predicate) { 2000 }
             )
         }
 
         @Test
         fun returnErrIfErrAndPredicateDoesMatch() {
+            fun predicate(int: Int): Boolean {
+                return int == 4000
+            }
+
             assertEquals(
-                expected = 4000,
-                actual = Err(4000).recoverUnless(
-                    { it == 4000 },
-                    { 2000 }
-                ).getError()
+                expected = Err(4000),
+                actual = Err(4000).recoverUnless(::predicate) { 2000 }
             )
         }
     }

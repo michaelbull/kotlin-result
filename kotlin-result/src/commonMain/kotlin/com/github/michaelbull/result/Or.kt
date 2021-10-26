@@ -42,6 +42,16 @@ public inline infix fun <V, E> Result<V, E>.orElse(transform: (E) -> Result<V, E
 }
 
 /**
+ * Throws the [error][Err.error] if this [Result] is [Err], otherwise returns this [Ok].
+ */
+public fun <V, E : Throwable> Result<V, E>.orElseThrow(): Ok<V> {
+    return when (this) {
+        is Ok -> this
+        is Err -> throw error
+    }
+}
+
+/**
  * Returns the [transformation][transform] of the [error][Err.error] if this [Result] is [Err],
  * otherwise this [Ok].
  */

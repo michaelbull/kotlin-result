@@ -1,4 +1,5 @@
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
+import com.github.benmanes.gradle.versions.updates.gradle.GradleReleaseChannel
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginWrapper
@@ -23,6 +24,8 @@ plugins {
 }
 
 tasks.withType<DependencyUpdatesTask> {
+    gradleReleaseChannel = GradleReleaseChannel.CURRENT.id
+
     rejectVersionIf {
         listOf("alpha", "beta", "rc", "cr", "m", "eap", "pr", "dev").any {
             candidate.version.contains(it, ignoreCase = true)

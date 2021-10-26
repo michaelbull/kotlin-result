@@ -171,6 +171,11 @@ subprojects {
                             name.set("Pablo Gonzalez Alonso")
                             url.set("https://pablisco.com/")
                         }
+
+                        contributor {
+                            name.set("Joseph Cooper")
+                            url.set("https://grodin.github.io/")
+                        }
                     }
 
                     scm {

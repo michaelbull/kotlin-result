@@ -107,8 +107,8 @@ public inline fun <V, E> Result<V, E>.recoverUnless(predicate: (E) -> Boolean, t
 }
 
 /**
- * Throws the [error][Err.error] if this [Result] is an [Err]
- * and satisfies the given [predicate], otherwise this [Result].
+ * Throws the [error][Err.error] if this [Result] is an [Err] and satisfies the given
+ * [predicate], otherwise returns this [Result].
  *
  * @see [takeIf]
  */
@@ -128,8 +128,8 @@ public inline fun <V, E : Throwable> Result<V, E>.throwIf(predicate: (E) -> Bool
 }
 
 /**
- * Throws the [error][Err.error] if this [Result] is an [Err]
- * and _does not_ satisfy the given [predicate], otherwise this [Result].
+ * Throws the [error][Err.error] if this [Result] is an [Err] and _does not_ satisfy the
+ * given [predicate], otherwise returns this [Result].
  *
  * @see [takeUnless]
  */

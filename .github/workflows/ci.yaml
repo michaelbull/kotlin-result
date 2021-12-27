@@ -37,7 +37,7 @@ jobs:
       - run: ./gradlew mingwX64Test
         if: matrix.os == 'windows-latest'
 
-      - run: ./gradlew check
+      - run: ./gradlew build
         if: matrix.os == 'macos-latest'
 
   publish:

@@ -3,7 +3,7 @@ name: ci
 on: [ push, pull_request ]
 
 jobs:
-  check:
+  build:
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -41,8 +41,8 @@ jobs:
         if: matrix.os == 'macos-latest'
 
   publish:
-    needs: check
-    if: github.ref == 'refs/heads/master' && github.event_name == 'push' && needs.check.result == 'success'
+    needs: build
+    if: github.ref == 'refs/heads/master' && github.event_name == 'push' && needs.build.result == 'success'
     runs-on: ${{ matrix.os }}
 
     strategy:

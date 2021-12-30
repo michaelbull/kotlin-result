@@ -1,5 +1,6 @@
 package com.github.michaelbull.result.example
 
+import com.fasterxml.jackson.databind.SerializationFeature
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.andThen
 import com.github.michaelbull.result.example.model.domain.Created
@@ -28,32 +29,37 @@ import com.github.michaelbull.result.example.repository.InMemoryCustomerReposito
 import com.github.michaelbull.result.example.service.CustomerService
 import com.github.michaelbull.result.mapBoth
 import com.github.michaelbull.result.toResultOr
-import io.ktor.application.Application
-import io.ktor.application.call
-import io.ktor.application.install
-import io.ktor.features.CallLogging
-import io.ktor.features.Compression
-import io.ktor.features.ContentNegotiation
-import io.ktor.features.DefaultHeaders
-import io.ktor.gson.gson
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.Parameters
-import io.ktor.request.receive
-import io.ktor.response.respond
-import io.ktor.routing.get
-import io.ktor.routing.post
-import io.ktor.routing.routing
+import io.ktor.serialization.jackson.jackson
+import io.ktor.server.application.Application
+import io.ktor.server.application.call
+import io.ktor.server.application.install
+import io.ktor.server.engine.embeddedServer
+import io.ktor.server.netty.Netty
+import io.ktor.server.plugins.ContentNegotiation
+import io.ktor.server.request.receive
+import io.ktor.server.response.respond
+import io.ktor.server.routing.get
+import io.ktor.server.routing.post
+import io.ktor.server.routing.routing
 
-fun Application.main() {
-    install(DefaultHeaders)
-    install(Compression)
-    install(CallLogging)
+fun main() {
+    embeddedServer(Netty, port = 8080, host = "0.0.0.0") {
+        configureRouting()
+        configureSerialization()
+    }.start(wait = true)
+}
+
+fun Application.configureSerialization() {
     install(ContentNegotiation) {
-        gson {
-            setPrettyPrinting()
+        jackson {
+            enable(SerializationFeature.INDENT_OUTPUT)
         }
     }
+}
 
+fun Application.configureRouting() {
     val customers = setOf(
         CustomerEntity(CustomerId(1L), "Michael", "Bull", "michael@example.com"),
         CustomerEntity(CustomerId(2L), "Kevin", "Herron", "kevin@example.com"),
@@ -86,7 +92,6 @@ fun Application.main() {
             }
         }
     }
-
 }
 
 private fun Parameters.readId(): Result<Long, DomainMessage> {

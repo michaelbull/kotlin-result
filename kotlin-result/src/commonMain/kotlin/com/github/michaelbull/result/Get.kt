@@ -122,6 +122,39 @@ public inline infix fun <V, E> Result<V, E>.getErrorOrElse(transform: (V) -> E):
 }
 
 /**
+ * Returns the [value][Ok.value] if this [Result] is [Ok], otherwise throws the
+ * [error][Err.error].
+ *
+ * This is functionally equivalent to [`getOrElse { throw it }`][getOrElse].
+ */
+public fun <V, E : Throwable> Result<V, E>.getOrThrow(): V {
+    contract {
+        returns() implies (this@getOrThrow is Ok<V>)
+    }
+
+    return when (this) {
+        is Ok -> value
+        is Err -> throw error
+    }
+}
+
+/**
+ * Returns the [value][Ok.value] if this [Result] is [Ok], otherwise throws the
+ * [transformation][transform] of the [error][Err.error] to a [Throwable].
+ */
+public inline infix fun <V, E> Result<V, E>.getOrThrow(transform: (E) -> Throwable): V {
+    contract {
+        returns() implies (this@getOrThrow is Ok<V>)
+        callsInPlace(transform, InvocationKind.AT_MOST_ONCE)
+    }
+
+    return when (this) {
+        is Ok -> value
+        is Err -> throw transform(error)
+    }
+}
+
+/**
  * Merges this [Result<V, E>][Result] to [U], returning the [value][Ok.value] if this [Result] is [Ok], otherwise the
  * [error][Err.error].
  *

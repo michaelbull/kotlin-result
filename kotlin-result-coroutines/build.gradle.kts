@@ -24,6 +24,7 @@ kotlin {
             dependencies {
                 implementation(kotlin("test-common"))
                 implementation(kotlin("test-annotations-common"))
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:${Versions.kotlinCoroutines}")
             }
         }
 
@@ -31,7 +32,6 @@ kotlin {
             dependencies {
                 implementation(kotlin("test-junit"))
                 implementation(kotlin("test"))
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:${Versions.kotlinCoroutinesTest}")
             }
         }
 
@@ -39,30 +39,6 @@ kotlin {
             dependencies {
                 implementation(kotlin("test-js"))
             }
-        }
-
-        val nativeTest by creating {
-            dependsOn(commonTest)
-        }
-
-        val linuxX64Test by getting {
-            dependsOn(nativeTest)
-        }
-
-        val mingwX64Test by getting {
-            dependsOn(nativeTest)
-        }
-
-        val macosX64Test by getting {
-            dependsOn(nativeTest)
-        }
-
-        val iosX64Test by getting {
-            dependsOn(nativeTest)
-        }
-
-        val iosArm64Test by getting {
-            dependsOn(nativeTest)
         }
     }
 }

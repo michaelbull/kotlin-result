@@ -5,11 +5,10 @@ import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.TestCoroutineDispatcher
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -24,7 +23,7 @@ class AsyncSuspendableBindingTest {
     }
 
     @Test
-    fun returnsOkIfAllBindsSuccessful() {
+    fun returnsOkIfAllBindsSuccessful() = runTest {
         suspend fun provideX(): Result<Int, BindingError> {
             delay(100)
             return Ok(1)
@@ -35,23 +34,20 @@ class AsyncSuspendableBindingTest {
             return Ok(2)
         }
 
-        runBlockingTest {
-            val result = binding<Int, BindingError> {
-                val x = async { provideX().bind() }
-                val y = async { provideY().bind() }
-                x.await() + y.await()
-            }
-
-            assertTrue(result is Ok)
-            assertEquals(
-                expected = 3,
-                actual = result.value
-            )
+        val result = binding<Int, BindingError> {
+            val x = async { provideX().bind() }
+            val y = async { provideY().bind() }
+            x.await() + y.await()
         }
+
+        assertEquals(
+            expected = Ok(3),
+            actual = result
+        )
     }
 
     @Test
-    fun returnsFirstErrIfBindingFailed() {
+    fun returnsFirstErrIfBindingFailed() = runTest {
         suspend fun provideX(): Result<Int, BindingError> {
             delay(3)
             return Ok(1)
@@ -67,24 +63,21 @@ class AsyncSuspendableBindingTest {
             return Err(BindingError.BindingErrorB)
         }
 
-        runBlockingTest {
-            val result = binding<Int, BindingError> {
-                val x = async { provideX().bind() }
-                val y = async { provideY().bind() }
-                val z = async { provideZ().bind() }
-                x.await() + y.await() + z.await()
-            }
-
-            assertTrue(result is Err)
-            assertEquals(
-                expected = BindingError.BindingErrorB,
-                actual = result.error
-            )
+        val result = binding<Int, BindingError> {
+            val x = async { provideX().bind() }
+            val y = async { provideY().bind() }
+            val z = async { provideZ().bind() }
+            x.await() + y.await() + z.await()
         }
+
+        assertEquals(
+            expected = Err(BindingError.BindingErrorB),
+            actual = result
+        )
     }
 
     @Test
-    fun returnsStateChangedForOnlyTheFirstAsyncBindFailWhenEagerlyCancellingBinding() {
+    fun returnsStateChangedForOnlyTheFirstAsyncBindFailWhenEagerlyCancellingBinding() = runTest {
         var xStateChange = false
         var yStateChange = false
 
@@ -100,29 +93,30 @@ class AsyncSuspendableBindingTest {
             return Err(BindingError.BindingErrorB)
         }
 
-        val dispatcherA = TestCoroutineDispatcher()
-        val dispatcherB = TestCoroutineDispatcher()
+        val dispatcherA = StandardTestDispatcher(testScheduler)
+        val dispatcherB = StandardTestDispatcher(testScheduler)
 
-        runBlocking {
-            val result = binding<Int, BindingError> {
-                val x = async(dispatcherA) { provideX().bind() }
-                val y = async(dispatcherB) { provideY().bind() }
-                dispatcherA.advanceTimeBy(2)
-                x.await() + y.await()
-            }
+        val result = binding<Int, BindingError> {
+            val x = async(dispatcherA) { provideX().bind() }
+            val y = async(dispatcherB) { provideY().bind() }
 
-            assertTrue(result is Err)
-            assertEquals(
-                expected = BindingError.BindingErrorA,
-                actual = result.error
-            )
-            assertTrue(xStateChange)
-            assertFalse(yStateChange)
+            testScheduler.advanceTimeBy(2)
+            testScheduler.runCurrent()
+
+            x.await() + y.await()
         }
+
+        assertEquals(
+            expected = Err(BindingError.BindingErrorA),
+            actual = result
+        )
+
+        assertTrue(xStateChange)
+        assertFalse(yStateChange)
     }
 
     @Test
-    fun returnsStateChangedForOnlyTheFirstLaunchBindFailWhenEagerlyCancellingBinding() {
+    fun returnsStateChangedForOnlyTheFirstLaunchBindFailWhenEagerlyCancellingBinding() = runTest {
         var xStateChange = false
         var yStateChange = false
         var zStateChange = false
@@ -145,27 +139,31 @@ class AsyncSuspendableBindingTest {
             return Err(BindingError.BindingErrorB)
         }
 
-        val dispatcherA = TestCoroutineDispatcher()
-        val dispatcherB = TestCoroutineDispatcher()
-        val dispatcherC = TestCoroutineDispatcher()
+        val dispatcherA = StandardTestDispatcher(testScheduler)
+        val dispatcherB = StandardTestDispatcher(testScheduler)
+        val dispatcherC = StandardTestDispatcher(testScheduler)
 
-        runBlocking {
-            val result = binding<Unit, BindingError> {
-                launch(dispatcherA) { provideX().bind() }
-                dispatcherA.advanceTimeBy(20)
-                launch(dispatcherB) { provideY().bind() }
-                dispatcherB.advanceTimeBy(20)
-                launch(dispatcherC) { provideZ().bind() }
-            }
+        val result = binding<Unit, BindingError> {
+            launch(dispatcherA) { provideX().bind() }
 
-            assertTrue(result is Err)
-            assertEquals(
-                expected = BindingError.BindingErrorA,
-                actual = result.error
-            )
-            assertTrue(xStateChange)
-            assertTrue(yStateChange)
-            assertFalse(zStateChange)
+            testScheduler.advanceTimeBy(20)
+            testScheduler.runCurrent()
+
+            launch(dispatcherB) { provideY().bind() }
+
+            testScheduler.advanceTimeBy(20)
+            testScheduler.runCurrent()
+
+            launch(dispatcherC) { provideZ().bind() }
         }
+
+        assertEquals(
+            expected = Err(BindingError.BindingErrorA),
+            actual = result
+        )
+
+        assertTrue(xStateChange)
+        assertTrue(yStateChange)
+        assertFalse(zStateChange)
     }
 }

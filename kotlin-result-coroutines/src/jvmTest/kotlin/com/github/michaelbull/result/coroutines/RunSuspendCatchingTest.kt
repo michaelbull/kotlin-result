@@ -8,7 +8,8 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -17,7 +18,7 @@ import kotlin.test.assertNull
 class RunSuspendCatchingTest {
 
     @Test
-    fun propagatesCoroutineCancellation() = runBlockingTest {
+    fun propagatesCoroutineCancellation() = runTest(UnconfinedTestDispatcher()) {
         var value: String? = null
 
         launch(CoroutineName("outer scope")) {
@@ -31,7 +32,8 @@ class RunSuspendCatchingTest {
                 result.onSuccess { value = it }
             }
 
-            advanceTimeBy(2_000)
+            testScheduler.advanceTimeBy(2_000)
+            testScheduler.runCurrent()
 
             // Cancel outer scope, which should cancel inner scope
             cancel()
@@ -41,7 +43,7 @@ class RunSuspendCatchingTest {
     }
 
     @Test
-    fun returnsOkIfInvocationSuccessful() = runBlockingTest {
+    fun returnsOkIfInvocationSuccessful() = runTest {
         val block = { "example" }
         val result = runSuspendCatching(block)
 
@@ -52,7 +54,7 @@ class RunSuspendCatchingTest {
     }
 
     @Test
-    fun returnsErrIfInvocationFailsWithAnythingOtherThanCancellationException() = runBlockingTest {
+    fun returnsErrIfInvocationFailsWithAnythingOtherThanCancellationException() = runTest {
         val exception = IllegalArgumentException("throw me")
         val block = { throw exception }
         val result = runSuspendCatching(block)

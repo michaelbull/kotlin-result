@@ -3,14 +3,16 @@ package com.github.michaelbull.result.coroutines.binding
 import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
-import com.github.michaelbull.result.coroutines.runBlockingTest
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
+@ExperimentalCoroutinesApi
 class AsyncSuspendableBindingTest {
 
     private sealed class BindingError {
@@ -19,7 +21,7 @@ class AsyncSuspendableBindingTest {
     }
 
     @Test
-    fun returnsOkIfAllBindsSuccessful(): dynamic {
+    fun returnsOkIfAllBindsSuccessful() = runTest {
         suspend fun provideX(): Result<Int, BindingError> {
             delay(100)
             return Ok(1)
@@ -30,22 +32,20 @@ class AsyncSuspendableBindingTest {
             return Ok(2)
         }
 
-        return runBlockingTest {
-            val result = binding<Int, BindingError> {
-                val x = async { provideX().bind() }
-                val y = async { provideY().bind() }
-                x.await() + y.await()
-            }
-            assertTrue(result is Ok)
-            assertEquals(
-                expected = 3,
-                actual = result.value
-            )
+        val result = binding<Int, BindingError> {
+            val x = async { provideX().bind() }
+            val y = async { provideY().bind() }
+            x.await() + y.await()
         }
+
+        assertEquals(
+            expected = Ok(3),
+            actual = result
+        )
     }
 
     @Test
-    fun returnsFirstErrIfBindingFailed(): dynamic {
+    fun returnsFirstErrIfBindingFailed() = runTest {
         suspend fun provideX(): Result<Int, BindingError> {
             delay(10)
             return Ok(1)
@@ -61,27 +61,25 @@ class AsyncSuspendableBindingTest {
             return Err(BindingError.BindingErrorB)
         }
 
-        return runBlockingTest {
-            val result = binding<Int, BindingError> {
-                val x = async { provideX().bind() }
-                val y = async { provideY().bind() }
-                val z = async { provideZ().bind() }
-                x.await() + y.await() + z.await()
-            }
-
-            assertTrue(result is Err)
-            assertEquals(
-                expected = BindingError.BindingErrorB,
-                actual = result.error
-            )
+        val result = binding<Int, BindingError> {
+            val x = async { provideX().bind() }
+            val y = async { provideY().bind() }
+            val z = async { provideZ().bind() }
+            x.await() + y.await() + z.await()
         }
+
+        assertEquals(
+            expected = Err(BindingError.BindingErrorB),
+            actual = result
+        )
     }
 
     @Test
-    fun returnsStateChangedForOnlyTheFirstAsyncBindFailWhenEagerlyCancellingBinding(): dynamic {
+    fun returnsStateChangedForOnlyTheFirstAsyncBindFailWhenEagerlyCancellingBinding() = runTest {
         var xStateChange = false
         var yStateChange = false
         var zStateChange = false
+
         suspend fun provideX(): Result<Int, BindingError> {
             delay(20)
             xStateChange = true
@@ -100,23 +98,21 @@ class AsyncSuspendableBindingTest {
             return Err(BindingError.BindingErrorB)
         }
 
-        return runBlockingTest {
-            val result = binding<Int, BindingError> {
-                val x = async { provideX().bind() }
-                val y = async { provideY().bind() }
-                val z = async { provideZ().bind() }
+        val result = binding<Int, BindingError> {
+            val x = async { provideX().bind() }
+            val y = async { provideY().bind() }
+            val z = async { provideZ().bind() }
 
-                x.await() + y.await() + z.await()
-            }
-
-            assertTrue(result is Err)
-            assertEquals(
-                expected = BindingError.BindingErrorB,
-                actual = result.error
-            )
-            assertFalse(xStateChange)
-            assertFalse(yStateChange)
-            assertTrue(zStateChange)
+            x.await() + y.await() + z.await()
         }
+
+        assertEquals(
+            expected = Err(BindingError.BindingErrorB),
+            actual = result
+        )
+
+        assertFalse(xStateChange)
+        assertFalse(yStateChange)
+        assertTrue(zStateChange)
     }
 }

@@ -177,6 +177,11 @@ subprojects {
                             name.set("Joseph Cooper")
                             url.set("https://grodin.github.io/")
                         }
+
+                        contributor {
+                            name.set("Sebastian Kappen")
+                            url.set("https://github.com/Nimelrian")
+                        }
                     }
 
                     scm {

@@ -70,9 +70,11 @@ subprojects {
                 }
 
                 ios()
+                iosSimulatorArm64()
                 linuxX64()
                 mingwX64()
                 macosX64()
+                macosArm64()
             }
         }
 

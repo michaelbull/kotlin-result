@@ -61,11 +61,19 @@ kotlin {
             dependsOn(nativeMain)
         }
 
+        val macosArm64Main by getting {
+            dependsOn(nativeMain)
+        }
+
         val iosX64Main by getting {
             dependsOn(nativeMain)
         }
 
         val iosArm64Main by getting {
+            dependsOn(nativeMain)
+        }
+
+        val iosSimulatorArm64Main by getting {
             dependsOn(nativeMain)
         }
     }

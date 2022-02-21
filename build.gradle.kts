@@ -184,6 +184,11 @@ subprojects {
                             name.set("Sebastian Kappen")
                             url.set("https://github.com/Nimelrian")
                         }
+
+                        contributor {
+                            name.set("Dmitry Suzdalev")
+                            url.set("https://github.com/dimsuz")
+                        }
                     }
 
                     scm {

@@ -40,6 +40,14 @@ internal expect object BindException : Exception
 
 public interface ResultBinding<E> {
     public fun <V> Result<V, E>.bind(): V
+    
+    public fun <V> V?.bindOr(error: () -> E): V { 
+        contract {
+            callsInPlace(error, InvocationKind.AT_MOST_ONCE)
+        }
+        
+        return toResultOr(error).bind()
+    }
 }
 
 @PublishedApi

@@ -21,6 +21,7 @@ out/
 
 # Gradle
 build/
+kotlin-js-store/
 
 # JVM error logs
 hs_err_pid*.log

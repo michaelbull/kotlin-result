@@ -37,7 +37,7 @@ import io.ktor.server.application.call
 import io.ktor.server.application.install
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
-import io.ktor.server.plugins.ContentNegotiation
+import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.get
@@ -46,8 +46,8 @@ import io.ktor.server.routing.routing
 
 fun main() {
     embeddedServer(Netty, port = 8080, host = "0.0.0.0") {
-        configureRouting()
         configureSerialization()
+        configureRouting()
     }.start(wait = true)
 }
 
@@ -73,7 +73,8 @@ fun Application.configureRouting() {
 
     routing {
         get("/customers/{id}") {
-            val (status, message) = call.parameters.readId()
+            val (status, message) = call.parameters
+                .readId()
                 .andThen(customerService::getById)
                 .mapBoth(::customerToResponse, ::messageToResponse)
 
@@ -81,7 +82,8 @@ fun Application.configureRouting() {
         }
 
         post("/customers/{id}") {
-            val (status, message) = call.parameters.readId()
+            val (status, message) = call.parameters
+                .readId()
                 .andThen { customerService.save(it, call.receive()) }
                 .mapBoth(::eventToResponse, ::messageToResponse)
 
@@ -95,9 +97,7 @@ fun Application.configureRouting() {
 }
 
 private fun Parameters.readId(): Result<Long, DomainMessage> {
-    return get("id")
-        ?.toLongOrNull()
-        .toResultOr { CustomerRequired }
+    return get("id")?.toLongOrNull().toResultOr { CustomerRequired }
 }
 
 private fun customerToResponse(customer: CustomerDto) = HttpStatusCode.OK to customer

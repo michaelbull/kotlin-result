@@ -55,6 +55,12 @@ subprojects {
                 from(dokkaHtml)
             }
 
+            tasks.withType<Jar> {
+                from(rootDir.resolve("LICENSE")) {
+                    into("META-INF")
+                }
+            }
+
             configure<KotlinMultiplatformExtension> {
                 explicitApi()
 

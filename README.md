@@ -25,7 +25,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.michael-bull.kotlin-result:kotlin-result:1.1.15")
+    implementation("com.michael-bull.kotlin-result:kotlin-result:1.1.16")
 }
 ```
 
@@ -165,8 +165,8 @@ dependency:
 
 ```kotlin
 dependencies {
-    implementation("com.michael-bull.kotlin-result:kotlin-result:1.1.15")
-    implementation("com.michael-bull.kotlin-result:kotlin-result-coroutines:1.1.15")
+    implementation("com.michael-bull.kotlin-result:kotlin-result:1.1.16")
+    implementation("com.michael-bull.kotlin-result:kotlin-result-coroutines:1.1.16")
 }
 ```
 

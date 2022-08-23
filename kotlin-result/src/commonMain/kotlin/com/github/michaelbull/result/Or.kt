@@ -70,7 +70,7 @@ public inline infix fun <V, E> Result<V, E>.recover(transform: (E) -> V): Ok<V> 
  * Returns the [transformation][transform] of the [error][Err.error], catching and encapsulating any
  * thrown exception as a failure if this [Result] is [Err], otherwise this [Ok].
  */
-inline infix fun <V, E> Result<V, E>.recoverCatching(transform: (E) -> V): Result<V, Throwable> {
+public inline infix fun <V, E> Result<V, E>.recoverCatching(transform: (E) -> V): Result<V, Throwable> {
     contract {
         callsInPlace(transform, InvocationKind.AT_MOST_ONCE)
     }

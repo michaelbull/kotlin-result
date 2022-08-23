@@ -82,6 +82,36 @@ class OrTest {
         }
     }
 
+    class RecoverCatching {
+        @Test
+        fun returnsValueIfOk() {
+            assertEquals(
+                expected = Ok(3000),
+                actual = Ok(3000).recoverCatching { 4000 }
+            )
+        }
+
+        @Test
+        fun returnsTransformedValueIfErr() {
+            assertEquals(
+                expected = Ok(2000),
+                actual = Err(4000).recoverCatching { 2000 }
+            )
+        }
+
+        @Test
+        fun returnsErrorIfTransformerThrows() {
+            val exception = IllegalArgumentException("throw me")
+
+            assertEquals(
+                expected = exception,
+                actual = Err(4000)
+                    .recoverCatching { throw exception }
+                    .getError()
+            )
+        }
+    }
+
     class RecoverIf {
         @Test
         fun returnsValueIfOk() {

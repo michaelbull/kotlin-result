@@ -195,6 +195,11 @@ subprojects {
                             name.set("Dmitry Suzdalev")
                             url.set("https://github.com/dimsuz")
                         }
+
+                        contributor {
+                            name.set("Berik Visschers")
+                            url.set("https://visschers.nu/")
+                        }
                     }
 
                     scm {

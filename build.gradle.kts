@@ -75,12 +75,23 @@ subprojects {
                     nodejs()
                 }
 
-                ios()
-                iosSimulatorArm64()
                 linuxX64()
+
                 mingwX64()
+
                 macosX64()
                 macosArm64()
+
+                ios()
+                iosArm32()
+                iosSimulatorArm64()
+
+                tvos()
+                tvosSimulatorArm64()
+
+                watchos()
+                watchosX86()
+                watchosSimulatorArm64()
             }
         }
 

@@ -91,11 +91,47 @@ jobs:
         with:
           java-version: 1.8
 
-      - run: ./gradlew publishLinuxX64PublicationToMavenRepository
-        if: matrix.os == 'ubuntu-latest'
+      # ./gradlew tasks | grep "PublicationToMavenRepository" | grep -e "publishAndroid" -e "publishJs" -e "publishJvm" -e "publishKotlinMultiplatform" -e "publishLinux" -e "publishWasm" | cut -d ' ' -f 1
+      - if: matrix.os == 'ubuntu-latest'
+        run: >
+          ./gradlew
+          publishAndroidNativeArm32PublicationToMavenRepository
+          publishAndroidNativeArm64PublicationToMavenRepository
+          publishAndroidNativeX64PublicationToMavenRepository
+          publishAndroidNativeX86PublicationToMavenRepository
+          publishJsPublicationToMavenRepository
+          publishJvmPublicationToMavenRepository
+          publishKotlinMultiplatformPublicationToMavenRepository
+          publishLinuxArm32HfpPublicationToMavenRepository
+          publishLinuxArm64PublicationToMavenRepository
+          publishLinuxMips32PublicationToMavenRepository
+          publishLinuxMipsel32PublicationToMavenRepository
+          publishLinuxX64PublicationToMavenRepository
+          publishWasm32PublicationToMavenRepository
 
-      - run: ./gradlew publishMingwX64PublicationToMavenRepository
-        if: matrix.os == 'windows-latest'
+      # ./gradlew tasks | grep "PublicationToMavenRepository" | grep "publishMingw" | cut -d ' ' -f 1
+      - if: matrix.os == 'windows-latest'
+        run: >
+          ./gradlew
+          publishMingwX64PublicationToMavenRepository
+          publishMingwX86PublicationToMavenRepository
 
-      - run: ./gradlew publish
-        if: matrix.os == 'macos-11'
+      # ./gradlew tasks | grep "PublicationToMavenRepository" | grep -e "publishIos" -e "publishMacos" -e "publishTvos" -e "publishWatchos" | cut -d ' ' -f 1
+      - if: matrix.os == 'macos-11'
+        run: >
+          ./gradlew
+          publishIosArm32PublicationToMavenRepository
+          publishIosArm64PublicationToMavenRepository
+          publishIosSimulatorArm64PublicationToMavenRepository
+          publishIosX64PublicationToMavenRepository
+          publishMacosArm64PublicationToMavenRepository
+          publishMacosX64PublicationToMavenRepository
+          publishTvosArm64PublicationToMavenRepository
+          publishTvosSimulatorArm64PublicationToMavenRepository
+          publishTvosX64PublicationToMavenRepository
+          publishWatchosArm32PublicationToMavenRepository
+          publishWatchosArm64PublicationToMavenRepository
+          publishWatchosSimulatorArm64PublicationToMavenRepository
+          publishWatchosX64PublicationToMavenRepository
+          publishWatchosX86PublicationToMavenRepository
+

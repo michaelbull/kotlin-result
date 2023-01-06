@@ -211,6 +211,11 @@ subprojects {
                             name.set("Berik Visschers")
                             url.set("https://visschers.nu/")
                         }
+
+                        contributor {
+                            name.set("Matthew Nelson")
+                            url.set("https://matthewnelson.io/")
+                        }
                     }
 
                     scm {

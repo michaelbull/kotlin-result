@@ -16,7 +16,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.kotlinCoroutines}")
-                implementation(project(":kotlin-result"))
+                api(project(":kotlin-result"))
             }
         }
 

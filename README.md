@@ -5,10 +5,8 @@
 [![License](https://img.shields.io/github/license/michaelbull/kotlin-result.svg)](https://github.com/michaelbull/kotlin-result/blob/master/LICENSE)
 
 ![badge][badge-android]
-![badge][badge-android-native]
 ![badge][badge-jvm]
 ![badge][badge-js]
-![badge][badge-js-ir]
 ![badge][badge-nodejs]
 ![badge][badge-linux]
 ![badge][badge-windows]
@@ -17,6 +15,8 @@
 ![badge][badge-mac]
 ![badge][badge-tvos]
 ![badge][badge-watchos]
+![badge][badge-js-ir]
+![badge][badge-android-native]
 ![badge][badge-apple-silicon]
 
 [`Result<V, E>`][result] is a monad for modelling success ([`Ok`][result-ok]) or
@@ -315,7 +315,7 @@ This project is available under the terms of the ISC license. See the
 [either-syntax]: https://arrow-kt.io/docs/0.10/apidocs/arrow-core-data/arrow.core/-either/#syntax
 
 [badge-android]: http://img.shields.io/badge/-android-6EDB8D.svg?style=flat
-[badge-android-native]: http://img.shields.io/badge/-android--native-6EDB8D.svg?style=flat
+[badge-android-native]: http://img.shields.io/badge/support-[AndroidNative]-6EDB8D.svg?style=flat
 [badge-jvm]: http://img.shields.io/badge/-jvm-DB413D.svg?style=flat
 [badge-js]: http://img.shields.io/badge/-js-F8DB5D.svg?style=flat
 [badge-js-ir]: https://img.shields.io/badge/support-[IR]-AAC4E0.svg?style=flat

@@ -38,10 +38,10 @@ jobs:
         with:
           java-version: 1.8
 
-      - run: ./gradlew linuxX64Test
+      - run: ./gradlew $(./gradlew tasks | grep "Test " | grep "linux" | cut -d ' ' -f 1)
         if: matrix.os == 'ubuntu-latest'
 
-      - run: ./gradlew mingwX64Test
+      - run: ./gradlew $(./gradlew tasks | grep "Test " | grep "mingw" | cut -d ' ' -f 1)
         if: matrix.os == 'windows-latest'
 
       - run: ./gradlew build
@@ -91,11 +91,11 @@ jobs:
         with:
           java-version: 1.8
 
-      - run: ./gradlew publishLinuxX64PublicationToMavenRepository
+      - run: ./gradlew $(./gradlew tasks | grep "PublicationToMavenRepository" | grep -e "publishAndroid" -e "publishJs" -e "publishJvm" -e "publishKotlinMultiplatform" -e "publishLinux" -e "publishWasm" | cut -d ' ' -f 1)
         if: matrix.os == 'ubuntu-latest'
 
-      - run: ./gradlew publishMingwX64PublicationToMavenRepository
+      - run: ./gradlew $(./gradlew tasks | grep "PublicationToMavenRepository" | grep "publishMingw" | cut -d ' ' -f 1)
         if: matrix.os == 'windows-latest'
 
-      - run: ./gradlew publish
+      - run: ./gradlew $(./gradlew tasks | grep "PublicationToMavenRepository" | grep -e "publishIos" -e "publishMacos" -e "publishTvos" -e "publishWatchos" | cut -d ' ' -f 1)
         if: matrix.os == 'macos-11'

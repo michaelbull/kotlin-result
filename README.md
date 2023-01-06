@@ -175,6 +175,9 @@ dependencies {
 }
 ```
 
+**DISCLAIMER:** Supported platforms for the `kotlin-result-coroutines` dependency are
+limited to that which coroutines currently supports.
+
 The coroutine implementation of `binding` has been designed so that the first
 call to `bind()` that fails will cancel all child coroutines within the current
 coroutine scope.

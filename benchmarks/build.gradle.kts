@@ -34,7 +34,6 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation(project(":kotlin-result"))
                 implementation(project(":kotlin-result-coroutines"))
                 implementation("org.jetbrains.kotlinx:kotlinx-benchmark-runtime:${Versions.kotlinBenchmark}")
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.kotlinCoroutines}")

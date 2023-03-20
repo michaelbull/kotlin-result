@@ -15,12 +15,12 @@ description = "A Result monad for modelling success or failure operations."
 
 plugins {
     base
-    id("com.github.ben-manes.versions") version Versions.versionsPlugin
+    alias(libs.plugins.versions)
 
-    kotlin("multiplatform") version Versions.kotlin apply false
-    id("org.jetbrains.kotlinx.benchmark") version Versions.kotlinBenchmark apply false
-    id("org.jetbrains.dokka") version Versions.dokka apply false
-    id("org.jetbrains.kotlin.plugin.allopen") version Versions.kotlin apply false
+    alias(libs.plugins.kotlin.multiplatform) apply false
+    alias(libs.plugins.kotlin.benchmark) apply false
+    alias(libs.plugins.kotlin.allopen) apply false
+    alias(libs.plugins.dokka) apply false
 }
 
 tasks.withType<DependencyUpdatesTask> {
@@ -215,6 +215,11 @@ subprojects {
                         contributor {
                             name.set("Matthew Nelson")
                             url.set("https://matthewnelson.io/")
+                        }
+
+                        contributor {
+                            name.set("Matthias Geisler")
+                            url.set("https://github.com/bitPogo")
                         }
                     }
 

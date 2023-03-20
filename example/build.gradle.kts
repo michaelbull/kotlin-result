@@ -11,12 +11,12 @@ application {
 
 dependencies {
     implementation(project(":kotlin-result"))
-    implementation(kotlin("stdlib-jdk8"))
-    implementation("ch.qos.logback:logback-classic:${Versions.logback}")
-    implementation("io.ktor:ktor-serialization-jackson:${Versions.ktor}")
-    implementation("io.ktor:ktor-server-core:${Versions.ktor}")
-    implementation("io.ktor:ktor-server-content-negotiation:${Versions.ktor}")
-    implementation("io.ktor:ktor-server-netty:${Versions.ktor}")
+    implementation(libs.kotlin.stdlib.jdk8)
+    implementation(libs.logback)
+    implementation(libs.ktor.serialization.jackson)
+    implementation(libs.ktor.server.core)
+    implementation(libs.ktor.server.content.negotiation)
+    implementation(libs.ktor.server.netty)
 }
 
 tasks.withType(KotlinCompile::class.java).all {

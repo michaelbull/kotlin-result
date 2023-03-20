@@ -1,0 +1,28 @@
+[versions]
+dokka = "1.7.20"
+kotlin = "1.8.10"
+kotlin-benchmark = "0.4.7"
+kotlin-coroutines = "1.6.4"
+ktor = "2.2.3"
+logback = "1.4.5"
+versions-plugin = "0.45.0"
+
+[libraries]
+logback = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
+
+kotlin-stdlib-jdk8 = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8", version.ref = "kotlin" }
+kotlin-benchmark-runtime = { module = "org.jetbrains.kotlinx:kotlinx-benchmark-runtime", version.ref = "kotlin-benchmark" }
+kotlin-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlin-coroutines" }
+kotlin-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlin-coroutines" }
+
+ktor-server-core = { module = "io.ktor:ktor-server-core", version.ref = "ktor" }
+ktor-serialization-jackson = { module = "io.ktor:ktor-serialization-jackson", version.ref = "ktor" }
+ktor-server-content-negotiation = { module = "io.ktor:ktor-server-content-negotiation", version.ref = "ktor" }
+ktor-server-netty = { module = "io.ktor:ktor-server-netty", version.ref = "ktor" }
+
+[plugins]
+dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
+kotlin-allopen = { id = "org.jetbrains.kotlin.plugin.allopen", version.ref = "kotlin" }
+kotlin-benchmark = { id = "org.jetbrains.kotlinx.benchmark", version.ref = "kotlin-benchmark" }
+kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+versions = { id = "com.github.ben-manes.versions", version.ref = "versions-plugin" }

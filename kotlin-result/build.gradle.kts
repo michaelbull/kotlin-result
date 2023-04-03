@@ -6,13 +6,7 @@ plugins {
 }
 
 kotlin {
-    jvm {
-        compilations.all {
-            kotlinOptions {
-                jvmTarget = "1.8"
-            }
-        }
-    }
+    jvmToolchain(8)
 
     // Additional targets not currently supported by coroutines
     androidNativeArm32()

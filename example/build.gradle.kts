@@ -9,6 +9,10 @@ application {
     mainClass.set("com.github.michaelbull.result.example.ApplicationKt")
 }
 
+kotlin {
+    jvmToolchain(8)
+}
+
 dependencies {
     implementation(project(":kotlin-result"))
     implementation(libs.kotlin.stdlib.jdk8)
@@ -17,10 +21,4 @@ dependencies {
     implementation(libs.ktor.server.core)
     implementation(libs.ktor.server.content.negotiation)
     implementation(libs.ktor.server.netty)
-}
-
-tasks.withType(KotlinCompile::class.java).all {
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
 }

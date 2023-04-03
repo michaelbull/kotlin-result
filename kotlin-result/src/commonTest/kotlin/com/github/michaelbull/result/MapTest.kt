@@ -2,6 +2,7 @@ package com.github.michaelbull.result
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNull
 import kotlin.test.assertSame
 
 class MapTest {
@@ -171,6 +172,81 @@ class MapTest {
             assertEquals(
                 expected = "the truth",
                 actual = result.error.reason
+            )
+        }
+    }
+
+    class ToErrorIfNull {
+
+        @Test
+        fun returnsValueIfOk() {
+            val result = Ok("a").toErrorIfNull { "b" }
+
+            result as Ok
+
+            assertEquals(
+                expected = "a",
+                actual = result.value
+            )
+        }
+
+        @Test
+        fun returnsTransformedErrorIfNull() {
+            val result = Ok(null).toErrorIfNull { "a" }
+
+            result as Err
+
+            assertEquals(
+                expected = "a",
+                actual = result.error
+            )
+        }
+
+        @Test
+        fun returnsErrorIfErr() {
+            val result = Err("a").toErrorIfNull { "b" }
+
+            result as Err
+
+            assertEquals(
+                expected = "a",
+                actual = result.error
+            )
+        }
+    }
+
+    class ToErrorUnlessNull {
+
+        @Test
+        fun returnsTransformedErrorIfNotNull() {
+            val result = Ok("a").toErrorUnlessNull { "b" }
+
+            result as Err
+
+            assertEquals(
+                expected = "b",
+                actual = result.error
+            )
+        }
+
+        @Test
+        fun returnsValueIfNull() {
+            val result = Ok(null).toErrorUnlessNull { "a" }
+
+            result as Ok
+
+            assertNull(result.value)
+        }
+
+        @Test
+        fun returnsErrorIfErr() {
+            val result = Err("a").toErrorUnlessNull { "b" }
+
+            result as Err
+
+            assertEquals(
+                expected = "a",
+                actual = result.error
             )
         }
     }

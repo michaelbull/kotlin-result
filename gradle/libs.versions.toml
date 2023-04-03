@@ -1,11 +1,11 @@
 [versions]
-dokka = "1.7.20"
+dokka = "1.8.10"
 kotlin = "1.8.10"
 kotlin-benchmark = "0.4.7"
 kotlin-coroutines = "1.6.4"
-ktor = "2.2.3"
-logback = "1.4.5"
-versions-plugin = "0.45.0"
+ktor = "2.2.4"
+logback = "1.4.6"
+versions-plugin = "0.46.0"
 
 [libraries]
 logback = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }

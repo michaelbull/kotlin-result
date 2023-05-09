@@ -192,7 +192,7 @@ class MapTest {
 
         @Test
         fun returnsTransformedErrorIfNull() {
-            val result = Ok(null).toErrorIfNull { "a" }
+            val result: Result<Nothing, String> = Ok(null).toErrorIfNull { "a" }
 
             result as Err
 

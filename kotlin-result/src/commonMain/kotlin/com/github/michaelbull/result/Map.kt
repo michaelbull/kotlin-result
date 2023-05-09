@@ -195,7 +195,7 @@ public inline fun <V, E> Result<V, E>.toErrorIf(predicate: (V) -> Boolean, trans
  *
  * @see [toErrorIf]
  */
-public inline fun <V, E> Result<V, E>.toErrorIfNull(error: () -> E): Result<V, E> {
+public inline fun <V, E> Result<V?, E>.toErrorIfNull(error: () -> E): Result<V, E> {
     contract {
         callsInPlace(error, InvocationKind.AT_MOST_ONCE)
     }
@@ -203,7 +203,10 @@ public inline fun <V, E> Result<V, E>.toErrorIfNull(error: () -> E): Result<V, E
     return toErrorIf(
         { it == null },
         { error() }
-    )
+    ).map {
+        @Suppress("UNCHECKED_CAST")
+        it as V
+    }
 }
 
 /**

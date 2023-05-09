@@ -195,15 +195,19 @@ public inline fun <V, E> Result<V, E>.toErrorIf(predicate: (V) -> Boolean, trans
  *
  * @see [toErrorIf]
  */
-public inline fun <V, E> Result<V, E>.toErrorIfNull(error: () -> E): Result<V, E> {
+public inline fun <V, E> Result<V?, E>.toErrorIfNull(error: () -> E): Result<V, E> {
     contract {
         callsInPlace(error, InvocationKind.AT_MOST_ONCE)
     }
 
-    return toErrorIf(
-        { it == null },
-        { error() }
-    )
+    return when (this) {
+        is Ok -> if(value == null) {
+            Err(error())
+        } else {
+            Ok(value)
+        }
+        is Err -> this
+    }
 }
 
 /**
@@ -239,8 +243,12 @@ public inline fun <V, E> Result<V, E>.toErrorUnlessNull(error: () -> E): Result<
         callsInPlace(error, InvocationKind.AT_MOST_ONCE)
     }
 
-    return toErrorUnless(
-        { it == null },
-        { error() }
-    )
+    return when (this) {
+        is Ok -> if (value == null) {
+            this
+        } else {
+            Err(error())
+        }
+        is Err -> Err(error())
+    }
 }

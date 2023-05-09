@@ -223,6 +223,11 @@ subprojects {
                             name.set("Matthias Geisler")
                             url.set("https://github.com/bitPogo")
                         }
+
+                        contributor {
+                            name.set("Kirill Zhukov")
+                            url.set("https://github.com/kirillzh")
+                        }
                     }
 
                     scm {

@@ -199,4 +199,73 @@ class ZipTest {
             )
         }
     }
+
+    class ZipOrAccumulate {
+
+        @Test
+        fun returnsTransformedValueIfAllOk() {
+            val result = zipOrAccumulate(
+                { Ok(10) },
+                { Ok(20) },
+                { Ok(30) },
+                { Ok(40) },
+                { Ok(50) },
+            ) { a, b, c, d, e ->
+                a + b + c + d + e
+            }
+
+            result as Ok
+
+            assertEquals(
+                expected = 150,
+                actual = result.value,
+            )
+        }
+
+        @Test
+        fun returnsAllErrsIfAllErr() {
+            val result = zipOrAccumulate(
+                { Ok(10).and(Err("error one")) },
+                { Ok(20).and(Err("error two")) },
+                { Ok(30).and(Err("error three")) },
+                { Ok(40).and(Err("error four")) },
+                { Ok(50).and(Err("error five")) },
+            ) { a, b, c, d, e ->
+                a + b + c + d + e
+            }
+
+            result as Err
+
+            assertEquals(
+                expected = listOf(
+                    "error one",
+                    "error two",
+                    "error three",
+                    "error four",
+                    "error five",
+                ),
+                actual = result.error,
+            )
+        }
+
+        @Test
+        fun returnsOneErrsIfOneOfErr() {
+            val result = zipOrAccumulate(
+                { Ok(10) },
+                { Ok(20).and(Err("only error")) },
+                { Ok(30) },
+                { Ok(40) },
+                { Ok(50) },
+            ) { a, b, c, d, e ->
+                a + b + c + d + e
+            }
+
+            result as Err
+
+            assertEquals(
+                expected = listOf("only error",),
+                actual = result.error,
+            )
+        }
+    }
 }

@@ -38,7 +38,8 @@ public inline fun <T, R, E> List<T>.foldRight(initial: R, operation: (T, acc: R)
 }
 
 /**
- * Combines a vararg of [Results][Result] into a single [Result] (holding a [List]).
+ * Combines a vararg of [Results][Result] into a single [Result] (holding a [List]). Elements in the returned list
+ * are in the same order is the input vararg.
  *
  * - Elm: [Result.Extra.combine](http://package.elm-lang.org/packages/elm-community/result-extra/2.2.0/Result-Extra#combine)
  */
@@ -47,7 +48,8 @@ public fun <V, E> combine(vararg results: Result<V, E>): Result<List<V>, E> {
 }
 
 /**
- * Combines an [Iterable] of [Results][Result] into a single [Result] (holding a [List]).
+ * Combines an [Iterable] of [Results][Result] into a single [Result] (holding a [List]). Elements in the returned
+ * list are in the input [Iterable] order.
  *
  * - Elm: [Result.Extra.combine](http://package.elm-lang.org/packages/elm-community/result-extra/2.2.0/Result-Extra#combine)
  */
@@ -133,7 +135,7 @@ public fun <V, E> Iterable<Result<V, E>>.partition(): Pair<List<V>, List<E>> {
 /**
  * Returns a [Result<List<U>, E>][Result] containing the results of applying the given [transform]
  * function to each element in the original collection, returning early with the first [Err] if a
- * transformation fails.
+ * transformation fails. Elements in the returned list are in the input [Iterable] order.
  */
 public inline fun <V, E, U> Iterable<V>.mapResult(
     transform: (V) -> Result<U, E>
@@ -149,7 +151,7 @@ public inline fun <V, E, U> Iterable<V>.mapResult(
 /**
  * Applies the given [transform] function to each element of the original collection and appends
  * the results to the given [destination], returning early with the first [Err] if a
- * transformation fails.
+ * transformation fails. Elements in the returned list are in the input [Iterable] order.
  */
 public inline fun <V, E, U, C : MutableCollection<in U>> Iterable<V>.mapResultTo(
     destination: C,
@@ -166,7 +168,8 @@ public inline fun <V, E, U, C : MutableCollection<in U>> Iterable<V>.mapResultTo
 /**
  * Returns a [Result<List<U>, E>][Result] containing only the non-null results of applying the
  * given [transform] function to each element in the original collection, returning early with the
- * first [Err] if a transformation fails.
+ * first [Err] if a transformation fails. Elements in the returned list are in the input [Iterable]
+ * order.
  */
 public inline fun <V, E, U : Any> Iterable<V>.mapResultNotNull(
     transform: (V) -> Result<U, E>?
@@ -201,7 +204,8 @@ public inline fun <V, E, U : Any, C : MutableCollection<in U>> Iterable<V>.mapRe
 /**
  * Returns a [Result<List<U>, E>][Result] containing the results of applying the given [transform]
  * function to each element and its index in the original collection, returning early with the
- * first [Err] if a transformation fails.
+ * first [Err] if a transformation fails. Elements in the returned list are in the input [Iterable]
+ * order.
  */
 public inline fun <V, E, U> Iterable<V>.mapResultIndexed(
     transform: (index: Int, V) -> Result<U, E>
@@ -234,7 +238,8 @@ public inline fun <V, E, U, C : MutableCollection<in U>> Iterable<V>.mapResultIn
 /**
  * Returns a [Result<List<U>, E>][Result] containing only the non-null results of applying the
  * given [transform] function to each element and its index in the original collection, returning
- * early with the first [Err] if a transformation fails.
+ * early with the first [Err] if a transformation fails. Elements in the returned list are in
+ * the input [Iterable] order.
  */
 public inline fun <V, E, U : Any> Iterable<V>.mapResultIndexedNotNull(
     transform: (index: Int, V) -> Result<U, E>?

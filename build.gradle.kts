@@ -84,15 +84,13 @@ subprojects {
                 macosX64()
                 macosArm64()
 
-                ios()
-                iosArm32()
+                iosArm64()
                 iosSimulatorArm64()
 
-                tvos()
+                tvosArm64()
                 tvosSimulatorArm64()
 
-                watchos()
-                watchosX86()
+                watchosArm64()
                 watchosSimulatorArm64()
             }
         }

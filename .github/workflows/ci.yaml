@@ -102,25 +102,20 @@ jobs:
           publishJsPublicationToMavenRepository
           publishJvmPublicationToMavenRepository
           publishKotlinMultiplatformPublicationToMavenRepository
-          publishLinuxArm32HfpPublicationToMavenRepository
           publishLinuxArm64PublicationToMavenRepository
-          publishLinuxMips32PublicationToMavenRepository
-          publishLinuxMipsel32PublicationToMavenRepository
           publishLinuxX64PublicationToMavenRepository
-          publishWasm32PublicationToMavenRepository
+          publishWasmJsPublicationToMavenRepository
 
       # ./gradlew tasks | grep "PublicationToMavenRepository" | grep "publishMingw" | cut -d ' ' -f 1
       - if: matrix.os == 'windows-latest'
         run: >
           ./gradlew
           publishMingwX64PublicationToMavenRepository
-          publishMingwX86PublicationToMavenRepository
 
       # ./gradlew tasks | grep "PublicationToMavenRepository" | grep -e "publishIos" -e "publishMacos" -e "publishTvos" -e "publishWatchos" | cut -d ' ' -f 1
       - if: matrix.os == 'macos-11'
         run: >
           ./gradlew
-          publishIosArm32PublicationToMavenRepository
           publishIosArm64PublicationToMavenRepository
           publishIosSimulatorArm64PublicationToMavenRepository
           publishIosX64PublicationToMavenRepository
@@ -133,5 +128,4 @@ jobs:
           publishWatchosArm64PublicationToMavenRepository
           publishWatchosSimulatorArm64PublicationToMavenRepository
           publishWatchosX64PublicationToMavenRepository
-          publishWatchosX86PublicationToMavenRepository
 

@@ -81,19 +81,21 @@ subprojects {
 
                 mingwX64()
 
-                macosX64()
                 macosArm64()
+                macosX64()
 
-                ios()
-                iosArm32()
+                iosArm64()
                 iosSimulatorArm64()
+                iosX64()
 
-                tvos()
+                tvosArm64()
                 tvosSimulatorArm64()
+                tvosX64()
 
-                watchos()
-                watchosX86()
+                watchosArm32()
+                watchosArm64()
                 watchosSimulatorArm64()
+                watchosX64()
             }
         }
 

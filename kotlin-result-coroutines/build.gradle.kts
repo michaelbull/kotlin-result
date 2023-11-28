@@ -13,14 +13,14 @@ kotlin {
             }
         }
 
-        val commonMain by getting {
+        commonMain {
             dependencies {
                 implementation(libs.kotlin.coroutines.core)
                 api(project(":kotlin-result"))
             }
         }
 
-        val commonTest by getting {
+        commonTest {
             dependencies {
                 implementation(kotlin("test-common"))
                 implementation(kotlin("test-annotations-common"))
@@ -28,14 +28,14 @@ kotlin {
             }
         }
 
-        val jvmTest by getting {
+        jvmTest {
             dependencies {
                 implementation(kotlin("test-junit"))
                 implementation(kotlin("test"))
             }
         }
 
-        val jsTest by getting {
+        jsTest {
             dependencies {
                 implementation(kotlin("test-js"))
             }

@@ -228,6 +228,16 @@ subprojects {
                             name.set("Kirill Zhukov")
                             url.set("https://github.com/kirillzh")
                         }
+
+                        contributor {
+                            name.set("Peter Cunderlik")
+                            url.set("https://github.com/peter-cunderlik-kmed")
+                        }
+
+                        contributor {
+                            name.set("YuitoSato")
+                            url.set("https://github.com/YuitoSato")
+                        }
                     }
 
                     scm {

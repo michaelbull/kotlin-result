@@ -43,6 +43,24 @@ class AndTest {
         }
     }
 
+    class AndThenRecover {
+        @Test
+        fun returnsValueIfOk() {
+            assertEquals(
+                expected = 5,
+                actual = Ok(5).andThenRecover { Ok(7) }.get()
+            )
+        }
+
+        @Test
+        fun returnsTransformValueIfErr() {
+            assertEquals(
+                expected = 20,
+                actual = Err(AndError).andThenRecover { Ok(20) }.get()
+            )
+        }
+    }
+
     class AndThenRecoverIf {
         @Test
         fun returnsValueIfOk() {

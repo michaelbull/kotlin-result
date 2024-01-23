@@ -43,6 +43,23 @@ public inline infix fun <V, E, U> Result<V, E>.andThen(transform: (V) -> Result<
 }
 
 /**
+ * Returns the [transformation][transform] of the [error][Err.error] if this [Result] is [Err],
+ * otherwise this [Result].
+ */
+public inline fun <V, E> Result<V, E>.andThenRecover(
+    transform: (E) -> Result<V, E>
+): Result<V, E> {
+    contract {
+        callsInPlace(transform, InvocationKind.AT_MOST_ONCE)
+    }
+
+    return when (this) {
+        is Ok -> this
+        is Err -> transform(error)
+    }
+}
+
+/**
  * Returns the [transformation][transform] of the [error][Err.error] if this [Result] is [Err] and
  * satisfies the given [predicate], otherwise this [Result].
  */

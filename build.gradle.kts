@@ -240,6 +240,11 @@ subprojects {
                             name.set("YuitoSato")
                             url.set("https://github.com/YuitoSato")
                         }
+
+                        contributor {
+                            name.set("Dmitry Bock")
+                            url.set("https://github.com/Jhabkin")
+                        }
                     }
 
                     scm {

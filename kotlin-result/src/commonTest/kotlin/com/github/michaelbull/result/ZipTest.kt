@@ -3,7 +3,7 @@ package com.github.michaelbull.result
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-private inline fun produce(number: Int, error: String): Result<Int, String> {
+private fun produce(number: Int, error: String): Result<Int, String> {
     return Ok(number).and(Err(error))
 }
 

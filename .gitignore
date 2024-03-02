@@ -21,7 +21,6 @@ out/
 
 # Gradle
 build/
-kotlin-js-store/
 local.properties
 
 # JVM error logs

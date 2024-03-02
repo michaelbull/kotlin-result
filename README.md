@@ -19,8 +19,7 @@
 ![badge][badge-android-native]
 ![badge][badge-apple-silicon]
 
-[`Result<V, E>`][result] is a monad for modelling success ([`Ok`][result-ok]) or
-failure ([`Err`][result-err]) operations.
+A multiplatform Result monad for modelling success or failure operations.
 
 ## Installation
 
@@ -299,7 +298,6 @@ Bug reports and pull requests are welcome on [GitHub][github].
 This project is available under the terms of the ISC license. See the
 [`LICENSE`](LICENSE) file for the copyright information and licensing terms.
 
-[result]: https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/Result.kt#L10
 [result-ok]: https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/Result.kt#L35
 [result-err]: https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/Result.kt#L58
 [result-runCatching]: https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/Factory.kt#L11

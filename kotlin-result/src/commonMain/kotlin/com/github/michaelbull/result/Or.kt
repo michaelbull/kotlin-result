@@ -8,7 +8,7 @@ import kotlin.contracts.contract
  *
  * - Rust: [Result.or](https://doc.rust-lang.org/std/result/enum.Result.html#method.or)
  */
-public infix fun <V, E> Result<V, E>.or(result: Result<V, E>): Result<V, E> {
+public infix fun <V, E, F> Result<V, E>.or(result: Result<V, F>): Result<V, F> {
     return when (this) {
         is Ok -> this
         is Err -> result
@@ -16,7 +16,7 @@ public infix fun <V, E> Result<V, E>.or(result: Result<V, E>): Result<V, E> {
 }
 
 @Deprecated("Use orElse instead", ReplaceWith("orElse { result() }"))
-public inline infix fun <V, E> Result<V, E>.or(result: () -> Result<V, E>): Result<V, E> {
+public inline infix fun <V, E, F> Result<V, E>.or(result: () -> Result<V, F>): Result<V, F> {
     contract {
         callsInPlace(result, InvocationKind.AT_MOST_ONCE)
     }
@@ -30,7 +30,7 @@ public inline infix fun <V, E> Result<V, E>.or(result: () -> Result<V, E>): Resu
  *
  * - Rust: [Result.or_else](https://doc.rust-lang.org/std/result/enum.Result.html#method.or_else)
  */
-public inline infix fun <V, E> Result<V, E>.orElse(transform: (E) -> Result<V, E>): Result<V, E> {
+public inline infix fun <V, E, F> Result<V, E>.orElse(transform: (E) -> Result<V, F>): Result<V, F> {
     contract {
         callsInPlace(transform, InvocationKind.AT_MOST_ONCE)
     }

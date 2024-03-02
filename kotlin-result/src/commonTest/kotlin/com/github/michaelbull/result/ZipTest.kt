@@ -3,6 +3,10 @@ package com.github.michaelbull.result
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
+private inline fun produce(number: Int, error: String): Result<Int, String> {
+    return Ok(number).and(Err(error))
+}
+
 class ZipTest {
 
     data class ZipData3(val a: String, val b: Int, val c: Boolean)
@@ -31,7 +35,7 @@ class ZipTest {
         fun returnsErrIfOneOfTwoErr() {
             val result = zip(
                 { Ok(10) },
-                { Ok(20).and(Err("hello")) },
+                { produce(20, "hello") },
                 Int::plus
             )
 
@@ -46,8 +50,8 @@ class ZipTest {
         @Test
         fun returnsFirstErrIfBothErr() {
             val result = zip(
-                { Ok(10).and(Err("foo")) },
-                { Ok(20).and(Err("bar")) },
+                { produce(10, "foo") },
+                { produce(20, "bar") },
                 Int::plus
             )
 
@@ -225,11 +229,11 @@ class ZipTest {
         @Test
         fun returnsAllErrsIfAllErr() {
             val result = zipOrAccumulate(
-                { Ok(10).and(Err("error one")) },
-                { Ok(20).and(Err("error two")) },
-                { Ok(30).and(Err("error three")) },
-                { Ok(40).and(Err("error four")) },
-                { Ok(50).and(Err("error five")) },
+                { produce(10, "error one") },
+                { produce(20, "error two") },
+                { produce(30, "error three") },
+                { produce(40, "error four") },
+                { produce(50, "error five") },
             ) { a, b, c, d, e ->
                 a + b + c + d + e
             }
@@ -252,7 +256,7 @@ class ZipTest {
         fun returnsOneErrsIfOneOfErr() {
             val result = zipOrAccumulate(
                 { Ok(10) },
-                { Ok(20).and(Err("only error")) },
+                { produce(20, "only error") },
                 { Ok(30) },
                 { Ok(40) },
                 { Ok(50) },
@@ -263,7 +267,7 @@ class ZipTest {
             result as Err
 
             assertEquals(
-                expected = listOf("only error",),
+                expected = listOf("only error"),
                 actual = result.error,
             )
         }

@@ -15,18 +15,18 @@ jobs:
     strategy:
       matrix:
         include:
-          - target: build
-            os: ubuntu-latest
-          - target: iosX64Test
-            os: macos-latest
-          - target: macosX64Test
-            os: macos-latest
-          - target: tvosX64Test
-            os: macos-latest
-          - target: watchosX64Test
-            os: macos-latest
-          - target: mingwX64Test
-            os: windows-latest
+          - os: ubuntu-latest
+            tasks: build
+
+          - os: macos-latest
+            tasks: >
+              iosX64Test
+              macosX64Test
+              tvosX64Test
+              watchosX64Test
+
+          - os: windows-latest
+            tasks: mingwX64Test
 
     runs-on: ${{ matrix.os }}
 
@@ -53,4 +53,4 @@ jobs:
         uses: gradle/actions/setup-gradle@v3
 
       - name: Build with Gradle Wrapper
-        run: ./gradlew ${{ matrix.target }}
+        run: ./gradlew ${{ matrix.tasks }}

@@ -18,52 +18,36 @@ jobs:
     strategy:
       matrix:
         include:
-          - target: publishAndroidNativeArm32PublicationToMavenRepository
-            os: ubuntu-latest
-          - target: publishAndroidNativeArm64PublicationToMavenRepository
-            os: ubuntu-latest
-          - target: publishAndroidNativeX64PublicationToMavenRepository
-            os: ubuntu-latest
-          - target: publishAndroidNativeX86PublicationToMavenRepository
-            os: ubuntu-latest
-          - target: publishJsPublicationToMavenRepository
-            os: ubuntu-latest
-          - target: publishJvmPublicationToMavenRepository
-            os: ubuntu-latest
-          - target: publishKotlinMultiplatformPublicationToMavenRepository
-            os: ubuntu-latest
-          - target: publishLinuxArm64PublicationToMavenRepository
-            os: ubuntu-latest
-          - target: publishLinuxX64PublicationToMavenRepository
-            os: ubuntu-latest
-          - target: publishWasmJsPublicationToMavenRepository
-            os: ubuntu-latest
-          - target: publishMingwX64PublicationToMavenRepository
-            os: windows-latest
-          - target: publishIosArm64PublicationToMavenRepository
-            os: macos-latest
-          - target: publishIosSimulatorArm64PublicationToMavenRepository
-            os: macos-latest
-          - target: publishIosX64PublicationToMavenRepository
-            os: macos-latest
-          - target: publishMacosArm64PublicationToMavenRepository
-            os: macos-latest
-          - target: publishMacosX64PublicationToMavenRepository
-            os: macos-latest
-          - target: publishTvosArm64PublicationToMavenRepository
-            os: macos-latest
-          - target: publishTvosSimulatorArm64PublicationToMavenRepository
-            os: macos-latest
-          - target: publishTvosX64PublicationToMavenRepository
-            os: macos-latest
-          - target: publishWatchosArm32PublicationToMavenRepository
-            os: macos-latest
-          - target: publishWatchosArm64PublicationToMavenRepository
-            os: macos-latest
-          - target: publishWatchosSimulatorArm64PublicationToMavenRepository
-            os: macos-latest
-          - target: publishWatchosX64PublicationToMavenRepository
-            os: macos-latest
+          - os: ubuntu-latest
+            tasks: >
+              publishAndroidNativeArm32PublicationToMavenRepository
+              publishAndroidNativeArm64PublicationToMavenRepository
+              publishAndroidNativeX64PublicationToMavenRepository
+              publishAndroidNativeX86PublicationToMavenRepository
+              publishJsPublicationToMavenRepository
+              publishJvmPublicationToMavenRepository
+              publishKotlinMultiplatformPublicationToMavenRepository
+              publishLinuxArm64PublicationToMavenRepository
+              publishLinuxX64PublicationToMavenRepository
+              publishWasmJsPublicationToMavenRepository
+
+          - os: windows-latest
+            tasks: publishMingwX64PublicationToMavenRepository
+
+          - os: macos-latest
+            tasks: >
+              publishIosArm64PublicationToMavenRepository
+              publishIosSimulatorArm64PublicationToMavenRepository
+              publishIosX64PublicationToMavenRepository
+              publishMacosArm64PublicationToMavenRepository
+              publishMacosX64PublicationToMavenRepository
+              publishTvosArm64PublicationToMavenRepository
+              publishTvosSimulatorArm64PublicationToMavenRepository
+              publishTvosX64PublicationToMavenRepository
+              publishWatchosArm32PublicationToMavenRepository
+              publishWatchosArm64PublicationToMavenRepository
+              publishWatchosSimulatorArm64PublicationToMavenRepository
+              publishWatchosX64PublicationToMavenRepository
 
     runs-on: ${{ matrix.os }}
 
@@ -97,4 +81,4 @@ jobs:
         uses: gradle/actions/setup-gradle@v3
 
       - name: Publish with Gradle Wrapper
-        run: ./gradlew ${{ matrix.target }}
+        run: ./gradlew ${{ matrix.tasks }}

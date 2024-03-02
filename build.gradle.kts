@@ -33,12 +33,6 @@ tasks.withType<DependencyUpdatesTask> {
     }
 }
 
-allprojects {
-    repositories {
-        mavenCentral()
-    }
-}
-
 subprojects {
     plugins.withType<MavenPublishPlugin> {
         apply(plugin = "org.gradle.signing")

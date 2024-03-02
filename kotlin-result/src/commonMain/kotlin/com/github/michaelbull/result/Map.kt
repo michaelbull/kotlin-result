@@ -168,6 +168,15 @@ public inline infix fun <V, E, U> Result<V, E>.flatMap(transform: (V) -> Result<
 }
 
 /**
+ * Maps this [Result<Result<V, E>, E>][Result] to [Result<V, E>][Result].
+ *
+ * - Rust: [Result.flatten](https://doc.rust-lang.org/std/result/enum.Result.html#method.flatten)
+ */
+public inline fun <V, E> Result<Result<V, E>, E>.flatten(): Result<V, E> {
+    return andThen { it }
+}
+
+/**
  * Returns the [transformation][transform] of the [value][Ok.value] if this [Result] is [Ok]
  * and satisfies the given [predicate], otherwise this [Result].
  *

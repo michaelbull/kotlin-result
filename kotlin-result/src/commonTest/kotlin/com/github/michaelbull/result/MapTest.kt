@@ -176,6 +176,54 @@ class MapTest {
         }
     }
 
+    class Flatten {
+
+        @Test
+        fun returnsFlattenedValueIfOk() {
+            val result = Ok(Ok("hello"))
+
+            assertEquals(
+                expected = Ok("hello"),
+                actual = result.flatten()
+            )
+        }
+
+        @Test
+        fun returnsFlattenedErrIfErr() {
+            val result = Ok(Err(6))
+
+            assertEquals(
+                expected = Err(6),
+                actual = result.flatten()
+            )
+        }
+
+        @Test
+        fun returnsErrIfFlatErr() {
+            val result = Err(6)
+
+            assertEquals(
+                expected = Err(6),
+                actual = result.flatten()
+            )
+        }
+
+        @Test
+        fun returnsFlattenNestedResult() {
+            val result = Ok(Ok(Ok("hello")))
+
+            assertEquals(
+                expected = Ok(Ok("hello")),
+                actual = result.flatten()
+            )
+
+            assertEquals(
+                expected = Ok("hello"),
+                actual = result.flatten().flatten()
+            )
+        }
+    }
+
     class ToErrorIfNull {
 
         @Test

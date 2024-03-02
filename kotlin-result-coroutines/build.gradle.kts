@@ -1,18 +1,13 @@
-description = "Extensions for using kotlin-result with kotlinx-coroutines."
-
 plugins {
     `maven-publish`
-    kotlin("multiplatform")
+    id("kotlin-conventions")
+    id("publish-conventions")
 }
 
 kotlin {
-    sourceSets {
-        all {
-            languageSettings.apply {
-                optIn("kotlin.contracts.ExperimentalContracts")
-            }
-        }
+    explicitApi()
 
+    sourceSets {
         commonMain {
             dependencies {
                 implementation(libs.kotlin.coroutines.core)
@@ -22,31 +17,8 @@ kotlin {
 
         commonTest {
             dependencies {
-                implementation(kotlin("test-common"))
-                implementation(kotlin("test-annotations-common"))
                 implementation(libs.kotlin.coroutines.test)
             }
-        }
-
-        jvmTest {
-            dependencies {
-                implementation(kotlin("test-junit"))
-                implementation(kotlin("test"))
-            }
-        }
-
-        jsTest {
-            dependencies {
-                implementation(kotlin("test-js"))
-            }
-        }
-    }
-}
-
-publishing {
-    publications.withType<MavenPublication> {
-        pom {
-            description.set(project.description)
         }
     }
 }

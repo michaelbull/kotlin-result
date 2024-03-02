@@ -1,15 +1,14 @@
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask
 
-description = "A Result monad for modelling success or failure operations."
-
 plugins {
     `maven-publish`
-    kotlin("multiplatform")
+    id("kotlin-conventions")
+    id("publish-conventions")
 }
 
 kotlin {
-    jvmToolchain(8)
+    explicitApi()
 
     // Additional targets not currently supported by coroutines
     androidNativeArm32()
@@ -23,40 +22,6 @@ kotlin {
     wasmJs {
         binaries.executable()
         nodejs()
-    }
-
-    sourceSets {
-        all {
-            languageSettings.apply {
-                optIn("kotlin.contracts.ExperimentalContracts")
-            }
-        }
-
-        commonTest {
-            dependencies {
-                implementation(kotlin("test"))
-            }
-        }
-
-        jvmTest {
-            dependencies {
-                implementation(kotlin("test-junit"))
-            }
-        }
-
-        jsTest {
-            dependencies {
-                implementation(kotlin("test-js"))
-            }
-        }
-    }
-}
-
-publishing {
-    publications.withType<MavenPublication> {
-        pom {
-            description.set(project.description)
-        }
     }
 }
 

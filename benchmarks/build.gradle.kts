@@ -1,9 +1,7 @@
-description = "Benchmarks for kotlin-result."
-
 plugins {
-    kotlin("multiplatform")
     id("org.jetbrains.kotlinx.benchmark")
     id("org.jetbrains.kotlin.plugin.allopen")
+    id("kotlin-conventions")
 }
 
 allOpen {
@@ -19,15 +17,6 @@ benchmark {
 }
 
 kotlin {
-    jvmToolchain(8)
-
-    jvm {
-    }
-
-    js(IR) {
-        nodejs()
-    }
-
     sourceSets {
         val commonMain by getting {
             dependencies {

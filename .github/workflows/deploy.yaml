@@ -1,6 +1,8 @@
 name: Deploy
 
-on: workflow_dispatch
+on:
+  push:
+    branches: [ "master" ]
 
 permissions:
   contents: read
@@ -11,6 +13,7 @@ jobs:
 
   deploy:
     needs: build
+    if: needs.build.result == 'success'
 
     strategy:
       matrix:

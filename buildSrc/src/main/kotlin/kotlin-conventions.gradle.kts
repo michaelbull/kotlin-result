@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask
 
@@ -15,25 +16,45 @@ kotlin {
         nodejs()
     }
 
-    linuxX64()
+    @OptIn(ExperimentalWasmDsl::class)
+    wasmJs {
+        binaries.executable()
+        nodejs()
+    }
 
-    mingwX64()
+    /* https://kotlinlang.org/docs/native-target-support.html#tier-1 */
 
-    macosArm64()
     macosX64()
-
-    iosArm64()
+    macosArm64()
     iosSimulatorArm64()
     iosX64()
 
-    tvosArm64()
-    tvosSimulatorArm64()
-    tvosX64()
+    /* https://kotlinlang.org/docs/native-target-support.html#tier-2 */
 
-    watchosArm32()
-    watchosArm64()
+    linuxX64()
+    linuxArm64()
+
     watchosSimulatorArm64()
     watchosX64()
+    watchosArm32()
+    watchosArm64()
+
+    tvosSimulatorArm64()
+    tvosX64()
+    tvosArm64()
+
+    iosArm64()
+
+    /* https://kotlinlang.org/docs/native-target-support.html#tier-3 */
+
+    androidNativeArm32()
+    androidNativeArm64()
+    androidNativeX86()
+    androidNativeX64()
+
+    mingwX64()
+
+    watchosDeviceArm64()
 
     sourceSets {
         all {

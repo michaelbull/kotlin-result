@@ -93,6 +93,7 @@ jobs:
               publishTvosX64PublicationToMavenRepository
               publishWatchosArm32PublicationToMavenRepository
               publishWatchosArm64PublicationToMavenRepository
+              publishWatchosDeviceArm64PublicationToMavenRepository
               publishWatchosSimulatorArm64PublicationToMavenRepository
               publishWatchosX64PublicationToMavenRepository
 

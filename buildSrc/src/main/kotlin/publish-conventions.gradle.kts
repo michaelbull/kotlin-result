@@ -175,13 +175,13 @@ publishing {
             }
 
             issueManagement {
-                system.set("GitHub")
+                system.set("GitHub Issues")
                 url.set("https://github.com/michaelbull/kotlin-result/issues")
             }
 
             ciManagement {
-                system.set("GitHub")
-                url.set("https://github.com/michaelbull/kotlin-result/actions/workflows/build.yaml")
+                system.set("GitHub Actions")
+                url.set("https://github.com/michaelbull/kotlin-result/actions")
             }
         }
     }

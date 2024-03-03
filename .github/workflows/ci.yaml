@@ -1,7 +1,9 @@
-name: Deploy
+name: CI
 
 on:
   push:
+    branches: [ "master" ]
+  pull_request:
     branches: [ "master" ]
 
 permissions:
@@ -9,11 +11,52 @@ permissions:
 
 jobs:
   build:
-    uses: ./.github/workflows/build.yaml
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            tasks: build
 
-  deploy:
+          - os: macos-latest
+            tasks: >
+              iosX64Test
+              macosX64Test
+              tvosX64Test
+              watchosX64Test
+
+          - os: windows-latest
+            tasks: mingwX64Test
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout Project
+        uses: actions/checkout@v4
+
+      - name: Validate Gradle Wrapper
+        uses: gradle/wrapper-validation-action@v2
+
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.konan
+          key: ${{ runner.os }}-${{ hashFiles('**/.lock') }}
+
+      - name: Setup JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 8
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Build with Gradle Wrapper
+        run: ./gradlew ${{ matrix.tasks }}
+
+  publish:
     needs: build
-    if: needs.build.result == 'success'
+    if: github.ref == 'refs/heads/master' && github.event_name == 'push' && needs.build.result == 'success'
 
     strategy:
       matrix:

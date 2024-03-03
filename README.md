@@ -1,7 +1,7 @@
 # kotlin-result
 
 [![Maven Central](https://img.shields.io/maven-central/v/com.michael-bull.kotlin-result/kotlin-result.svg)](https://search.maven.org/search?q=g:com.michael-bull.kotlin-result)
-[![CI Status](https://github.com/michaelbull/kotlin-result/workflows/ci/badge.svg)](https://github.com/michaelbull/kotlin-result/actions?query=workflow%3Aci)
+[![Build](https://github.com/michaelbull/kotlin-result/actions/workflows/build.yaml/badge.svg)](https://github.com/michaelbull/kotlin-result/actions/workflows/build.yaml)
 [![License](https://img.shields.io/github/license/michaelbull/kotlin-result.svg)](https://github.com/michaelbull/kotlin-result/blob/master/LICENSE)
 
 ![badge][badge-android]

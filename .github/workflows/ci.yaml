@@ -11,6 +11,9 @@ permissions:
 
 jobs:
   build:
+    name: Build
+    runs-on: ${{ matrix.os }}
+
     strategy:
       matrix:
         include:
@@ -26,8 +29,6 @@ jobs:
 
           - os: windows-latest
             tasks: mingwX64Test
-
-    runs-on: ${{ matrix.os }}
 
     steps:
       - name: Checkout Project
@@ -55,6 +56,9 @@ jobs:
         run: ./gradlew ${{ matrix.tasks }}
 
   publish:
+    name: Publish
+    runs-on: ${{ matrix.os }}
+
     needs: build
     if: github.ref == 'refs/heads/master' && github.event_name == 'push' && needs.build.result == 'success'
 
@@ -91,8 +95,6 @@ jobs:
               publishWatchosArm64PublicationToMavenRepository
               publishWatchosSimulatorArm64PublicationToMavenRepository
               publishWatchosX64PublicationToMavenRepository
-
-    runs-on: ${{ matrix.os }}
 
     env:
       ORG_GRADLE_PROJECT_ossrhUsername: ${{ secrets.OSSRH_USERNAME }}

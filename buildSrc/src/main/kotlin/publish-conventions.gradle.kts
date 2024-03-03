@@ -181,7 +181,7 @@ publishing {
 
             ciManagement {
                 system.set("GitHub")
-                url.set("https://github.com/michaelbull/kotlin-result/actions?query=workflow%3Aci")
+                url.set("https://github.com/michaelbull/kotlin-result/actions/workflows/build.yaml")
             }
         }
     }

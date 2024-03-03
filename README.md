@@ -29,7 +29,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.michael-bull.kotlin-result:kotlin-result:1.1.19")
+    implementation("com.michael-bull.kotlin-result:kotlin-result:1.1.20")
 }
 ```
 
@@ -169,13 +169,10 @@ dependency:
 
 ```kotlin
 dependencies {
-    implementation("com.michael-bull.kotlin-result:kotlin-result:1.1.19")
-    implementation("com.michael-bull.kotlin-result:kotlin-result-coroutines:1.1.19")
+    implementation("com.michael-bull.kotlin-result:kotlin-result:1.1.20")
+    implementation("com.michael-bull.kotlin-result:kotlin-result-coroutines:1.1.20")
 }
 ```
-
-**DISCLAIMER:** Supported platforms for the `kotlin-result-coroutines` dependency are
-limited to that which coroutines currently supports.
 
 The coroutine implementation of `binding` has been designed so that the first
 call to `bind()` that fails will cancel all child coroutines within the current
@@ -184,7 +181,6 @@ coroutine scope.
 The example below demonstrates a computationally expensive function that takes
 five milliseconds to compute being eagerly cancelled as soon as a smaller
 function fails in just one millisecond:
-
 
 ```kotlin
 suspend fun failsIn5ms(): Result<Int, DomainErrorA> { ... }

@@ -1,9 +1,9 @@
 name: CI
 
 on:
-  push:
-    branches: [ "master" ]
   pull_request:
+    branches: [ "master" ]
+  push:
     branches: [ "master" ]
 
 permissions:
@@ -58,9 +58,8 @@ jobs:
   publish:
     name: Publish
     runs-on: ${{ matrix.os }}
-
+    if: github.ref == 'refs/heads/master' && github.repository == 'michaelbull/kotlin-result'
     needs: build
-    if: github.ref == 'refs/heads/master' && github.event_name == 'push' && needs.build.result == 'success'
 
     strategy:
       matrix:

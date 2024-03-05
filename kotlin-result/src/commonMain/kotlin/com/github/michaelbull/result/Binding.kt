@@ -41,12 +41,6 @@ public inline fun <V, E> binding(crossinline block: BindingScope<E>.() -> V): Re
 
 internal expect object BindException : Exception
 
-@Deprecated(
-    message = "Use BindingScope instead",
-    replaceWith = ReplaceWith("BindingScope<E>")
-)
-public typealias ResultBinding<E> = BindingScope<E>
-
 public interface BindingScope<E> {
     public fun <V> Result<V, E>.bind(): V
 }

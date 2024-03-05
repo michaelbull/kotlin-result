@@ -15,15 +15,6 @@ public infix fun <V, E, F> Result<V, E>.or(result: Result<V, F>): Result<V, F> {
     }
 }
 
-@Deprecated("Use orElse instead", ReplaceWith("orElse { result() }"))
-public inline infix fun <V, E, F> Result<V, E>.or(result: () -> Result<V, F>): Result<V, F> {
-    contract {
-        callsInPlace(result, InvocationKind.AT_MOST_ONCE)
-    }
-
-    return orElse { result() }
-}
-
 /**
  * Returns the [transformation][transform] of the [error][Result.error] if this result
  * [is an error][Result.isErr], otherwise [this].

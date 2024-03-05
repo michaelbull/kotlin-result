@@ -51,22 +51,6 @@ public sealed class Result<out V, out E> {
 
     public abstract operator fun component1(): V?
     public abstract operator fun component2(): E?
-
-    public companion object {
-
-        /**
-         * Invokes a [function] and wraps it in a [Result], returning an [Err]
-         * if an [Exception] was thrown, otherwise [Ok].
-         */
-        @Deprecated("Use top-level runCatching instead", ReplaceWith("runCatching(function)"))
-        public inline fun <V> of(function: () -> V): Result<V, Exception> {
-            return try {
-                Ok(function.invoke())
-            } catch (ex: Exception) {
-                Err(ex)
-            }
-        }
-    }
 }
 
 /**

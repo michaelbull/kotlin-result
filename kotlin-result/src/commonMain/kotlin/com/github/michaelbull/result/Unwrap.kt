@@ -24,15 +24,6 @@ public fun <V, E> Result<V, E>.unwrap(): V {
     }
 }
 
-@Deprecated("Use lazy-evaluating variant instead", ReplaceWith("expect { message }"))
-public infix fun <V, E> Result<V, E>.expect(message: String): V {
-    contract {
-        returns() implies (this@expect is Ok<V>)
-    }
-
-    return expect { message }
-}
-
 /**
  * Returns the [value][Result.value] if this result [is ok][Result.isOk], otherwise throws an
  * [UnwrapException] with the specified [message].
@@ -73,15 +64,6 @@ public fun <V, E> Result<V, E>.unwrapError(): E {
         isErr -> error
         else -> throw UnwrapException("called Result.unwrapError on an Ok value $value")
     }
-}
-
-@Deprecated("Use lazy-evaluating variant instead", ReplaceWith("expectError { message }"))
-public infix fun <V, E> Result<V, E>.expectError(message: String): E {
-    contract {
-        returns() implies (this@expectError is Err<E>)
-    }
-
-    return expectError { message }
 }
 
 /**

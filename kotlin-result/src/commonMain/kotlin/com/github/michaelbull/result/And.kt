@@ -15,15 +15,6 @@ public infix fun <V, E, U> Result<V, E>.and(result: Result<U, E>): Result<U, E> 
     }
 }
 
-@Deprecated("Use andThen instead", ReplaceWith("andThen { result() }"))
-public inline infix fun <V, E, U> Result<V, E>.and(result: () -> Result<U, E>): Result<U, E> {
-    contract {
-        callsInPlace(result, InvocationKind.AT_MOST_ONCE)
-    }
-
-    return andThen { result() }
-}
-
 /**
  * Maps this [Result<V, E>][Result] to [Result<U, E>][Result] by either applying the [transform]
  * function if this result [is ok][Result.isOk], or returning [this].

@@ -55,15 +55,6 @@ public infix fun <V, E> Result<V, E>.getOr(default: V): V {
     }
 }
 
-@Deprecated("Use getOrElse instead", ReplaceWith("getOrElse { default() }"))
-public inline infix fun <V, E> Result<V, E>.getOr(default: () -> V): V {
-    contract {
-        callsInPlace(default, InvocationKind.AT_MOST_ONCE)
-    }
-
-    return getOrElse { default() }
-}
-
 /**
  * Returns the [error][Result.error] if this result [is an error][Result.isErr], otherwise
  * [default].
@@ -78,15 +69,6 @@ public infix fun <V, E> Result<V, E>.getErrorOr(default: E): E {
         isOk -> default
         else -> error
     }
-}
-
-@Deprecated("Use getOrElse instead", ReplaceWith("getErrorOrElse { default() }"))
-public inline infix fun <V, E> Result<V, E>.getErrorOr(default: () -> E): E {
-    contract {
-        callsInPlace(default, InvocationKind.AT_MOST_ONCE)
-    }
-
-    return getErrorOrElse { default() }
 }
 
 /**

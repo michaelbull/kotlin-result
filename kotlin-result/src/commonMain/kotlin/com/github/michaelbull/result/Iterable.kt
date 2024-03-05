@@ -170,29 +170,6 @@ public fun <V, E, R : Result<V, E>> valuesOf(vararg results: R): List<V> {
     return results.asIterable().filterValues()
 }
 
-@Deprecated(
-    message = "Use allValuesOf instead",
-    replaceWith = ReplaceWith("valuesOf(results)")
-)
-public fun <V, E, R : Result<V, E>> getAll(vararg results: R): List<V> {
-    return results.asIterable().filterValues()
-}
-
-
-/**
- * Extracts from an [Iterable] of [Results][Result] all the [Ok] elements. All the [Ok] elements
- * are extracted in order.
- *
- * - Haskell: [Data.Either.lefts](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Either.html#v:lefts)
- */
-@Deprecated(
-    message = "Use filterValues instead",
-    replaceWith = ReplaceWith("filterValues()")
-)
-public fun <V, E> Iterable<Result<V, E>>.getAll(): List<V> {
-    return filterValues()
-}
-
 /**
  * Returns a [List] containing the [error][Result.error] of each element in the specified [results]
  * that [is an error][Result.isErr]. Elements in the returned list are in the same order as the
@@ -202,28 +179,6 @@ public fun <V, E> Iterable<Result<V, E>>.getAll(): List<V> {
  */
 public fun <V, E, R : Result<V, E>> errorsOf(vararg results: R): List<E> {
     return results.asIterable().filterErrors()
-}
-
-@Deprecated(
-    message = "Use errorsOf instead",
-    replaceWith = ReplaceWith("errorsOf(results)")
-)
-public fun <V, E, R : Result<V, E>> getAllErrors(vararg results: R): List<E> {
-    return results.asIterable().filterErrors()
-}
-
-/**
- * Extracts from an [Iterable] of [Results][Result] all the [Err] elements. All the [Err] elements
- * are extracted in order.
- *
- * - Haskell: [Data.Either.rights](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Either.html#v:rights)
- */
-@Deprecated(
-    message = "Use filterErrors instead",
-    replaceWith = ReplaceWith("filterErrors()")
-)
-public fun <V, E> Iterable<Result<V, E>>.getAllErrors(): List<E> {
-    return filterErrors()
 }
 
 /**

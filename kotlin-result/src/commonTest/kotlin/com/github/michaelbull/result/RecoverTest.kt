@@ -7,11 +7,12 @@ class RecoverTest {
     private object RecoverError
 
     class Recover {
+
         @Test
         fun returnsValueIfOk() {
             assertEquals(
                 expected = Ok(3000),
-                actual = Ok(3000).recover { 4000 }
+                actual = Ok(3000).recover { 4000 },
             )
         }
 
@@ -19,17 +20,18 @@ class RecoverTest {
         fun returnsTransformedValueIfErr() {
             assertEquals(
                 expected = Ok(2000),
-                actual = Err(4000).recover { 2000 }
+                actual = Err(4000).recover { 2000 },
             )
         }
     }
 
     class RecoverCatching {
+
         @Test
         fun returnsValueIfOk() {
             assertEquals(
                 expected = Ok(3000),
-                actual = Ok(3000).recoverCatching { 4000 }
+                actual = Ok(3000).recoverCatching { 4000 },
             )
         }
 
@@ -37,7 +39,7 @@ class RecoverTest {
         fun returnsTransformedValueIfErr() {
             assertEquals(
                 expected = Ok(2000),
-                actual = Err(4000).recoverCatching { 2000 }
+                actual = Err(4000).recoverCatching { 2000 },
             )
         }
 
@@ -46,15 +48,14 @@ class RecoverTest {
             val exception = IllegalArgumentException("throw me")
 
             assertEquals(
-                expected = exception,
-                actual = Err(4000)
-                    .recoverCatching { throw exception }
-                    .getError()
+                expected = Err(exception),
+                actual = Err(4000).recoverCatching { throw exception },
             )
         }
     }
 
     class RecoverIf {
+
         @Test
         fun returnsValueIfOk() {
             fun predicate(int: Int): Boolean {
@@ -63,7 +64,7 @@ class RecoverTest {
 
             assertEquals(
                 expected = Ok(3000),
-                actual = Ok(3000).recoverIf(::predicate) { 2000 }
+                actual = Ok(3000).recoverIf(::predicate) { 2000 },
             )
         }
 
@@ -75,7 +76,7 @@ class RecoverTest {
 
             assertEquals(
                 expected = Ok(2000),
-                actual = Err(4000).recoverIf(::predicate) { 2000 }
+                actual = Err(4000).recoverIf(::predicate) { 2000 },
             )
         }
 
@@ -87,7 +88,7 @@ class RecoverTest {
 
             assertEquals(
                 expected = Err(4000),
-                actual = Err(4000).recoverIf(::predicate) { 2000 }
+                actual = Err(4000).recoverIf(::predicate) { 2000 },
             )
         }
 
@@ -99,12 +100,13 @@ class RecoverTest {
 
             assertEquals(
                 expected = Err(4000),
-                actual = Err(4000).recoverIf(::predicate) { 2000 }
+                actual = Err(4000).recoverIf(::predicate) { 2000 },
             )
         }
     }
 
     class RecoverUnless {
+
         @Test
         fun returnsValueIfOk() {
             fun predicate(int: Int): Boolean {
@@ -113,7 +115,7 @@ class RecoverTest {
 
             assertEquals(
                 expected = Ok(3000),
-                actual = Ok(3000).recoverUnless(::predicate) { 2000 }
+                actual = Ok(3000).recoverUnless(::predicate) { 2000 },
             )
         }
 
@@ -125,7 +127,7 @@ class RecoverTest {
 
             assertEquals(
                 expected = Ok(2000),
-                actual = Err(4000).recoverUnless(::predicate) { 2000 }
+                actual = Err(4000).recoverUnless(::predicate) { 2000 },
             )
         }
 
@@ -137,7 +139,7 @@ class RecoverTest {
 
             assertEquals(
                 expected = Err(4000),
-                actual = Err(4000).recoverUnless(::predicate) { 2000 }
+                actual = Err(4000).recoverUnless(::predicate) { 2000 },
             )
         }
 
@@ -149,25 +151,26 @@ class RecoverTest {
 
             assertEquals(
                 expected = Err(4000),
-                actual = Err(4000).recoverUnless(::predicate) { 2000 }
+                actual = Err(4000).recoverUnless(::predicate) { 2000 },
             )
         }
     }
 
     class AndThenRecover {
+
         @Test
         fun returnsValueIfOk() {
             assertEquals(
-                expected = 5,
-                actual = Ok(5).andThenRecover { Ok(7) }.get()
+                expected = Ok(5),
+                actual = Ok(5).andThenRecover { Ok(7) },
             )
         }
 
         @Test
         fun returnsTransformValueIfErr() {
             assertEquals(
-                expected = 20,
-                actual = Err(RecoverError).andThenRecover { Ok(20) }.get()
+                expected = Ok(20),
+                actual = Err(RecoverError).andThenRecover { Ok(20) },
             )
         }
     }
@@ -181,7 +184,7 @@ class RecoverTest {
 
             assertEquals(
                 expected = Ok(3000),
-                actual = Ok(3000).andThenRecoverIf(::predicate) { Ok(2000) }
+                actual = Ok(3000).andThenRecoverIf(::predicate) { Ok(2000) },
             )
         }
 
@@ -193,7 +196,7 @@ class RecoverTest {
 
             assertEquals(
                 expected = Ok(2000),
-                actual = Err(4000).andThenRecoverIf(::predicate) { Ok(2000) }
+                actual = Err(4000).andThenRecoverIf(::predicate) { Ok(2000) },
             )
         }
 
@@ -205,7 +208,7 @@ class RecoverTest {
 
             assertEquals(
                 expected = Err(2000),
-                actual = Err(4000).andThenRecoverIf(::predicate) { Err(2000) }
+                actual = Err(4000).andThenRecoverIf(::predicate) { Err(2000) },
             )
         }
 
@@ -217,7 +220,7 @@ class RecoverTest {
 
             assertEquals(
                 expected = Err(4000),
-                actual = Err(4000).andThenRecoverIf(::predicate) { Ok(2000) }
+                actual = Err(4000).andThenRecoverIf(::predicate) { Ok(2000) },
             )
         }
     }
@@ -231,7 +234,7 @@ class RecoverTest {
 
             assertEquals(
                 expected = Ok(3000),
-                actual = Ok(3000).andThenRecoverUnless(::predicate) { Ok(2000) }
+                actual = Ok(3000).andThenRecoverUnless(::predicate) { Ok(2000) },
             )
         }
 
@@ -243,7 +246,7 @@ class RecoverTest {
 
             assertEquals(
                 expected = Ok(2000),
-                actual = Err(4000).andThenRecoverUnless(::predicate) { Ok(2000) }
+                actual = Err(4000).andThenRecoverUnless(::predicate) { Ok(2000) },
             )
         }
 
@@ -255,7 +258,7 @@ class RecoverTest {
 
             assertEquals(
                 expected = Err(2000),
-                actual = Err(4000).andThenRecoverUnless(::predicate) { Err(2000) }
+                actual = Err(4000).andThenRecoverUnless(::predicate) { Err(2000) },
             )
         }
 
@@ -267,7 +270,7 @@ class RecoverTest {
 
             assertEquals(
                 expected = Err(4000),
-                actual = Err(4000).andThenRecoverUnless(::predicate) { Ok(2000) }
+                actual = Err(4000).andThenRecoverUnless(::predicate) { Ok(2000) },
             )
         }
     }

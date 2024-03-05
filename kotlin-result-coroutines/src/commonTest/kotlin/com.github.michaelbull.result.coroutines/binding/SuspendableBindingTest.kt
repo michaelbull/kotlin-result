@@ -36,7 +36,7 @@ class SuspendableBindingTest {
 
         assertEquals(
             expected = Ok(3),
-            actual = result
+            actual = result,
         )
     }
 
@@ -60,7 +60,7 @@ class SuspendableBindingTest {
 
         assertEquals(
             expected = Ok(3),
-            actual = result
+            actual = result,
         )
     }
 
@@ -90,7 +90,7 @@ class SuspendableBindingTest {
 
         assertEquals(
             expected = Err(BindingError),
-            actual = result
+            actual = result,
         )
     }
 
@@ -127,7 +127,7 @@ class SuspendableBindingTest {
 
         assertEquals(
             expected = Err(BindingError),
-            actual = result
+            actual = result,
         )
 
         assertTrue(xStateChange)
@@ -161,7 +161,7 @@ class SuspendableBindingTest {
 
         assertEquals(
             expected = Err(BindingError),
-            actual = result
+            actual = result,
         )
     }
 }

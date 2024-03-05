@@ -86,7 +86,7 @@ class GetTest {
         @Test
         fun throwsTransformedErrorIfErr() {
             assertFailsWith<CustomException> {
-                Err("error").getOrThrow { error -> CustomException(error) }
+                Err("error").getOrThrow(::CustomException)
             }
         }
 
@@ -148,19 +148,43 @@ class GetTest {
     }
 
     class Merge {
+        interface Direction
+        object Left : Direction
+        object Right : Direction
+
         @Test
         fun returnsValueIfOk() {
+            val left: Result<Left, Left> = Ok(Left)
+            val right: Result<Right, Right> = Ok(Right)
+
+            val result: Result<Direction, Direction> = left.flatMapEither(
+                success = { left },
+                failure = { right },
+            )
+
+            val direction: Direction = result.merge()
+
             assertEquals(
-                expected = setOf(4, 5, 6),
-                actual = Ok(listOf(1, 2, 3)).and(Ok(setOf(4, 5, 6))).merge()
+                expected = Left,
+                actual = direction
             )
         }
 
         @Test
         fun returnsErrorIfErr() {
+            val left: Result<Left, Left> = Err(Left)
+            val right: Result<Right, Right> = Err(Right)
+
+            val result: Result<Direction, Direction> = left.flatMapEither(
+                success = { left },
+                failure = { right },
+            )
+
+            val direction: Direction = result.merge()
+
             assertEquals(
-                expected = listOf(1, 2, 3),
-                actual = Err(listOf(1, 2, 3)).and(Err(setOf(4, 5, 6))).merge()
+                expected = Right,
+                actual = direction
             )
         }
     }

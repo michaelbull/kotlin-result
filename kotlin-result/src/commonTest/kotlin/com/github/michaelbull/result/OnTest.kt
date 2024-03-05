@@ -8,6 +8,7 @@ class OnTest {
     class Counter(var count: Int)
 
     class OnSuccess {
+
         @Test
         fun invokesActionIfOk() {
             val counter = Counter(50)
@@ -34,6 +35,7 @@ class OnTest {
     }
 
     class OnFailure {
+
         @Test
         fun invokesActionIfErr() {
             val counter = Counter(555)

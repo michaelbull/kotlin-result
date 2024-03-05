@@ -8,19 +8,20 @@ class OrTest {
     private object OrError
 
     class Or {
+
         @Test
         fun returnsValueIfOk() {
             assertEquals(
-                expected = 500,
-                actual = Ok(500).or(Ok(1000)).get()
+                expected = Ok(500),
+                actual = Ok(500).or(Ok(1000))
             )
         }
 
         @Test
         fun returnsDefaultValueIfErr() {
             assertEquals(
-                expected = 5000,
-                actual = Err(OrError).or(Ok(5000)).get()
+                expected = Ok(5000),
+                actual = Err(OrError).or(Ok(5000))
             )
         }
     }
@@ -29,21 +30,22 @@ class OrTest {
         @Test
         fun returnsValueIfOk() {
             assertEquals(
-                expected = 3000,
-                actual = Ok(3000).orElse { Ok(4000) }.get()
+                expected = Ok(3000),
+                actual = Ok(3000).orElse { Ok(4000) }
             )
         }
 
         @Test
         fun returnsTransformedValueIfErr() {
             assertEquals(
-                expected = 2000,
-                actual = Err(4000).orElse { Ok(2000) }.get()
+                expected = Ok(2000),
+                actual = Err(4000).orElse { Ok(2000) }
             )
         }
     }
 
     class OrElseThrow {
+
         @Test
         fun returnsValueIfOk() {
             assertEquals(
@@ -53,18 +55,14 @@ class OrTest {
         }
 
         @Test
-        fun returnsTransformedValueIfErr() {
-            val error = RuntimeException("or else throw")
-
-            fun provideError(): Result<String, Throwable> {
-                return Err(error)
-            }
-
-            assertFailsWith<RuntimeException>(error.message, provideError()::orElseThrow)
+        fun throwsErrorIfErr() {
+            val result = Err(RuntimeException("or else throw"))
+            assertFailsWith<RuntimeException>(block = result::orElseThrow)
         }
     }
 
     class ThrowIf {
+
         @Test
         fun returnsValueIfOk() {
             assertEquals(
@@ -75,25 +73,26 @@ class OrTest {
 
         @Test
         fun returnsErrIfPredicateDoesNotMatch() {
-            val error = RuntimeException("throw if")
+            val result: Result<Int, Exception> = Err(RuntimeException("throw if"))
 
             assertEquals(
-                expected = Err(error),
-                actual = Err(error).throwIf { false }
+                expected = result,
+                actual = result.throwIf { false }
             )
         }
 
         @Test
         fun throwsErrIfPredicateMatches() {
-            val error = RuntimeException("throw if")
+            val result = Err(RuntimeException("throw if"))
 
-            assertFailsWith<RuntimeException>(error.message) {
-                Err(error).throwIf { true }
+            assertFailsWith<RuntimeException> {
+                result.throwIf { true }
             }
         }
     }
 
     class ThrowUnless {
+
         @Test
         fun returnsValueIfOk() {
             assertEquals(
@@ -104,20 +103,20 @@ class OrTest {
 
         @Test
         fun returnsErrIfPredicateMatches() {
-            val error = RuntimeException("example")
+            val result: Result<Int, Exception> = Err(RuntimeException("throw unless"))
 
             assertEquals(
-                expected = Err(error),
-                actual = Err(error).throwUnless { true }
+                expected = result,
+                actual = result.throwUnless { true }
             )
         }
 
         @Test
         fun throwsErrIfPredicateDoesNotMatch() {
-            val error = RuntimeException("throw unless")
+            val result = Err(RuntimeException("throw unless"))
 
-            assertFailsWith<RuntimeException>(error.message) {
-                Err(error).throwUnless { false }
+            assertFailsWith<RuntimeException> {
+                result.throwUnless { false }
             }
         }
     }

@@ -49,7 +49,7 @@ class RunSuspendCatchingTest {
 
         assertEquals(
             expected = Ok("example"),
-            actual = result
+            actual = result,
         )
     }
 
@@ -61,7 +61,7 @@ class RunSuspendCatchingTest {
 
         assertEquals(
             expected = Err(exception),
-            actual = result
+            actual = result,
         )
     }
 }

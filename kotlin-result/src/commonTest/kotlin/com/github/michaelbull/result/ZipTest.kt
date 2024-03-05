@@ -20,14 +20,12 @@ class ZipTest {
             val result = zip(
                 { Ok(10) },
                 { Ok(20) },
-                Int::plus
+                Int::plus,
             )
 
-            result as Ok
-
             assertEquals(
-                expected = 30,
-                actual = result.value
+                expected = Ok(30),
+                actual = result,
             )
         }
 
@@ -36,14 +34,12 @@ class ZipTest {
             val result = zip(
                 { Ok(10) },
                 { produce(20, "hello") },
-                Int::plus
+                Int::plus,
             )
 
-            result as Err
-
             assertEquals(
-                expected = "hello",
-                actual = result.error
+                expected = Err("hello"),
+                actual = result,
             )
         }
 
@@ -52,14 +48,12 @@ class ZipTest {
             val result = zip(
                 { produce(10, "foo") },
                 { produce(20, "bar") },
-                Int::plus
+                Int::plus,
             )
 
-            result as Err
-
             assertEquals(
-                expected = "foo",
-                actual = result.error
+                expected = Err("foo"),
+                actual = result,
             )
         }
 
@@ -69,14 +63,12 @@ class ZipTest {
                 { Ok("hello") },
                 { Ok(2) },
                 { Ok(false) },
-                ::ZipData3
+                ::ZipData3,
             )
 
-            result as Ok
-
             assertEquals(
-                expected = ZipData3("hello", 2, false),
-                actual = result.value
+                expected = Ok(ZipData3("hello", 2, false)),
+                actual = result,
             )
         }
 
@@ -86,14 +78,12 @@ class ZipTest {
                 { Ok("foo") },
                 { Ok(1).and(Err("bar")) },
                 { Ok(false) },
-                ::ZipData3
+                ::ZipData3,
             )
 
-            result as Err
-
             assertEquals(
-                expected = "bar",
-                actual = result.error
+                expected = Err("bar"),
+                actual = result,
             )
         }
 
@@ -103,12 +93,12 @@ class ZipTest {
                 { Ok("foo") },
                 { Ok(1).and(Err("bar")) },
                 { Ok(false).and(Err("baz")) },
-                ::ZipData3
+                ::ZipData3,
             )
 
             assertEquals(
-                expected = "bar",
-                actual = result.getError()
+                expected = Err("bar"),
+                actual = result,
             )
         }
 
@@ -118,14 +108,12 @@ class ZipTest {
                 { Ok("foo").and(Err(1)) },
                 { Ok(1).and(Err(2)) },
                 { Ok(false).and(Err(3)) },
-                ::ZipData3
+                ::ZipData3,
             )
 
-            result as Err
-
             assertEquals(
-                expected = 1,
-                actual = result.error
+                expected = Err(1),
+                actual = result,
             )
         }
 
@@ -136,14 +124,12 @@ class ZipTest {
                 { Ok(2) },
                 { Ok(false) },
                 { Ok(1.5) },
-                ::ZipData4
+                ::ZipData4,
             )
 
-            result as Ok
-
             assertEquals(
-                expected = ZipData4("hello", 2, false, 1.5),
-                actual = result.value
+                expected = Ok(ZipData4("hello", 2, false, 1.5)),
+                actual = result
             )
         }
 
@@ -154,14 +140,12 @@ class ZipTest {
                 { Ok(2).and(Err(1)) },
                 { Ok(false) },
                 { Ok(1.5).and(Err(2)) },
-                ::ZipData4
+                ::ZipData4,
             )
 
-            result as Err
-
             assertEquals(
-                expected = 1,
-                actual = result.error
+                expected = Err(1),
+                actual = result,
             )
         }
 
@@ -173,14 +157,12 @@ class ZipTest {
                 { Ok(false) },
                 { Ok(1.5) },
                 { Ok('a') },
-                ::ZipData5
+                ::ZipData5,
             )
 
-            result as Ok
-
             assertEquals(
-                expected = ZipData5("hello", 2, false, 1.5, 'a'),
-                actual = result.value
+                expected = Ok(ZipData5("hello", 2, false, 1.5, 'a')),
+                actual = result,
             )
         }
 
@@ -192,14 +174,12 @@ class ZipTest {
                 { Ok(false) },
                 { Ok(1.5) },
                 { Ok('a').and(Err(2)) },
-                ::ZipData5
+                ::ZipData5,
             )
 
-            result as Err
-
             assertEquals(
-                expected = 1,
-                actual = result.error
+                expected = Err(1),
+                actual = result,
             )
         }
     }
@@ -218,11 +198,9 @@ class ZipTest {
                 a + b + c + d + e
             }
 
-            result as Ok
-
             assertEquals(
-                expected = 150,
-                actual = result.value,
+                expected = Ok(150),
+                actual = result,
             )
         }
 
@@ -238,17 +216,17 @@ class ZipTest {
                 a + b + c + d + e
             }
 
-            result as Err
+            val errors = listOf(
+                "error one",
+                "error two",
+                "error three",
+                "error four",
+                "error five",
+            )
 
             assertEquals(
-                expected = listOf(
-                    "error one",
-                    "error two",
-                    "error three",
-                    "error four",
-                    "error five",
-                ),
-                actual = result.error,
+                expected = Err(errors),
+                actual = result,
             )
         }
 
@@ -264,11 +242,9 @@ class ZipTest {
                 a + b + c + d + e
             }
 
-            result as Err
-
             assertEquals(
-                expected = listOf("only error"),
-                actual = result.error,
+                expected = Err(listOf("only error")),
+                actual = result,
             )
         }
     }

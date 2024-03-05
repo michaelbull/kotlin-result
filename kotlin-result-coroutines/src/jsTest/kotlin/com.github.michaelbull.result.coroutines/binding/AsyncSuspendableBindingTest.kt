@@ -15,9 +15,9 @@ import kotlin.test.assertTrue
 @ExperimentalCoroutinesApi
 class AsyncSuspendableBindingTest {
 
-    private sealed class BindingError {
-        object BindingErrorA : BindingError()
-        object BindingErrorB : BindingError()
+    private sealed interface BindingError {
+        data object BindingErrorA : BindingError
+        data object BindingErrorB : BindingError
     }
 
     @Test
@@ -32,7 +32,7 @@ class AsyncSuspendableBindingTest {
             return Ok(2)
         }
 
-        val result = binding<Int, BindingError> {
+        val result = binding {
             val x = async { provideX().bind() }
             val y = async { provideY().bind() }
             x.await() + y.await()
@@ -40,7 +40,7 @@ class AsyncSuspendableBindingTest {
 
         assertEquals(
             expected = Ok(3),
-            actual = result
+            actual = result,
         )
     }
 
@@ -61,7 +61,7 @@ class AsyncSuspendableBindingTest {
             return Err(BindingError.BindingErrorB)
         }
 
-        val result = binding<Int, BindingError> {
+        val result = binding {
             val x = async { provideX().bind() }
             val y = async { provideY().bind() }
             val z = async { provideZ().bind() }
@@ -98,7 +98,7 @@ class AsyncSuspendableBindingTest {
             return Err(BindingError.BindingErrorB)
         }
 
-        val result = binding<Int, BindingError> {
+        val result = binding {
             val x = async { provideX().bind() }
             val y = async { provideY().bind() }
             val z = async { provideZ().bind() }
@@ -108,7 +108,7 @@ class AsyncSuspendableBindingTest {
 
         assertEquals(
             expected = Err(BindingError.BindingErrorB),
-            actual = result
+            actual = result,
         )
 
         assertFalse(xStateChange)

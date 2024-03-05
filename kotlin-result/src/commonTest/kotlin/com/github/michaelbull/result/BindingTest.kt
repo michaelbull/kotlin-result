@@ -2,7 +2,6 @@ package com.github.michaelbull.result
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 class BindingTest {
 
@@ -13,14 +12,16 @@ class BindingTest {
         fun provideX(): Result<Int, BindingError> = Ok(1)
         fun provideY(): Result<Int, BindingError> = Ok(2)
 
-        val result = binding<Int, BindingError> {
+        val result = binding {
             val x = provideX().bind()
             val y = provideY().bind()
             x + y
         }
 
-        assertTrue(result is Ok)
-        assertEquals(3, result.value)
+        assertEquals(
+            expected = Ok(3),
+            actual = result,
+        )
     }
 
     @Test
@@ -28,14 +29,16 @@ class BindingTest {
         fun provideX(): Result<String, BindingError> = Ok("1")
         fun provideY(x: Int): Result<Int, BindingError> = Ok(x + 2)
 
-        val result = binding<Int, BindingError> {
+        val result = binding {
             val x = provideX().bind()
             val y = provideY(x.toInt()).bind()
             y
         }
 
-        assertTrue(result is Ok)
-        assertEquals(3, result.value)
+        assertEquals(
+            expected = Ok(3),
+            actual = result,
+        )
     }
 
     @Test
@@ -44,15 +47,17 @@ class BindingTest {
         fun provideY(): Result<Int, BindingError> = Err(BindingError)
         fun provideZ(): Result<Int, BindingError> = Ok(2)
 
-        val result = binding<Int, BindingError> {
+        val result = binding {
             val x = provideX().bind()
             val y = provideY().bind()
             val z = provideZ().bind()
             x + y + z
         }
 
-        assertTrue(result is Err)
-        assertEquals(BindingError, result.error)
+        assertEquals(
+            expected = Err(BindingError),
+            actual = result,
+        )
     }
 
     @Test
@@ -68,7 +73,9 @@ class BindingTest {
             x + y.toInt() + z
         }
 
-        assertTrue(result is Err)
-        assertEquals(BindingError, result.error)
+        assertEquals(
+            expected = Err(BindingError),
+            actual = result,
+        )
     }
 }

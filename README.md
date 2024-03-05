@@ -187,7 +187,7 @@ suspend fun failsIn5ms(): Result<Int, DomainErrorA> { ... }
 suspend fun failsIn1ms(): Result<Int, DomainErrorB> { ... }
 
 runBlocking {
-    val result = binding<Int, BindingError> {
+    val result: Result<Int, BindingError> = binding {
         val x = async { failsIn5ms().bind() }
         val y = async { failsIn1ms().bind() }
         x.await() + y.await()

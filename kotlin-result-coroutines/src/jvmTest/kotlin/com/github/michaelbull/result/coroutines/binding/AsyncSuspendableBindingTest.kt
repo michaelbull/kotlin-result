@@ -34,7 +34,7 @@ class AsyncSuspendableBindingTest {
             return Ok(2)
         }
 
-        val result = binding<Int, BindingError> {
+        val result: Result<Int, BindingError> = binding {
             val x = async { provideX().bind() }
             val y = async { provideY().bind() }
             x.await() + y.await()
@@ -63,7 +63,7 @@ class AsyncSuspendableBindingTest {
             return Err(BindingError.BindingErrorB)
         }
 
-        val result = binding<Int, BindingError> {
+        val result: Result<Int, BindingError> = binding {
             val x = async { provideX().bind() }
             val y = async { provideY().bind() }
             val z = async { provideZ().bind() }
@@ -96,7 +96,7 @@ class AsyncSuspendableBindingTest {
         val dispatcherA = StandardTestDispatcher(testScheduler)
         val dispatcherB = StandardTestDispatcher(testScheduler)
 
-        val result = binding<Int, BindingError> {
+        val result: Result<Int, BindingError> = binding {
             val x = async(dispatcherA) { provideX().bind() }
             val y = async(dispatcherB) { provideY().bind() }
 
@@ -143,7 +143,7 @@ class AsyncSuspendableBindingTest {
         val dispatcherB = StandardTestDispatcher(testScheduler)
         val dispatcherC = StandardTestDispatcher(testScheduler)
 
-        val result = binding<Unit, BindingError> {
+        val result: Result<Unit, BindingError> = binding {
             launch(dispatcherA) { provideX().bind() }
 
             testScheduler.advanceTimeBy(20)

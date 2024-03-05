@@ -42,27 +42,23 @@ class SuspendBindingBenchmark {
 
     private val time = 100L
 
-    private fun nonSuspend() = binding<Int, Error> {
+    private fun nonSuspend(): Result<Int, Error> = binding {
         val x = provideXBlocking().bind()
         val y = provideYBlocking().bind()
         x + y
     }
 
-    private suspend fun withSuspend(): Result<Int, Error> {
-        return coroutineBinding {
-            val x = provideX().bind()
-            val y = provideY().bind()
-            x + y
-        }
+    private suspend fun withSuspend(): Result<Int, Error> = coroutineBinding {
+        val x = provideX().bind()
+        val y = provideY().bind()
+        x + y
     }
 
-    private suspend fun withAsyncSuspend(): Result<Int, Error> {
-        return coroutineScope {
-            coroutineBinding {
-                val x = async { provideX().bind() }
-                val y = async { provideY().bind() }
-                x.await() + y.await()
-            }
+    private suspend fun withAsyncSuspend(): Result<Int, Error> = coroutineScope {
+        coroutineBinding {
+            val x = async { provideX().bind() }
+            val y = async { provideY().bind() }
+            x.await() + y.await()
         }
     }
 

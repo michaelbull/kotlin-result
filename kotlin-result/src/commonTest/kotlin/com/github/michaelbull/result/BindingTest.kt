@@ -66,7 +66,7 @@ class BindingTest {
         fun provideY(): Result<String, BindingError> = Err(BindingError)
         fun provideZ(): Result<Int, BindingError> = Ok(2)
 
-        val result = binding<Int, BindingError> {
+        val result: Result<Int, BindingError> = binding {
             val x = provideX().bind()
             val y = provideY().bind()
             val z = provideZ().bind()

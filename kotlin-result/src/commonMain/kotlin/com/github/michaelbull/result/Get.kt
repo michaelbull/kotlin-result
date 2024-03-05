@@ -10,11 +10,6 @@ import kotlin.contracts.contract
  * - Rust: [Result.ok](https://doc.rust-lang.org/std/result/enum.Result.html#method.ok)
  */
 public fun <V, E> Result<V, E>.get(): V? {
-    contract {
-        returnsNotNull() implies (this@get is Ok<V>)
-        returns(null) implies (this@get is Err<E>)
-    }
-
     return when {
         isOk -> value
         else -> null
@@ -27,11 +22,6 @@ public fun <V, E> Result<V, E>.get(): V? {
  * - Rust: [Result.err](https://doc.rust-lang.org/std/result/enum.Result.html#method.err)
  */
 public fun <V, E> Result<V, E>.getError(): E? {
-    contract {
-        returns(null) implies (this@getError is Ok<V>)
-        returnsNotNull() implies (this@getError is Err<E>)
-    }
-
     return when {
         isErr -> error
         else -> null
@@ -111,10 +101,6 @@ public inline infix fun <V, E> Result<V, E>.getErrorOrElse(transform: (V) -> E):
  * This is functionally equivalent to [`getOrElse { throw it }`][getOrElse].
  */
 public fun <V, E : Throwable> Result<V, E>.getOrThrow(): V {
-    contract {
-        returns() implies (this@getOrThrow is Ok<V>)
-    }
-
     return when {
         isOk -> value
         else -> throw error
@@ -127,7 +113,6 @@ public fun <V, E : Throwable> Result<V, E>.getOrThrow(): V {
  */
 public inline infix fun <V, E> Result<V, E>.getOrThrow(transform: (E) -> Throwable): V {
     contract {
-        returns() implies (this@getOrThrow is Ok<V>)
         callsInPlace(transform, InvocationKind.AT_MOST_ONCE)
     }
 

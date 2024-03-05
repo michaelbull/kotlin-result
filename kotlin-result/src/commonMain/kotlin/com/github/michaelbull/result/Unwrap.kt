@@ -14,10 +14,6 @@ public class UnwrapException(message: String) : Exception(message)
  * @throws UnwrapException if this result [is an error][Result.isErr].
  */
 public fun <V, E> Result<V, E>.unwrap(): V {
-    contract {
-        returns() implies (this@unwrap is Ok<V>)
-    }
-
     return when {
         isOk -> value
         else -> throw UnwrapException("called Result.unwrap on an Err value $error")
@@ -38,7 +34,6 @@ public fun <V, E> Result<V, E>.unwrap(): V {
 public inline infix fun <V, E> Result<V, E>.expect(message: () -> Any): V {
     contract {
         callsInPlace(message, InvocationKind.AT_MOST_ONCE)
-        returns() implies (this@expect is Ok<V>)
     }
 
     return when {
@@ -56,10 +51,6 @@ public inline infix fun <V, E> Result<V, E>.expect(message: () -> Any): V {
  * @throws UnwrapException if this result [is ok][Result.isOk].
  */
 public fun <V, E> Result<V, E>.unwrapError(): E {
-    contract {
-        returns() implies (this@unwrapError is Err<E>)
-    }
-
     return when {
         isErr -> error
         else -> throw UnwrapException("called Result.unwrapError on an Ok value $value")
@@ -80,7 +71,6 @@ public fun <V, E> Result<V, E>.unwrapError(): E {
 public inline infix fun <V, E> Result<V, E>.expectError(message: () -> Any): E {
     contract {
         callsInPlace(message, InvocationKind.AT_MOST_ONCE)
-        returns() implies (this@expectError is Err<E>)
     }
 
     return when {

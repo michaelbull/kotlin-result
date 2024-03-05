@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   build:
-    name: Build
+    name: Build on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -56,7 +56,7 @@ jobs:
         run: ./gradlew ${{ matrix.tasks }}
 
   publish:
-    name: Publish
+    name: Publish on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     if: github.ref == 'refs/heads/master' && github.repository == 'michaelbull/kotlin-result'
     needs: build

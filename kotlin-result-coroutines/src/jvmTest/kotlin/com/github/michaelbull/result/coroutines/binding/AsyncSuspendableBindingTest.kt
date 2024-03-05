@@ -18,8 +18,8 @@ import kotlin.test.assertTrue
 class AsyncSuspendableBindingTest {
 
     private sealed class BindingError {
-        object BindingErrorA : BindingError()
-        object BindingErrorB : BindingError()
+        data object BindingErrorA : BindingError()
+        data object BindingErrorB : BindingError()
     }
 
     @Test

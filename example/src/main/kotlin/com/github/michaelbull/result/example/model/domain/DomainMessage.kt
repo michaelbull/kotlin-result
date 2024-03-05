@@ -3,29 +3,29 @@ package com.github.michaelbull.result.example.model.domain
 /**
  * All possible things that can happen in the use-cases
  */
-sealed class DomainMessage
+sealed interface DomainMessage
 
 /* validation errors */
 
-object CustomerRequired : DomainMessage()
-object CustomerIdMustBePositive : DomainMessage()
+data object CustomerRequired : DomainMessage
+data object CustomerIdMustBePositive : DomainMessage
 
-object FirstNameRequired : DomainMessage()
-object FirstNameTooLong : DomainMessage()
+data object FirstNameRequired : DomainMessage
+data object FirstNameTooLong : DomainMessage
 
-object LastNameRequired : DomainMessage()
-object LastNameTooLong : DomainMessage()
+data object LastNameRequired : DomainMessage
+data object LastNameTooLong : DomainMessage
 
-object EmailRequired : DomainMessage()
-object EmailTooLong : DomainMessage()
-object EmailInvalid : DomainMessage()
+data object EmailRequired : DomainMessage
+data object EmailTooLong : DomainMessage
+data object EmailInvalid : DomainMessage
 
 /* exposed errors */
 
-object CustomerNotFound : DomainMessage()
+data object CustomerNotFound : DomainMessage
 
 /* internal errors */
 
-object SqlCustomerInvalid : DomainMessage()
-object DatabaseTimeout : DomainMessage()
-class DatabaseError(val reason: String?) : DomainMessage()
+data object SqlCustomerInvalid : DomainMessage
+data object DatabaseTimeout : DomainMessage
+data class DatabaseError(val reason: String?) : DomainMessage

@@ -148,9 +148,9 @@ class GetTest {
     }
 
     class Merge {
-        interface Direction
-        object Left : Direction
-        object Right : Direction
+        sealed interface Direction
+        data object Left : Direction
+        data object Right : Direction
 
         @Test
         fun returnsValueIfOk() {

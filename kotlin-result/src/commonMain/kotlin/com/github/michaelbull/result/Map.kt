@@ -23,6 +23,151 @@ public inline infix fun <V, E, U> Result<V, E>.map(transform: (V) -> U): Result<
 }
 
 /**
+ * Maps this [Result<Result<V, E>, E>][Result] to [Result<V, E>][Result].
+ *
+ * - Rust: [Result.flatten](https://doc.rust-lang.org/std/result/enum.Result.html#method.flatten)
+ */
+public inline fun <V, E> Result<Result<V, E>, E>.flatten(): Result<V, E> {
+    return when (this) {
+        is Ok -> value
+        is Err -> this
+    }
+}
+
+/**
+ * Maps this [Result<V, E>][Result] to [Result<U, E>][Result] by either applying the [transform]
+ * function if this [Result] is [Ok], or returning this [Err].
+ *
+ * This is functionally equivalent to [andThen].
+ *
+ * - Scala: [Either.flatMap](http://www.scala-lang.org/api/2.12.0/scala/util/Either.html#flatMap[AA>:A,Y](f:B=>scala.util.Either[AA,Y]):scala.util.Either[AA,Y])
+ */
+public inline infix fun <V, E, U> Result<V, E>.flatMap(transform: (V) -> Result<U, E>): Result<U, E> {
+    contract {
+        callsInPlace(transform, InvocationKind.AT_MOST_ONCE)
+    }
+
+    return andThen(transform)
+}
+
+/**
+ * Maps this [Result<V, E>][Result] to [U] by applying either the [success] function if this
+ * [Result] is [Ok], or the [failure] function if this [Result] is an [Err].
+ *
+ * Unlike [mapEither], [success] and [failure] must both return [U].
+ *
+ * - Elm: [Result.Extra.mapBoth](http://package.elm-lang.org/packages/elm-community/result-extra/2.2.0/Result-Extra#mapBoth)
+ * - Haskell: [Data.Either.either](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Either.html#v:either)
+ */
+public inline fun <V, E, U> Result<V, E>.mapBoth(
+    success: (V) -> U,
+    failure: (E) -> U,
+): U {
+    contract {
+        callsInPlace(success, InvocationKind.AT_MOST_ONCE)
+        callsInPlace(failure, InvocationKind.AT_MOST_ONCE)
+    }
+
+    return when (this) {
+        is Ok -> success(value)
+        is Err -> failure(error)
+    }
+}
+
+/**
+ * Maps this [Result<V, E>][Result] to [U] by applying either the [success] function if this
+ * [Result] is [Ok], or the [failure] function if this [Result] is an [Err].
+ *
+ * Unlike [mapEither], [success] and [failure] must both return [U].
+ *
+ * This is functionally equivalent to [mapBoth].
+ *
+ * - Elm: [Result.Extra.mapBoth](http://package.elm-lang.org/packages/elm-community/result-extra/2.2.0/Result-Extra#mapBoth)
+ * - Haskell: [Data.Either.either](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Either.html#v:either)
+ */
+public inline fun <V, E, U> Result<V, E>.fold(
+    success: (V) -> U,
+    failure: (E) -> U,
+): U {
+    contract {
+        callsInPlace(success, InvocationKind.AT_MOST_ONCE)
+        callsInPlace(failure, InvocationKind.AT_MOST_ONCE)
+    }
+
+    return mapBoth(success, failure)
+}
+
+/**
+ * Maps this [Result<V, E>][Result] to [Result<U, E>][Result] by applying either the [success]
+ * function if this [Result] is [Ok], or the [failure] function if this [Result] is an [Err].
+ *
+ * Unlike [mapEither], [success] and [failure] must both return [U].
+ *
+ * - Elm: [Result.Extra.mapBoth](http://package.elm-lang.org/packages/elm-community/result-extra/2.2.0/Result-Extra#mapBoth)
+ * - Haskell: [Data.Either.either](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Either.html#v:either)
+ */
+public inline fun <V, E, U> Result<V, E>.flatMapBoth(
+    success: (V) -> Result<U, E>,
+    failure: (E) -> Result<U, E>,
+): Result<U, E> {
+    contract {
+        callsInPlace(success, InvocationKind.AT_MOST_ONCE)
+        callsInPlace(failure, InvocationKind.AT_MOST_ONCE)
+    }
+
+    return when (this) {
+        is Ok -> success(value)
+        is Err -> failure(error)
+    }
+}
+
+/**
+ * Maps this [Result<V, E>][Result] to [Result<U, F>][Result] by applying either the [success]
+ * function if this [Result] is [Ok], or the [failure] function if this [Result] is an [Err].
+ *
+ * Unlike [mapBoth], [success] and [failure] may either return [U] or [F] respectively.
+ *
+ * - Haskell: [Data.Bifunctor.Bimap](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Bifunctor.html#v:bimap)
+ */
+public inline fun <V, E, U, F> Result<V, E>.mapEither(
+    success: (V) -> U,
+    failure: (E) -> F,
+): Result<U, F> {
+    contract {
+        callsInPlace(success, InvocationKind.AT_MOST_ONCE)
+        callsInPlace(failure, InvocationKind.AT_MOST_ONCE)
+    }
+
+    return when (this) {
+        is Ok -> Ok(success(value))
+        is Err -> Err(failure(error))
+    }
+}
+
+/**
+ * Maps this [Result<V, E>][Result] to [Result<U, F>][Result] by applying either the [success]
+ * function if this [Result] is [Ok], or the [failure] function if this [Result] is an [Err].
+ *
+ * Unlike [mapBoth], [success] and [failure] may either return [U] or [F] respectively.
+ *
+ * - Haskell: [Data.Bifunctor.Bimap](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Bifunctor.html#v:bimap)
+ */
+public inline fun <V, E, U, F> Result<V, E>.flatMapEither(
+    success: (V) -> Result<U, F>,
+    failure: (E) -> Result<U, F>,
+): Result<U, F> {
+    contract {
+        callsInPlace(success, InvocationKind.AT_MOST_ONCE)
+        callsInPlace(failure, InvocationKind.AT_MOST_ONCE)
+    }
+
+    return when (this) {
+        is Ok -> success(value)
+        is Err -> failure(error)
+    }
+}
+
+/**
  * Maps this [Result<V, E>][Result] to [Result<V, F>][Result] by either applying the [transform]
  * function to the [error][Err.error] if this [Result] is [Err], or returning this [Ok].
  *
@@ -95,88 +240,6 @@ public inline infix fun <V, E, U> Result<Iterable<V>, E>.mapAll(transform: (V) -
 }
 
 /**
- * Maps this [Result<V, E>][Result] to [U] by applying either the [success] function if this
- * [Result] is [Ok], or the [failure] function if this [Result] is an [Err]. Both of these
- * functions must return the same type ([U]).
- *
- * - Elm: [Result.Extra.mapBoth](http://package.elm-lang.org/packages/elm-community/result-extra/2.2.0/Result-Extra#mapBoth)
- * - Haskell: [Data.Either.either](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Either.html#v:either)
- */
-public inline fun <V, E, U> Result<V, E>.mapBoth(success: (V) -> U, failure: (E) -> U): U {
-    contract {
-        callsInPlace(success, InvocationKind.AT_MOST_ONCE)
-        callsInPlace(failure, InvocationKind.AT_MOST_ONCE)
-    }
-
-    return when (this) {
-        is Ok -> success(value)
-        is Err -> failure(error)
-    }
-}
-
-/**
- * Maps this [Result<V, E>][Result] to [U] by applying either the [success] function if this
- * [Result] is [Ok], or the [failure] function if this [Result] is an [Err]. Both of these
- * functions must return the same type ([U]).
- *
- * This is functionally equivalent to [mapBoth].
- *
- * - Elm: [Result.Extra.mapBoth](http://package.elm-lang.org/packages/elm-community/result-extra/2.2.0/Result-Extra#mapBoth)
- * - Haskell: [Data.Either.either](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Either.html#v:either)
- */
-public inline fun <V, E, U> Result<V, E>.fold(success: (V) -> U, failure: (E) -> U): U {
-    contract {
-        callsInPlace(success, InvocationKind.AT_MOST_ONCE)
-        callsInPlace(failure, InvocationKind.AT_MOST_ONCE)
-    }
-
-    return mapBoth(success, failure)
-}
-
-/**
- * Maps this [Result<V, E>][Result] to [Result<U, F>][Result] by applying either the [success]
- * function if this [Result] is [Ok], or the [failure] function if this [Result] is an [Err].
- *
- * - Haskell: [Data.Bifunctor.Bimap](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Bifunctor.html#v:bimap)
- */
-public inline fun <V, E, U, F> Result<V, E>.mapEither(success: (V) -> U, failure: (E) -> F): Result<U, F> {
-    contract {
-        callsInPlace(success, InvocationKind.AT_MOST_ONCE)
-        callsInPlace(failure, InvocationKind.AT_MOST_ONCE)
-    }
-
-    return when (this) {
-        is Ok -> Ok(success(value))
-        is Err -> Err(failure(error))
-    }
-}
-
-/**
- * Maps this [Result<V, E>][Result] to [Result<U, E>][Result] by either applying the [transform]
- * function if this [Result] is [Ok], or returning this [Err].
- *
- * This is functionally equivalent to [andThen].
- *
- * - Scala: [Either.flatMap](http://www.scala-lang.org/api/2.12.0/scala/util/Either.html#flatMap[AA>:A,Y](f:B=>scala.util.Either[AA,Y]):scala.util.Either[AA,Y])
- */
-public inline infix fun <V, E, U> Result<V, E>.flatMap(transform: (V) -> Result<U, E>): Result<U, E> {
-    contract {
-        callsInPlace(transform, InvocationKind.AT_MOST_ONCE)
-    }
-
-    return andThen(transform)
-}
-
-/**
- * Maps this [Result<Result<V, E>, E>][Result] to [Result<V, E>][Result].
- *
- * - Rust: [Result.flatten](https://doc.rust-lang.org/std/result/enum.Result.html#method.flatten)
- */
-public inline fun <V, E> Result<Result<V, E>, E>.flatten(): Result<V, E> {
-    return andThen { it }
-}
-
-/**
  * Returns the [transformation][transform] of the [value][Ok.value] if this [Result] is [Ok]
  * and satisfies the given [predicate], otherwise this [Result].
  *
@@ -194,6 +257,7 @@ public inline fun <V, E> Result<V, E>.toErrorIf(predicate: (V) -> Boolean, trans
         } else {
             this
         }
+
         is Err -> this
     }
 }
@@ -210,11 +274,12 @@ public inline fun <V, E> Result<V?, E>.toErrorIfNull(error: () -> E): Result<V, 
     }
 
     return when (this) {
-        is Ok -> if(value == null) {
+        is Ok -> if (value == null) {
             Err(error())
         } else {
             Ok(value)
         }
+
         is Err -> this
     }
 }
@@ -237,6 +302,7 @@ public inline fun <V, E> Result<V, E>.toErrorUnless(predicate: (V) -> Boolean, t
         } else {
             this
         }
+
         is Err -> this
     }
 }
@@ -258,6 +324,7 @@ public inline fun <V, E> Result<V, E>.toErrorUnlessNull(error: () -> E): Result<
         } else {
             Err(error())
         }
+
         is Err -> Err(error())
     }
 }

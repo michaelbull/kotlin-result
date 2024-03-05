@@ -2,7 +2,6 @@ package com.github.michaelbull.result
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertNull
 
 class MapTest {
     private sealed interface MapErr {
@@ -27,7 +26,7 @@ class MapTest {
 
             assertEquals(
                 expected = Ok(30),
-                actual = value.map { it + 20 }
+                actual = value.map { it + 20 },
             )
         }
 
@@ -37,7 +36,7 @@ class MapTest {
 
             assertEquals(
                 expected = Err(MapErr.HelloError),
-                actual = value.map { "hello $it" }
+                actual = value.map { "hello $it" },
             )
         }
     }
@@ -50,7 +49,7 @@ class MapTest {
 
             assertEquals(
                 expected = Ok("hello"),
-                actual = result.flatten()
+                actual = result.flatten(),
             )
         }
 
@@ -60,7 +59,7 @@ class MapTest {
 
             assertEquals(
                 expected = Err(6),
-                actual = result.flatten()
+                actual = result.flatten(),
             )
         }
 
@@ -70,7 +69,7 @@ class MapTest {
 
             assertEquals(
                 expected = Err(6),
-                actual = result.flatten()
+                actual = result.flatten(),
             )
         }
 
@@ -80,12 +79,12 @@ class MapTest {
 
             assertEquals(
                 expected = Ok(Ok("hello")),
-                actual = result.flatten()
+                actual = result.flatten(),
             )
 
             assertEquals(
                 expected = Ok("hello"),
-                actual = result.flatten().flatten()
+                actual = result.flatten().flatten(),
             )
         }
     }
@@ -98,7 +97,7 @@ class MapTest {
 
             assertEquals(
                 expected = Ok(70),
-                actual = value.mapError { MapErr.WorldError }
+                actual = value.mapError { MapErr.WorldError },
             )
         }
 
@@ -108,7 +107,7 @@ class MapTest {
 
             assertEquals(
                 expected = Err(MapErr.WorldError),
-                actual = value.mapError { MapErr.WorldError }
+                actual = value.mapError { MapErr.WorldError },
             )
         }
     }
@@ -121,7 +120,7 @@ class MapTest {
 
             assertEquals(
                 expected = 3,
-                actual = value.mapOr(42, String::length)
+                actual = value.mapOr(42, String::length),
             )
         }
 
@@ -131,7 +130,7 @@ class MapTest {
 
             assertEquals(
                 expected = 42,
-                actual = value.mapOr(42, String::length)
+                actual = value.mapOr(42, String::length),
             )
         }
     }
@@ -145,7 +144,7 @@ class MapTest {
 
             assertEquals(
                 expected = 3,
-                actual = value.mapOrElse({ k * 2 }, String::length)
+                actual = value.mapOrElse({ k * 2 }, String::length),
             )
         }
 
@@ -155,7 +154,7 @@ class MapTest {
 
             assertEquals(
                 expected = 42,
-                actual = value.mapOrElse({ k * 2 }, String::length)
+                actual = value.mapOrElse({ k * 2 }, String::length),
             )
         }
     }
@@ -168,12 +167,12 @@ class MapTest {
 
             val result: String = value.mapBoth(
                 success = { "good $it" },
-                failure = { "bad $it" }
+                failure = { "bad $it" },
             )
 
             assertEquals(
                 expected = "good 50",
-                actual = result
+                actual = result,
             )
         }
 
@@ -183,12 +182,12 @@ class MapTest {
 
             val result: String = value.mapBoth(
                 success = { "good $it" },
-                failure = { "bad $it" }
+                failure = { "bad $it" },
             )
 
             assertEquals(
                 expected = "bad 20",
-                actual = result
+                actual = result,
             )
         }
     }
@@ -201,12 +200,12 @@ class MapTest {
 
             val result: Result<String, Long> = value.flatMapBoth(
                 success = { Ok("good $it") },
-                failure = { Err(100L) }
+                failure = { Err(100L) },
             )
 
             assertEquals(
                 expected = Ok("good 50"),
-                actual = result
+                actual = result,
             )
         }
 
@@ -216,12 +215,12 @@ class MapTest {
 
             val value: Result<String, Long> = result.flatMapBoth(
                 success = { Ok("good $it") },
-                failure = { Err(100L) }
+                failure = { Err(100L) },
             )
 
             assertEquals(
                 expected = Err(100L),
-                actual = value
+                actual = value,
             )
         }
     }
@@ -234,12 +233,12 @@ class MapTest {
 
             val result: Result<Long, MapErr.CustomError> = value.mapEither(
                 success = { it + 500L },
-                failure = { MapErr.CustomError("$it") }
+                failure = { MapErr.CustomError("$it") },
             )
 
             assertEquals(
                 expected = Ok(1000L),
-                actual = result
+                actual = result,
             )
         }
 
@@ -249,12 +248,12 @@ class MapTest {
 
             val result: Result<Long, MapErr.CustomError> = value.mapEither(
                 success = { it + 500L },
-                failure = { MapErr.CustomError("bad") }
+                failure = { MapErr.CustomError("bad") },
             )
 
             assertEquals(
                 expected = Err(MapErr.CustomError("bad")),
-                actual = result
+                actual = result,
             )
         }
     }
@@ -267,12 +266,12 @@ class MapTest {
 
             val result: Result<Long, MapErr.CustomError> = value.flatMapEither(
                 success = { Ok(it + 500L) },
-                failure = { Err(MapErr.CustomError("$it")) }
+                failure = { Err(MapErr.CustomError("$it")) },
             )
 
             assertEquals(
                 expected = Ok(1000L),
-                actual = result
+                actual = result,
             )
         }
 
@@ -282,12 +281,12 @@ class MapTest {
 
             val result: Result<Long, MapErr.CustomError> = value.flatMapEither(
                 success = { Ok(it + 500L) },
-                failure = { Err(MapErr.CustomError("bad")) }
+                failure = { Err(MapErr.CustomError("bad")) },
             )
 
             assertEquals(
                 expected = Err(MapErr.CustomError("bad")),
-                actual = result
+                actual = result,
             )
         }
     }
@@ -296,37 +295,25 @@ class MapTest {
 
         @Test
         fun returnsValueIfOk() {
-            val result = Ok("a").toErrorIfNull { "b" }
-
-            result as Ok
-
             assertEquals(
-                expected = "a",
-                actual = result.value
+                expected = Ok("a"),
+                actual = Ok("a").toErrorIfNull { "b" },
             )
         }
 
         @Test
         fun returnsTransformedErrorIfNull() {
-            val result: Result<Nothing, String> = Ok(null).toErrorIfNull { "a" }
-
-            result as Err
-
             assertEquals(
-                expected = "a",
-                actual = result.error
+                expected = Err("a"),
+                actual = Ok(null).toErrorIfNull { "a" },
             )
         }
 
         @Test
         fun returnsErrorIfErr() {
-            val result = Err("a").toErrorIfNull { "b" }
-
-            result as Err
-
             assertEquals(
-                expected = "a",
-                actual = result.error
+                expected = Err("a"),
+                actual = Err("a").toErrorIfNull { "b" },
             )
         }
     }
@@ -335,34 +322,25 @@ class MapTest {
 
         @Test
         fun returnsTransformedErrorIfNotNull() {
-            val result = Ok("a").toErrorUnlessNull { "b" }
-
-            result as Err
-
             assertEquals(
-                expected = "b",
-                actual = result.error
+                expected = Err("b"),
+                actual = Ok("a").toErrorUnlessNull { "b" },
             )
         }
 
         @Test
         fun returnsValueIfNull() {
-            val result = Ok(null).toErrorUnlessNull { "a" }
-
-            result as Ok
-
-            assertNull(result.value)
+            assertEquals(
+                expected = Ok(null),
+                actual = Ok(null).toErrorUnlessNull { "a" },
+            )
         }
 
         @Test
         fun returnsErrorIfErr() {
-            val result = Err("a").toErrorUnlessNull { "b" }
-
-            result as Err
-
             assertEquals(
-                expected = "b",
-                actual = result.error
+                expected = Err("b"),
+                actual = Err("a").toErrorUnlessNull { "b" },
             )
         }
     }

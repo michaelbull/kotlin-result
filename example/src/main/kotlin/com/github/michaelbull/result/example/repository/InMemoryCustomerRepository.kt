@@ -5,7 +5,7 @@ import com.github.michaelbull.result.example.model.entity.CustomerId
 import java.sql.SQLTimeoutException
 
 class InMemoryCustomerRepository(
-    private val customers: MutableMap<CustomerId, CustomerEntity>
+    private val customers: MutableMap<CustomerId, CustomerEntity>,
 ) : CustomerRepository {
 
     override fun findById(id: CustomerId): CustomerEntity? {

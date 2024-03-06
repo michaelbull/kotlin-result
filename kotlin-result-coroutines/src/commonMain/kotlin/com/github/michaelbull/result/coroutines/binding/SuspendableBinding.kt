@@ -45,7 +45,7 @@ public interface SuspendableResultBinding<E> : CoroutineScope {
 
 @PublishedApi
 internal class SuspendableResultBindingImpl<E>(
-    override val coroutineContext: CoroutineContext
+    override val coroutineContext: CoroutineContext,
 ) : SuspendableResultBinding<E> {
 
     private val mutex = Mutex()

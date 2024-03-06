@@ -4,6 +4,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class FactoryTest {
+
     class RunCatching {
 
         @Test

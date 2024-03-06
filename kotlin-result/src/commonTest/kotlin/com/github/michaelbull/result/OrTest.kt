@@ -27,6 +27,7 @@ class OrTest {
     }
 
     class OrElse {
+
         @Test
         fun returnsValueIfOk() {
             assertEquals(

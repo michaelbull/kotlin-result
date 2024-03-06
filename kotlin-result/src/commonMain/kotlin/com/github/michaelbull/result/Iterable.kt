@@ -138,7 +138,7 @@ public fun <V, E> Iterable<Result<V, E>>.partition(): Pair<List<V>, List<E>> {
  * transformation fails. Elements in the returned list are in the input [Iterable] order.
  */
 public inline fun <V, E, U> Iterable<V>.mapResult(
-    transform: (V) -> Result<U, E>
+    transform: (V) -> Result<U, E>,
 ): Result<List<U>, E> {
     return Ok(map { element ->
         when (val transformed = transform(element)) {
@@ -155,7 +155,7 @@ public inline fun <V, E, U> Iterable<V>.mapResult(
  */
 public inline fun <V, E, U, C : MutableCollection<in U>> Iterable<V>.mapResultTo(
     destination: C,
-    transform: (V) -> Result<U, E>
+    transform: (V) -> Result<U, E>,
 ): Result<C, E> {
     return Ok(mapTo(destination) { element ->
         when (val transformed = transform(element)) {
@@ -172,7 +172,7 @@ public inline fun <V, E, U, C : MutableCollection<in U>> Iterable<V>.mapResultTo
  * order.
  */
 public inline fun <V, E, U : Any> Iterable<V>.mapResultNotNull(
-    transform: (V) -> Result<U, E>?
+    transform: (V) -> Result<U, E>?,
 ): Result<List<U>, E> {
     return Ok(mapNotNull { element ->
         when (val transformed = transform(element)) {
@@ -190,7 +190,7 @@ public inline fun <V, E, U : Any> Iterable<V>.mapResultNotNull(
  */
 public inline fun <V, E, U : Any, C : MutableCollection<in U>> Iterable<V>.mapResultNotNullTo(
     destination: C,
-    transform: (V) -> Result<U, E>?
+    transform: (V) -> Result<U, E>?,
 ): Result<C, E> {
     return Ok(mapNotNullTo(destination) { element ->
         when (val transformed = transform(element)) {
@@ -208,7 +208,7 @@ public inline fun <V, E, U : Any, C : MutableCollection<in U>> Iterable<V>.mapRe
  * order.
  */
 public inline fun <V, E, U> Iterable<V>.mapResultIndexed(
-    transform: (index: Int, V) -> Result<U, E>
+    transform: (index: Int, V) -> Result<U, E>,
 ): Result<List<U>, E> {
     return Ok(mapIndexed { index, element ->
         when (val transformed = transform(index, element)) {
@@ -225,7 +225,7 @@ public inline fun <V, E, U> Iterable<V>.mapResultIndexed(
  */
 public inline fun <V, E, U, C : MutableCollection<in U>> Iterable<V>.mapResultIndexedTo(
     destination: C,
-    transform: (index: Int, V) -> Result<U, E>
+    transform: (index: Int, V) -> Result<U, E>,
 ): Result<C, E> {
     return Ok(mapIndexedTo(destination) { index, element ->
         when (val transformed = transform(index, element)) {
@@ -242,7 +242,7 @@ public inline fun <V, E, U, C : MutableCollection<in U>> Iterable<V>.mapResultIn
  * the input [Iterable] order.
  */
 public inline fun <V, E, U : Any> Iterable<V>.mapResultIndexedNotNull(
-    transform: (index: Int, V) -> Result<U, E>?
+    transform: (index: Int, V) -> Result<U, E>?,
 ): Result<List<U>, E> {
     return Ok(mapIndexedNotNull { index, element ->
         when (val transformed = transform(index, element)) {
@@ -260,7 +260,7 @@ public inline fun <V, E, U : Any> Iterable<V>.mapResultIndexedNotNull(
  */
 public inline fun <V, E, U : Any, C : MutableCollection<in U>> Iterable<V>.mapResultIndexedNotNullTo(
     destination: C,
-    transform: (index: Int, V) -> Result<U, E>?
+    transform: (index: Int, V) -> Result<U, E>?,
 ): Result<C, E> {
     return Ok(mapIndexedNotNullTo(destination) { index, element ->
         when (val transformed = transform(index, element)) {

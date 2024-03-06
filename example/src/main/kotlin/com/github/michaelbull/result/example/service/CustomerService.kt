@@ -29,7 +29,7 @@ import com.github.michaelbull.result.zip
 import java.sql.SQLTimeoutException
 
 class CustomerService(
-    private val repository: CustomerRepository
+    private val repository: CustomerRepository,
 ) {
 
     fun getById(id: Long): Result<CustomerDto, DomainMessage> {

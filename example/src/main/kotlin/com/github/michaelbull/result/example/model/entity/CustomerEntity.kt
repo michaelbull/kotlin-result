@@ -8,5 +8,5 @@ data class CustomerEntity(
     val id: CustomerId,
     val firstName: String,
     val lastName: String,
-    val email: String
+    val email: String,
 )

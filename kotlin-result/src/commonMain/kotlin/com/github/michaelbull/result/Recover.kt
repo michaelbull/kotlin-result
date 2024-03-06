@@ -100,7 +100,7 @@ public inline fun <V, E> Result<V, E>.andThenRecover(transform: (E) -> Result<V,
  */
 public inline fun <V, E> Result<V, E>.andThenRecoverIf(
     predicate: (E) -> Boolean,
-    transform: (E) -> Result<V, E>
+    transform: (E) -> Result<V, E>,
 ): Result<V, E> {
     contract {
         callsInPlace(predicate, InvocationKind.AT_MOST_ONCE)
@@ -123,7 +123,7 @@ public inline fun <V, E> Result<V, E>.andThenRecoverIf(
  */
 public inline fun <V, E> Result<V, E>.andThenRecoverUnless(
     predicate: (E) -> Boolean,
-    transform: (E) -> Result<V, E>
+    transform: (E) -> Result<V, E>,
 ): Result<V, E> {
     contract {
         callsInPlace(predicate, InvocationKind.AT_MOST_ONCE)

@@ -14,7 +14,7 @@ private typealias Producer<T, E> = () -> Result<T, E>
 public inline fun <T1, T2, E, V> zip(
     producer1: Producer<T1, E>,
     producer2: Producer<T2, E>,
-    transform: (T1, T2) -> V
+    transform: (T1, T2) -> V,
 ): Result<V, E> {
     contract {
         callsInPlace(producer1, InvocationKind.EXACTLY_ONCE)
@@ -39,7 +39,7 @@ public inline fun <T1, T2, T3, E, V> zip(
     producer1: Producer<T1, E>,
     producer2: Producer<T2, E>,
     producer3: Producer<T3, E>,
-    transform: (T1, T2, T3) -> V
+    transform: (T1, T2, T3) -> V,
 ): Result<V, E> {
     contract {
         callsInPlace(producer1, InvocationKind.EXACTLY_ONCE)
@@ -68,7 +68,7 @@ public inline fun <T1, T2, T3, T4, E, V> zip(
     producer2: Producer<T2, E>,
     producer3: Producer<T3, E>,
     producer4: Producer<T4, E>,
-    transform: (T1, T2, T3, T4) -> V
+    transform: (T1, T2, T3, T4) -> V,
 ): Result<V, E> {
     contract {
         callsInPlace(producer1, InvocationKind.EXACTLY_ONCE)
@@ -101,7 +101,7 @@ public inline fun <T1, T2, T3, T4, T5, E, V> zip(
     producer3: Producer<T3, E>,
     producer4: Producer<T4, E>,
     producer5: Producer<T5, E>,
-    transform: (T1, T2, T3, T4, T5) -> V
+    transform: (T1, T2, T3, T4, T5) -> V,
 ): Result<V, E> {
     contract {
         callsInPlace(producer1, InvocationKind.EXACTLY_ONCE)

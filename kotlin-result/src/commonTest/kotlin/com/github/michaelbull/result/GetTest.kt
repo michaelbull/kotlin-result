@@ -7,7 +7,9 @@ import kotlin.test.assertNull
 
 @Suppress("IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION")
 class GetTest {
+
     class Get {
+
         @Test
         fun returnsValueIfOk() {
             assertEquals(
@@ -23,6 +25,7 @@ class GetTest {
     }
 
     class GetError {
+
         @Test
         fun returnsNullIfOk() {
             assertNull(Ok("example").getError())
@@ -38,6 +41,7 @@ class GetTest {
     }
 
     class GetOr {
+
         @Test
         fun returnsValueIfOk() {
             assertEquals(
@@ -56,6 +60,7 @@ class GetTest {
     }
 
     class GetOrThrow {
+
         @Test
         fun returnsValueIfOk() {
             assertEquals(
@@ -75,6 +80,7 @@ class GetTest {
     }
 
     class GetOrThrowWithTransform {
+
         @Test
         fun returnsValueIfOk() {
             assertEquals(
@@ -94,6 +100,7 @@ class GetTest {
     }
 
     class GetErrorOr {
+
         @Test
         fun returnsDefaultValueIfOk() {
             assertEquals(
@@ -112,6 +119,7 @@ class GetTest {
     }
 
     class GetOrElse {
+
         @Test
         fun returnsValueIfOk() {
             assertEquals(
@@ -130,6 +138,7 @@ class GetTest {
     }
 
     class GetErrorOrElse {
+
         @Test
         fun returnsTransformedValueIfOk() {
             assertEquals(

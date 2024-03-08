@@ -29,13 +29,7 @@ public inline infix fun <V, E> Result<V, E>.recoverCatching(transform: (E) -> V)
 
     return when (this) {
         is Ok -> this
-        is Err -> {
-            try {
-                Ok(transform(error))
-            } catch (e: Throwable) {
-                Err(e)
-            }
-        }
+        is Err -> runCatching { transform(error) }
     }
 }
 

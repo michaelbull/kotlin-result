@@ -1,6 +1,48 @@
 package com.github.michaelbull.result
 
 /**
+ * Returns `true` if each element is [Ok], `false` otherwise.
+ */
+public fun <V, E> Iterable<Result<V, E>>.allOk(): Boolean {
+    return all { it is Ok }
+}
+
+/**
+ * Returns `true` if each element is [Err], `false` otherwise.
+ */
+public fun <V, E> Iterable<Result<V, E>>.allErr(): Boolean {
+    return all { it is Err }
+}
+
+/**
+ * Returns `true` if at least one element is [Ok], `false` otherwise.
+ */
+public fun <V, E> Iterable<Result<V, E>>.anyOk(): Boolean {
+    return any { it is Ok }
+}
+
+/**
+ * Returns `true` if at least one element is [Err], `false` otherwise.
+ */
+public fun <V, E> Iterable<Result<V, E>>.anyErr(): Boolean {
+    return any { it is Err }
+}
+
+/**
+ * Returns the number of elements that are [Ok].
+ */
+public fun <V, E> Iterable<Result<V, E>>.countOk(): Int {
+    return count { it is Ok }
+}
+
+/**
+ * Returns the number of elements that are [Err].
+ */
+public fun <V, E> Iterable<Result<V, E>>.countErr(): Int {
+    return count { it is Err }
+}
+
+/**
  * Accumulates value starting with [initial] value and applying [operation] from left to right to
  * current accumulator value and each element.
  */

@@ -41,6 +41,41 @@ class MapTest {
         }
     }
 
+    class MapCatching {
+
+        private object MapException : Throwable()
+
+        @Test
+        fun returnsTransformedValueIfOk() {
+            val value: Result<Int, Throwable> = Ok(10)
+
+            assertEquals(
+                expected = Ok(30),
+                actual = value.mapCatching { it + 20 },
+            )
+        }
+
+        @Test
+        fun returnsErrIfTransformationThrows() {
+            val value: Result<Int, Throwable> = Ok(10)
+
+            assertEquals(
+                expected = Err(MapException),
+                actual = value.mapCatching { throw MapException },
+            )
+        }
+
+        @Test
+        fun returnsErrorIfErr() {
+            val value: Result<Int, Throwable> = Err(MapException)
+
+            assertEquals(
+                expected = Err(MapException),
+                actual = value.mapCatching { "hello $it" },
+            )
+        }
+    }
+
     class Flatten {
 
         @Test

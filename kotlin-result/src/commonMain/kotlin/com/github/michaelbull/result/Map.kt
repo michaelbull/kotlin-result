@@ -23,6 +23,29 @@ public inline infix fun <V, E, U> Result<V, E>.map(transform: (V) -> U): Result<
 }
 
 /**
+ * Maps this [Result<V, Throwable>][Result] to [Result<U, Throwable>][Result] by either applying
+ * the [transform] function to the [value][Ok.value] if this [Result] is [Ok], or returning this
+ * [Err].
+ *
+ * This function catches any [Throwable] exception thrown by [transform] function and encapsulates
+ * it as a failure.
+ *
+ * - Elm: [Result.map](http://package.elm-lang.org/packages/elm-lang/core/latest/Result#map)
+ * - Haskell: [Data.Bifunctor.first](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Bifunctor.html#v:first)
+ * - Rust: [Result.map](https://doc.rust-lang.org/std/result/enum.Result.html#method.map)
+ */
+public inline infix fun <V, U> Result<V, Throwable>.mapCatching(transform: (V) -> U): Result<U, Throwable> {
+    contract {
+        callsInPlace(transform, InvocationKind.AT_MOST_ONCE)
+    }
+
+    return when (this) {
+        is Ok -> runCatching { transform(value) }
+        is Err -> this
+    }
+}
+
+/**
  * Maps this [Result<Result<V, E>, E>][Result] to [Result<V, E>][Result].
  *
  * - Rust: [Result.flatten](https://doc.rust-lang.org/std/result/enum.Result.html#method.flatten)

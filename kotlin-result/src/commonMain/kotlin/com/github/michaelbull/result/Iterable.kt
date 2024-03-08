@@ -169,8 +169,12 @@ public fun <V, E, R : Result<V, E>> getAll(vararg results: R): List<V> {
  *
  * - Haskell: [Data.Either.lefts](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Either.html#v:lefts)
  */
+@Deprecated(
+    message = "Use filterValues instead",
+    replaceWith = ReplaceWith("filterValues()")
+)
 public fun <V, E> Iterable<Result<V, E>>.getAll(): List<V> {
-    return filterIsInstance<Ok<V>>().map { it.value }
+    return filterValues()
 }
 
 /**
@@ -189,8 +193,12 @@ public fun <V, E, R : Result<V, E>> getAllErrors(vararg results: R): List<E> {
  *
  * - Haskell: [Data.Either.rights](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Either.html#v:rights)
  */
+@Deprecated(
+    message = "Use filterErrors instead",
+    replaceWith = ReplaceWith("filterErrors()")
+)
 public fun <V, E> Iterable<Result<V, E>>.getAllErrors(): List<E> {
-    return filterIsInstance<Err<E>>().map { it.error }
+    return filterErrors()
 }
 
 /**

@@ -62,13 +62,9 @@ public inline fun <V, E : Throwable> Result<V, E>.throwIf(predicate: (E) -> Bool
         callsInPlace(predicate, InvocationKind.AT_MOST_ONCE)
     }
 
-    return when (this) {
-        is Ok -> this
-        is Err -> if (predicate(error)) {
-            throw error
-        } else {
-            this
-        }
+    return when {
+        this is Err && predicate(error) -> throw error
+        else -> this
     }
 }
 

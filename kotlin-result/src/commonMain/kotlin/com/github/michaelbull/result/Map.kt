@@ -251,14 +251,9 @@ public inline fun <V, E> Result<V, E>.toErrorIf(predicate: (V) -> Boolean, trans
         callsInPlace(transform, InvocationKind.AT_MOST_ONCE)
     }
 
-    return when (this) {
-        is Ok -> if (predicate(value)) {
-            Err(transform(value))
-        } else {
-            this
-        }
-
-        is Err -> this
+    return when {
+        this is Ok && predicate(value) -> Err(transform(value))
+        else -> this
     }
 }
 

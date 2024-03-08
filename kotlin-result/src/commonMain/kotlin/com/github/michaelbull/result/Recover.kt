@@ -43,13 +43,9 @@ public inline fun <V, E> Result<V, E>.recoverIf(predicate: (E) -> Boolean, trans
         callsInPlace(transform, InvocationKind.AT_MOST_ONCE)
     }
 
-    return when (this) {
-        is Ok -> this
-        is Err -> if (predicate(error)) {
-            Ok(transform(error))
-        } else {
-            this
-        }
+    return when {
+        this is Err && predicate(error) -> Ok(transform(error))
+        else -> this
     }
 }
 
@@ -63,13 +59,9 @@ public inline fun <V, E> Result<V, E>.recoverUnless(predicate: (E) -> Boolean, t
         callsInPlace(transform, InvocationKind.AT_MOST_ONCE)
     }
 
-    return when (this) {
-        is Ok -> this
-        is Err -> if (!predicate(error)) {
-            Ok(transform(error))
-        } else {
-            this
-        }
+    return when {
+        this is Err && !predicate(error) -> Ok(transform(error))
+        else -> this
     }
 }
 
@@ -101,13 +93,9 @@ public inline fun <V, E> Result<V, E>.andThenRecoverIf(
         callsInPlace(transform, InvocationKind.AT_MOST_ONCE)
     }
 
-    return when (this) {
-        is Ok -> this
-        is Err -> if (predicate(error)) {
-            transform(error)
-        } else {
-            this
-        }
+    return when {
+        this is Err && predicate(error) -> transform(error)
+        else -> this
     }
 }
 
@@ -124,12 +112,8 @@ public inline fun <V, E> Result<V, E>.andThenRecoverUnless(
         callsInPlace(transform, InvocationKind.AT_MOST_ONCE)
     }
 
-    return when (this) {
-        is Ok -> this
-        is Err -> if (!predicate(error)) {
-            transform(error)
-        } else {
-            this
-        }
+    return when {
+        this is Err && !predicate(error) -> transform(error)
+        else -> this
     }
 }

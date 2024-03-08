@@ -27,6 +27,6 @@ public suspend inline fun <V, E> binding(crossinline block: suspend ResultBindin
     return try {
         with(receiver) { Ok(block()) }
     } catch (ex: BindException) {
-        receiver.error
+        receiver.result
     }
 }

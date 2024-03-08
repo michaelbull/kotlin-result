@@ -32,7 +32,7 @@ public inline fun <V, E> binding(crossinline block: ResultBinding<E>.() -> V): R
     return try {
         with(receiver) { Ok(block()) }
     } catch (ex: BindException) {
-        receiver.error
+        receiver.result
     }
 }
 
@@ -45,13 +45,13 @@ public interface ResultBinding<E> {
 @PublishedApi
 internal class ResultBindingImpl<E> : ResultBinding<E> {
 
-    lateinit var error: Err<E>
+    lateinit var result: Err<E>
 
     override fun <V> Result<V, E>.bind(): V {
         return when (this) {
             is Ok -> value
             is Err -> {
-                this@ResultBindingImpl.error = this
+                this@ResultBindingImpl.result = this
                 throw BindException
             }
         }

@@ -33,7 +33,7 @@ public suspend inline fun <V, E> binding(crossinline block: suspend SuspendableR
             with(receiver) { Ok(block()) }
         }
     } catch (ex: BindCancellationException) {
-        receiver.internalError
+        receiver.result
     }
 }
 
@@ -49,14 +49,14 @@ internal class SuspendableResultBindingImpl<E>(
 ) : SuspendableResultBinding<E> {
 
     private val mutex = Mutex()
-    lateinit var internalError: Err<E>
+    lateinit var result: Err<E>
 
     override suspend fun <V> Result<V, E>.bind(): V {
         return when (this) {
             is Ok -> value
             is Err -> mutex.withLock {
-                if (::internalError.isInitialized.not()) {
-                    internalError = this
+                if (::result.isInitialized.not()) {
+                    result = this
                     this@SuspendableResultBindingImpl.cancel(BindCancellationException)
                 }
 

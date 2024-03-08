@@ -1,6 +1,46 @@
 package com.github.michaelbull.result
 
 /**
+ * Returns a list containing only elements that are [Ok].
+ */
+public fun <V, E> Iterable<Result<V, E>>.filterValues(): List<V> {
+    return filterValuesTo(ArrayList())
+}
+
+/**
+ * Returns a list containing only elements that are [Err].
+ */
+public fun <V, E> Iterable<Result<V, E>>.filterErrors(): List<E> {
+    return filterErrorsTo(ArrayList())
+}
+
+/**
+ * Appends the [values][Ok.value] of each element that is [Ok] to the given [destination].
+ */
+public fun <V, E, C : MutableCollection<in V>> Iterable<Result<V, E>>.filterValuesTo(destination: C): C {
+    for (element in this) {
+        if (element is Ok<V>) {
+            destination.add(element.value)
+        }
+    }
+
+    return destination
+}
+
+/**
+ * Appends the [errors][Err.error] of each element that is [Err] to the given [destination].
+ */
+public fun <V, E, C : MutableCollection<in E>> Iterable<Result<V, E>>.filterErrorsTo(destination: C): C {
+    for (element in this) {
+        if (element is Err<E>) {
+            destination.add(element.error)
+        }
+    }
+
+    return destination
+}
+
+/**
  * Returns `true` if each element is [Ok], `false` otherwise.
  */
 public fun <V, E> Iterable<Result<V, E>>.allOk(): Boolean {
@@ -120,7 +160,7 @@ public fun <V, E> Iterable<Result<V, E>>.combine(): Result<List<V>, E> {
  * - Haskell: [Data.Either.lefts](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Either.html#v:lefts)
  */
 public fun <V, E, R : Result<V, E>> getAll(vararg results: R): List<V> {
-    return results.asIterable().getAll()
+    return results.asIterable().filterValues()
 }
 
 /**
@@ -139,7 +179,9 @@ public fun <V, E> Iterable<Result<V, E>>.getAll(): List<V> {
  *
  * - Haskell: [Data.Either.rights](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Either.html#v:rights)
  */
-public fun <V, E, R : Result<V, E>> getAllErrors(vararg results: R): List<E> = results.asIterable().getAllErrors()
+public fun <V, E, R : Result<V, E>> getAllErrors(vararg results: R): List<E> {
+    return results.asIterable().filterErrors()
+}
 
 /**
  * Extracts from an [Iterable] of [Results][Result] all the [Err] elements. All the [Err] elements

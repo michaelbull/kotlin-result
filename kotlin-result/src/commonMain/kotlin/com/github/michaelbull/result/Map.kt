@@ -46,6 +46,25 @@ public inline infix fun <V, U> Result<V, Throwable>.mapCatching(transform: (V) -
 }
 
 /**
+ * Transposes this [Result<V?, E>][Result] to [Result<V, E>][Result].
+ *
+ * Returns null if this [Result] is [Ok] and the [value][Ok.value] is `null`, otherwise this [Result].
+ *
+ * - Rust: [Result.transpose][https://doc.rust-lang.org/std/result/enum.Result.html#method.transpose]
+ */
+public inline fun <V, E> Result<V?, E>.transpose(): Result<V, E>? {
+    return when (this) {
+        is Ok -> if (value == null) {
+            null
+        } else {
+            Ok(value)
+        }
+
+        is Err -> this
+    }
+}
+
+/**
  * Maps this [Result<Result<V, E>, E>][Result] to [Result<V, E>][Result].
  *
  * - Rust: [Result.flatten](https://doc.rust-lang.org/std/result/enum.Result.html#method.flatten)

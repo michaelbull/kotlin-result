@@ -2,6 +2,7 @@ package com.github.michaelbull.result
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNull
 
 class MapTest {
     private sealed interface MapErr {
@@ -72,6 +73,36 @@ class MapTest {
             assertEquals(
                 expected = Err(MapException),
                 actual = value.mapCatching { "hello $it" },
+            )
+        }
+    }
+
+    class Transpose {
+
+        @Test
+        fun returnsNullIfValueIsNull() {
+            val result = Ok(null)
+
+            assertNull(result.transpose())
+        }
+
+        @Test
+        fun returnsOkIfValueIsNotNull() {
+            val result = Ok("non null")
+
+            assertEquals(
+                expected = Ok("non null"),
+                actual = result.transpose()
+            )
+        }
+
+        @Test
+        fun returnsErrIfErr() {
+            val result = Err("non null error")
+
+            assertEquals(
+                expected = Err("non null error"),
+                actual = result.transpose()
             )
         }
     }

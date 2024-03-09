@@ -217,7 +217,7 @@ public inline fun <T1, T2, T3, T4, E, V> zipOrAccumulate(
     producer3: () -> Result<T3, E>,
     producer4: () -> Result<T4, E>,
     transform: (T1, T2, T3, T4) -> V,
-): Result<V, Collection<E>> {
+): Result<V, List<E>> {
     contract {
         callsInPlace(producer1, InvocationKind.EXACTLY_ONCE)
         callsInPlace(producer2, InvocationKind.EXACTLY_ONCE)
@@ -268,7 +268,7 @@ public inline fun <T1, T2, T3, T4, T5, E, V> zipOrAccumulate(
     producer4: () -> Result<T4, E>,
     producer5: () -> Result<T5, E>,
     transform: (T1, T2, T3, T4, T5) -> V,
-): Result<V, Collection<E>> {
+): Result<V, List<E>> {
     contract {
         callsInPlace(producer1, InvocationKind.EXACTLY_ONCE)
         callsInPlace(producer2, InvocationKind.EXACTLY_ONCE)

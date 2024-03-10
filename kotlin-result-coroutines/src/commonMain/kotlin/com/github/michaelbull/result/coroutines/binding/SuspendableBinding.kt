@@ -20,16 +20,16 @@ import kotlin.coroutines.CoroutineContext
  * This new scope is [cancelled][CoroutineScope.cancel] once a failing bind is encountered, eagerly cancelling all
  * child [jobs][Job].
  */
-public suspend inline fun <V, E> binding(crossinline block: suspend SuspendableResultBinding<E>.() -> V): Result<V, E> {
+public suspend inline fun <V, E> binding(crossinline block: suspend CoroutineBindingScope<E>.() -> V): Result<V, E> {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
     }
 
-    lateinit var receiver: SuspendableResultBindingImpl<E>
+    lateinit var receiver: CoroutineBindingScopeImpl<E>
 
     return try {
         coroutineScope {
-            receiver = SuspendableResultBindingImpl(this)
+            receiver = CoroutineBindingScopeImpl(this)
 
             with(receiver) {
                 Ok(block())
@@ -42,14 +42,20 @@ public suspend inline fun <V, E> binding(crossinline block: suspend SuspendableR
 
 internal object BindCancellationException : CancellationException(null as String?)
 
-public interface SuspendableResultBinding<E> : CoroutineScope {
+@Deprecated(
+    message = "Use CoroutineBindingScope instead",
+    replaceWith = ReplaceWith("CoroutineBindingScope<E>")
+)
+public typealias SuspendableResultBinding<E> = CoroutineBindingScope<E>
+
+public interface CoroutineBindingScope<E> : CoroutineScope {
     public suspend fun <V> Result<V, E>.bind(): V
 }
 
 @PublishedApi
-internal class SuspendableResultBindingImpl<E>(
+internal class CoroutineBindingScopeImpl<E>(
     delegate: CoroutineScope,
-) : SuspendableResultBinding<E>, CoroutineScope by delegate {
+) : CoroutineBindingScope<E>, CoroutineScope by delegate {
 
     private val mutex = Mutex()
     var result: Result<Nothing, E>? = null

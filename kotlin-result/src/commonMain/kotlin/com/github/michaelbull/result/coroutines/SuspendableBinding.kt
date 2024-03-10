@@ -1,10 +1,10 @@
 package com.github.michaelbull.result.coroutines
 
 import com.github.michaelbull.result.BindException
+import com.github.michaelbull.result.BindingScope
+import com.github.michaelbull.result.BindingScopeImpl
 import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
-import com.github.michaelbull.result.ResultBinding
-import com.github.michaelbull.result.ResultBindingImpl
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
@@ -17,12 +17,12 @@ import kotlin.contracts.contract
         "Please import the kotlin-result-coroutines library to continue using this feature.",
     level = DeprecationLevel.WARNING
 )
-public suspend inline fun <V, E> binding(crossinline block: suspend ResultBinding<E>.() -> V): Result<V, E> {
+public suspend inline fun <V, E> binding(crossinline block: suspend BindingScope<E>.() -> V): Result<V, E> {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
     }
 
-    return with(ResultBindingImpl<E>()) {
+    return with(BindingScopeImpl<E>()) {
         try {
             Ok(block())
         } catch (ex: BindException) {

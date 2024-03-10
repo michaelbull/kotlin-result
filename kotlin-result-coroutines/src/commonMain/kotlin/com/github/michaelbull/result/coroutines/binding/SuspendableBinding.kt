@@ -36,7 +36,7 @@ public suspend inline fun <V, E> binding(crossinline block: suspend SuspendableR
             }
         }
     } catch (ex: BindCancellationException) {
-        receiver.result
+        receiver.result!!
     }
 }
 
@@ -52,13 +52,13 @@ internal class SuspendableResultBindingImpl<E>(
 ) : SuspendableResultBinding<E>, CoroutineScope by delegate {
 
     private val mutex = Mutex()
-    lateinit var result: Err<E>
+    var result: Result<Nothing, E>? = null
 
     override suspend fun <V> Result<V, E>.bind(): V {
         return when (this) {
             is Ok -> value
             is Err -> mutex.withLock {
-                if (::result.isInitialized.not()) {
+                if (result == null) {
                     result = this
                     coroutineContext.cancel(BindCancellationException)
                 }

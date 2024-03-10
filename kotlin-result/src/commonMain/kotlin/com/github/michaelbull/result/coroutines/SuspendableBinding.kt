@@ -22,11 +22,11 @@ public suspend inline fun <V, E> binding(crossinline block: suspend ResultBindin
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
     }
 
-    val receiver = ResultBindingImpl<E>()
-
-    return try {
-        with(receiver) { Ok(block()) }
-    } catch (ex: BindException) {
-        receiver.result
+    return with(ResultBindingImpl<E>()) {
+        try {
+            Ok(block())
+        } catch (ex: BindException) {
+            result!!
+        }
     }
 }

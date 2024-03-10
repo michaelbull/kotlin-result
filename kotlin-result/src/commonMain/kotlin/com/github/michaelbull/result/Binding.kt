@@ -27,12 +27,12 @@ public inline fun <V, E> binding(crossinline block: ResultBinding<E>.() -> V): R
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
     }
 
-    val receiver = ResultBindingImpl<E>()
-
-    return try {
-        with(receiver) { Ok(block()) }
-    } catch (ex: BindException) {
-        receiver.result
+    return with(ResultBindingImpl<E>()) {
+        try {
+            Ok(block())
+        } catch (ex: BindException) {
+            result!!
+        }
     }
 }
 
@@ -45,7 +45,7 @@ public interface ResultBinding<E> {
 @PublishedApi
 internal class ResultBindingImpl<E> : ResultBinding<E> {
 
-    lateinit var result: Err<E>
+    var result: Result<Nothing, E>? = null
 
     override fun <V> Result<V, E>.bind(): V {
         return when (this) {

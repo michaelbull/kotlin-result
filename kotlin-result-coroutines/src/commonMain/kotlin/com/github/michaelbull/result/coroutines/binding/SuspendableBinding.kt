@@ -29,8 +29,11 @@ public suspend inline fun <V, E> binding(crossinline block: suspend SuspendableR
 
     return try {
         coroutineScope {
-            receiver = SuspendableResultBindingImpl(this.coroutineContext)
-            with(receiver) { Ok(block()) }
+            receiver = SuspendableResultBindingImpl(this)
+
+            with(receiver) {
+                Ok(block())
+            }
         }
     } catch (ex: BindCancellationException) {
         receiver.result
@@ -45,8 +48,8 @@ public interface SuspendableResultBinding<E> : CoroutineScope {
 
 @PublishedApi
 internal class SuspendableResultBindingImpl<E>(
-    override val coroutineContext: CoroutineContext,
-) : SuspendableResultBinding<E> {
+    delegate: CoroutineScope,
+) : SuspendableResultBinding<E>, CoroutineScope by delegate {
 
     private val mutex = Mutex()
     lateinit var result: Err<E>
@@ -57,7 +60,7 @@ internal class SuspendableResultBindingImpl<E>(
             is Err -> mutex.withLock {
                 if (::result.isInitialized.not()) {
                     result = this
-                    this@SuspendableResultBindingImpl.cancel(BindCancellationException)
+                    coroutineContext.cancel(BindCancellationException)
                 }
 
                 throw BindCancellationException

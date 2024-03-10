@@ -1,4 +1,4 @@
-package com.github.michaelbull.result.coroutines.binding
+package com.github.michaelbull.result.coroutines
 
 import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Ok
@@ -15,7 +15,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 @ExperimentalCoroutinesApi
-class AsyncSuspendableBindingTest {
+class AsyncCoroutineBindingTest {
 
     private sealed interface BindingError {
         data object BindingErrorA : BindingError
@@ -34,7 +34,7 @@ class AsyncSuspendableBindingTest {
             return Ok(2)
         }
 
-        val result: Result<Int, BindingError> = binding {
+        val result: Result<Int, BindingError> = coroutineBinding {
             val x = async { provideX().bind() }
             val y = async { provideY().bind() }
             x.await() + y.await()
@@ -63,7 +63,7 @@ class AsyncSuspendableBindingTest {
             return Err(BindingError.BindingErrorB)
         }
 
-        val result: Result<Int, BindingError> = binding {
+        val result: Result<Int, BindingError> = coroutineBinding {
             val x = async { provideX().bind() }
             val y = async { provideY().bind() }
             val z = async { provideZ().bind() }
@@ -96,7 +96,7 @@ class AsyncSuspendableBindingTest {
         val dispatcherA = StandardTestDispatcher(testScheduler)
         val dispatcherB = StandardTestDispatcher(testScheduler)
 
-        val result: Result<Int, BindingError> = binding {
+        val result: Result<Int, BindingError> = coroutineBinding {
             val x = async(dispatcherA) { provideX().bind() }
             val y = async(dispatcherB) { provideY().bind() }
 
@@ -143,7 +143,7 @@ class AsyncSuspendableBindingTest {
         val dispatcherB = StandardTestDispatcher(testScheduler)
         val dispatcherC = StandardTestDispatcher(testScheduler)
 
-        val result: Result<Unit, BindingError> = binding {
+        val result: Result<Unit, BindingError> = coroutineBinding {
             launch(dispatcherA) { provideX().bind() }
 
             testScheduler.advanceTimeBy(20)

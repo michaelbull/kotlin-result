@@ -1,5 +1,6 @@
 package com.github.michaelbull.result
 
+import com.github.michaelbull.result.coroutines.coroutineBinding
 import kotlinx.benchmark.Benchmark
 import kotlinx.benchmark.BenchmarkMode
 import kotlinx.benchmark.BenchmarkTimeUnit
@@ -11,12 +12,11 @@ import kotlinx.benchmark.State
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
-import com.github.michaelbull.result.coroutines.binding.binding as coroutineBinding
 
 @State(Scope.Benchmark)
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(BenchmarkTimeUnit.MILLISECONDS)
-class SuspendBindingBenchmark {
+class CoroutineBindingBenchmark {
 
     @Benchmark
     fun nonSuspendableBinding(blackhole: Blackhole) {

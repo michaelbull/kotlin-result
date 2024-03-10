@@ -1,4 +1,4 @@
-package com.github.michaelbull.result.coroutines.binding
+package com.github.michaelbull.result.coroutines
 
 import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Ok
@@ -12,7 +12,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 @ExperimentalCoroutinesApi
-class SuspendableBindingTest {
+class CoroutineBindingTest {
 
     private object BindingError
 
@@ -28,7 +28,7 @@ class SuspendableBindingTest {
             return Ok(2)
         }
 
-        val result: Result<Int, BindingError> = binding {
+        val result: Result<Int, BindingError> = coroutineBinding {
             val x = provideX().bind()
             val y = provideY().bind()
             x + y
@@ -52,7 +52,7 @@ class SuspendableBindingTest {
             return Ok(x + 2)
         }
 
-        val result: Result<Int, BindingError> = binding {
+        val result: Result<Int, BindingError> = coroutineBinding {
             val x = provideX().bind()
             val y = provideY(x.toInt()).bind()
             y
@@ -81,7 +81,7 @@ class SuspendableBindingTest {
             return Ok(2)
         }
 
-        val result: Result<Int, BindingError> = binding {
+        val result: Result<Int, BindingError> = coroutineBinding {
             val x = provideX().bind()
             val y = provideY().bind()
             val z = provideZ().bind()
@@ -118,7 +118,7 @@ class SuspendableBindingTest {
             return Err(BindingError)
         }
 
-        val result: Result<Int, BindingError> = binding {
+        val result: Result<Int, BindingError> = coroutineBinding {
             val x = provideX().bind()
             val y = provideY().bind()
             val z = provideZ().bind()
@@ -152,7 +152,7 @@ class SuspendableBindingTest {
             return Ok(2)
         }
 
-        val result: Result<Int, BindingError> = binding {
+        val result: Result<Int, BindingError> = coroutineBinding {
             val x = provideX().bind()
             val y = provideY().bind()
             val z = provideZ().bind()

@@ -4,7 +4,7 @@ import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
 /**
- * Invokes an [action] if this [Result] is [Ok].
+ * Invokes an [action] if this result [is ok][Result.isOk].
  *
  * - Rust: [Result.inspect](https://doc.rust-lang.org/std/result/enum.Result.html#method.inspect)
  */
@@ -13,7 +13,7 @@ public inline infix fun <V, E> Result<V, E>.onSuccess(action: (V) -> Unit): Resu
         callsInPlace(action, InvocationKind.AT_MOST_ONCE)
     }
 
-    if (this is Ok) {
+    if (isOk) {
         action(value)
     }
 
@@ -21,7 +21,7 @@ public inline infix fun <V, E> Result<V, E>.onSuccess(action: (V) -> Unit): Resu
 }
 
 /**
- * Invokes an [action] if this [Result] is [Err].
+ * Invokes an [action] if this result [is an error][Result.isErr].
  *
  * - Rust [Result.inspect_err](https://doc.rust-lang.org/std/result/enum.Result.html#method.inspect_err)
  */
@@ -30,7 +30,7 @@ public inline infix fun <V, E> Result<V, E>.onFailure(action: (E) -> Unit): Resu
         callsInPlace(action, InvocationKind.AT_MOST_ONCE)
     }
 
-    if (this is Err) {
+    if (isErr) {
         action(error)
     }
 

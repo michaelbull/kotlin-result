@@ -4,11 +4,14 @@ import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
 /**
- * Calls the specified function [block] with [BindingScope] as its receiver and returns its [Result].
+ * Calls the specified function [block] with [BindingScope] as its receiver and returns its
+ * [Result].
  *
- * When inside a [binding] block, the [bind][BindingScope.bind] function is accessible on any [Result]. Calling the
- * [bind][BindingScope.bind] function will attempt to unwrap the [Result] and locally return its [value][Ok.value]. If
- * the [Result] is an [Err], the binding block will terminate with that bind and return that failed-to-bind [Err].
+ * When inside a binding [block], the [bind][BindingScope.bind] function is accessible on any
+ * [Result]. Calling the [bind][BindingScope.bind] function will attempt to unwrap the [Result]
+ * and locally return its [value][Result.value].
+ *
+ * If a [bind][BindingScope.bind] returns an error, the [block] will terminate immediately.
  *
  * Example:
  * ```
@@ -54,12 +57,11 @@ internal class BindingScopeImpl<E> : BindingScope<E> {
     var result: Result<Nothing, E>? = null
 
     override fun <V> Result<V, E>.bind(): V {
-        return when (this) {
-            is Ok -> value
-            is Err -> {
-                this@BindingScopeImpl.result = this
-                throw BindException
-            }
+        return if (isOk) {
+            value
+        } else {
+            result = this.asErr()
+            throw BindException
         }
     }
 }

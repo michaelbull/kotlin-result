@@ -1,8 +1,10 @@
 package com.github.michaelbull.result
 
 /**
- * Returns an [Iterator] over the possibly contained [value][Ok.value].
- * The iterator yields one [value][Ok.value] if the [Result] is [Ok], otherwise throws [NoSuchElementException].
+ * Returns an [Iterator] over the possibly contained [value][Result.value].
+ *
+ * The iterator yields one [value][Result.value] if this result [is ok][Result.isOk], otherwise
+ * throws [NoSuchElementException].
  *
  * - Rust: [Result.iter](https://doc.rust-lang.org/std/result/enum.Result.html#method.iter)
  */
@@ -11,8 +13,10 @@ public fun <V, E> Result<V, E>.iterator(): Iterator<V> {
 }
 
 /**
- * Returns a [MutableIterator] over the possibly contained [value][Ok.value].
- * The iterator yields one [value][Ok.value] if the [Result] is [Ok], otherwise throws [NoSuchElementException].
+ * Returns a [MutableIterator] over the possibly contained [value][Result.value].
+ *
+ * The iterator yields one [value][Result.value] if this result [is ok][Result.isOk], otherwise
+ * throws [NoSuchElementException].
  *
  * - Rust: [Result.iter_mut](https://doc.rust-lang.org/std/result/enum.Result.html#method.iter_mut)
  */
@@ -23,31 +27,29 @@ public fun <V, E> Result<V, E>.mutableIterator(): MutableIterator<V> {
 private class ResultIterator<out V, out E>(private val result: Result<V, E>) : MutableIterator<V> {
 
     /**
-     * A flag indicating whether this [Iterator] has [yielded] its [Result].
+     * A flag indicating whether this [Iterator] has [yielded] the [value][Result.value] of the
+     * [result].
      */
     private var yielded = false
 
     /**
-     * @return `true` if the [value][Ok.value] is not [yielded] and [Ok], `false` otherwise.
+     * @return `true` if this [Iterator] has [yielded] the [value][Result.value] of the [result],
+     * `false` otherwise.
      */
     override fun hasNext(): Boolean {
-        if (yielded) {
-            return false
-        }
-
-        return when (result) {
-            is Ok -> true
-            is Err -> false
-        }
+        return !yielded && result.isOk
     }
 
     /**
-     * Returns the [Result's][Result] [value][Ok.value] if not [yielded] and [Ok].
-     * @throws NoSuchElementException if the [Result] is [yielded] or is not [Ok].
+     * Returns the [value][Result.value] of the [result] if not [yielded] and the result
+     * [is ok][Result.isOk].
+     *
+     * @throws NoSuchElementException if already [yielded] or the result
+     * [is an error][Result.isErr].
      */
     override fun next(): V {
-        if (!yielded && result is Ok) {
-            yielded = true
+        if (hasNext()) {
+            remove()
             return result.value
         } else {
             throw NoSuchElementException()
@@ -55,7 +57,7 @@ private class ResultIterator<out V, out E>(private val result: Result<V, E>) : M
     }
 
     /**
-     * Flags this [Iterator] as having [yielded] its [Result].
+     * Flags this [Iterator] as having [yielded] the [value][Result.value] of the [result].
      */
     override fun remove() {
         yielded = true

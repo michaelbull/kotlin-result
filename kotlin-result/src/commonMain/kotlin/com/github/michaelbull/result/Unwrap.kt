@@ -6,20 +6,21 @@ import kotlin.contracts.contract
 public class UnwrapException(message: String) : Exception(message)
 
 /**
- * Unwraps a [Result], yielding the [value][Ok.value].
+ * Returns the [value][Result.value] if this result [is ok][Result.isOk], otherwise throws an
+ * [UnwrapException].
  *
  * - Rust: [Result.unwrap](https://doc.rust-lang.org/std/result/enum.Result.html#method.unwrap)
  *
- * @throws UnwrapException if the [Result] is an [Err], with a message containing the [error][Err.error].
+ * @throws UnwrapException if this result [is an error][Result.isErr].
  */
 public fun <V, E> Result<V, E>.unwrap(): V {
     contract {
         returns() implies (this@unwrap is Ok<V>)
     }
 
-    return when (this) {
-        is Ok -> value
-        is Err -> throw UnwrapException("called Result.unwrap on an Err value $error")
+    return when {
+        isOk -> value
+        else -> throw UnwrapException("called Result.unwrap on an Err value $error")
     }
 }
 
@@ -33,12 +34,15 @@ public infix fun <V, E> Result<V, E>.expect(message: String): V {
 }
 
 /**
- * Unwraps a [Result], yielding the [value][Ok.value].
+ * Returns the [value][Result.value] if this result [is ok][Result.isOk], otherwise throws an
+ * [UnwrapException] with the specified [message].
  *
  * - Rust: [Result.expect](https://doc.rust-lang.org/std/result/enum.Result.html#method.expect)
  *
- * @param message The message to include in the [UnwrapException] if the [Result] is an [Err].
- * @throws UnwrapException if the [Result] is an [Err], with the specified [message].
+ * @param message The message to include in the [UnwrapException] if this result
+ * [is an error][Result.isErr].
+ *
+ * @throws UnwrapException if this result [is an error][Result.isErr].
  */
 public inline infix fun <V, E> Result<V, E>.expect(message: () -> Any): V {
     contract {
@@ -46,27 +50,28 @@ public inline infix fun <V, E> Result<V, E>.expect(message: () -> Any): V {
         returns() implies (this@expect is Ok<V>)
     }
 
-    return when (this) {
-        is Ok -> value
-        is Err -> throw UnwrapException("${message()} $error")
+    return when {
+        isOk -> value
+        else -> throw UnwrapException("${message()} $error")
     }
 }
 
 /**
- * Unwraps a [Result], yielding the [error][Err.error].
+ * Returns the [error][Result.error] if this result [is an error][Result.isErr], otherwise throws
+ * an [UnwrapException].
  *
  * - Rust: [Result.unwrap_err](https://doc.rust-lang.org/std/result/enum.Result.html#method.unwrap_err)
  *
- * @throws UnwrapException if the [Result] is [Ok], with a message containing the [value][Ok.value].
+ * @throws UnwrapException if this result [is ok][Result.isOk].
  */
 public fun <V, E> Result<V, E>.unwrapError(): E {
     contract {
         returns() implies (this@unwrapError is Err<E>)
     }
 
-    return when (this) {
-        is Ok -> throw UnwrapException("called Result.unwrapError on an Ok value $value")
-        is Err -> error
+    return when {
+        isErr -> error
+        else -> throw UnwrapException("called Result.unwrapError on an Ok value $value")
     }
 }
 
@@ -80,12 +85,15 @@ public infix fun <V, E> Result<V, E>.expectError(message: String): E {
 }
 
 /**
- * Unwraps a [Result], yielding the [error][Err.error].
+ * Returns the [error][Result.error] if this result [is an error][Result.isErr], otherwise throws
+ * an [UnwrapException] with the specified [message].
  *
  * - Rust: [Result.expect_err](https://doc.rust-lang.org/std/result/enum.Result.html#method.expect_err)
  *
- * @param message The message to include in the [UnwrapException] if the [Result] is [Ok].
- * @throws UnwrapException if the [Result] is [Ok], with the specified [message].
+ * @param message The message to include in the [UnwrapException] if this result
+ * [is ok][Result.isOk].
+ *
+ * @throws UnwrapException if this result [is ok][Result.isOk].
  */
 public inline infix fun <V, E> Result<V, E>.expectError(message: () -> Any): E {
     contract {
@@ -93,8 +101,8 @@ public inline infix fun <V, E> Result<V, E>.expectError(message: () -> Any): E {
         returns() implies (this@expectError is Err<E>)
     }
 
-    return when (this) {
-        is Ok -> throw UnwrapException("${message()} $value")
-        is Err -> error
+    return when {
+        isErr -> error
+        else -> throw UnwrapException("${message()} $value")
     }
 }

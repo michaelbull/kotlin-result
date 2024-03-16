@@ -6,8 +6,8 @@ import kotlin.contracts.contract
 private typealias Producer<T, E> = () -> Result<T, E>
 
 /**
- * Apply a [transformation][transform] to two [Results][Result], if both [Results][Result] are [Ok].
- * If not, the first argument which is an [Err] will propagate through.
+ * Applies the given [transform] function to two [Results][Result], returning early with the first
+ * [Err] if a transformation fails.
  *
  * - Elm: http://package.elm-lang.org/packages/elm-lang/core/latest/Result#map2
  */
@@ -30,8 +30,8 @@ public inline fun <T1, T2, E, V> zip(
 }
 
 /**
- * Apply a [transformation][transform] to three [Results][Result], if all [Results][Result] are [Ok].
- * If not, the first argument which is an [Err] will propagate through.
+ * Applies the given [transform] function to three [Results][Result], returning early with the
+ * first [Err] if a transformation fails.
  *
  * - Elm: http://package.elm-lang.org/packages/elm-lang/core/latest/Result#map3
  */
@@ -58,8 +58,8 @@ public inline fun <T1, T2, T3, E, V> zip(
 }
 
 /**
- * Apply a [transformation][transform] to four [Results][Result], if all [Results][Result] are [Ok].
- * If not, the first argument which is an [Err] will propagate through.
+ * Applies the given [transform] function to four [Results][Result], returning early with the
+ * first [Err] if a transformation fails.
  *
  * - Elm: http://package.elm-lang.org/packages/elm-lang/core/latest/Result#map4
  */
@@ -90,8 +90,8 @@ public inline fun <T1, T2, T3, T4, E, V> zip(
 }
 
 /**
- * Apply a [transformation][transform] to five [Results][Result], if all [Results][Result] are [Ok].
- * If not, the first argument which is an [Err] will propagate through.
+ * Applies the given [transform] function to five [Results][Result], returning early with the
+ * first [Err] if a transformation fails.
  *
  * - Elm: http://package.elm-lang.org/packages/elm-lang/core/latest/Result#map5
  */
@@ -126,8 +126,8 @@ public inline fun <T1, T2, T3, T4, T5, E, V> zip(
 }
 
 /**
- * Apply a [transformation][transform] to two [Results][Result], if both [Results][Result] are [Ok].
- * If not, the all arguments which are [Err] will be collected.
+ * Applies the given [transform] function to two [Results][Result], collecting any result that
+ * [is an error][Result.isErr] to a [List].
  */
 public inline fun <T1, T2, E, V> zipOrAccumulate(
     producer1: () -> Result<T1, E>,
@@ -143,10 +143,12 @@ public inline fun <T1, T2, E, V> zipOrAccumulate(
     val result1 = producer1()
     val result2 = producer2()
 
-    return if (
-        result1 is Ok &&
-        result2 is Ok
-    ) {
+    val results = listOf(
+        producer1(),
+        producer2(),
+    )
+
+    return if (results.allOk()) {
         val transformed = transform(
             result1.value,
             result2.value,
@@ -154,18 +156,13 @@ public inline fun <T1, T2, E, V> zipOrAccumulate(
 
         Ok(transformed)
     } else {
-        val errors = listOf(
-            result1,
-            result2
-        ).mapNotNull { it.getError() }
-
-        Err(errors)
+        Err(results.filterErrors())
     }
 }
 
 /**
- * Apply a [transformation][transform] to three [Results][Result], if all [Results][Result] are [Ok].
- * If not, the all arguments which are [Err] will be collected.
+ * Applies the given [transform] function to three [Results][Result], collecting any result that
+ * [is an error][Result.isErr] to a [List].
  */
 public inline fun <T1, T2, T3, E, V> zipOrAccumulate(
     producer1: () -> Result<T1, E>,
@@ -184,11 +181,13 @@ public inline fun <T1, T2, T3, E, V> zipOrAccumulate(
     val result2 = producer2()
     val result3 = producer3()
 
-    return if (
-        result1 is Ok &&
-        result2 is Ok &&
-        result3 is Ok
-    ) {
+    val results = listOf(
+        result1,
+        result2,
+        result3,
+    )
+
+    return if (results.allOk()) {
         val transformed = transform(
             result1.value,
             result2.value,
@@ -197,19 +196,13 @@ public inline fun <T1, T2, T3, E, V> zipOrAccumulate(
 
         Ok(transformed)
     } else {
-        val errors = listOf(
-            result1,
-            result2,
-            result3
-        ).mapNotNull { it.getError() }
-
-        Err(errors)
+        Err(results.filterErrors())
     }
 }
 
 /**
- * Apply a [transformation][transform] to four [Results][Result], if all [Results][Result] are [Ok].
- * If not, the all arguments which are [Err] will be collected.
+ * Applies the given [transform] function to four [Results][Result], collecting any result that
+ * [is an error][Result.isErr] to a [List].
  */
 public inline fun <T1, T2, T3, T4, E, V> zipOrAccumulate(
     producer1: () -> Result<T1, E>,
@@ -231,35 +224,30 @@ public inline fun <T1, T2, T3, T4, E, V> zipOrAccumulate(
     val result3 = producer3()
     val result4 = producer4()
 
-    return if (
-        result1 is Ok &&
-        result2 is Ok &&
-        result3 is Ok &&
-        result4 is Ok
-    ) {
+    val results = listOf(
+        result1,
+        result2,
+        result3,
+        result4,
+    )
+
+    return if (results.allOk()) {
         val transformed = transform(
             result1.value,
             result2.value,
             result3.value,
-            result4.value
+            result4.value,
         )
 
         Ok(transformed)
     } else {
-        val errors = listOf(
-            result1,
-            result2,
-            result3,
-            result4
-        ).mapNotNull { it.getError() }
-
-        Err(errors)
+        Err(results.filterErrors())
     }
 }
 
 /**
- * Apply a [transformation][transform] to five [Results][Result], if all [Results][Result] are [Ok].
- * If not, the all arguments which are [Err] will be collected.
+ * Applies the given [transform] function to five [Results][Result], collecting any result that
+ * [is an error][Result.isErr] to a [List].
  */
 public inline fun <T1, T2, T3, T4, T5, E, V> zipOrAccumulate(
     producer1: () -> Result<T1, E>,
@@ -284,31 +272,25 @@ public inline fun <T1, T2, T3, T4, T5, E, V> zipOrAccumulate(
     val result4 = producer4()
     val result5 = producer5()
 
-    return if (
-        result1 is Ok &&
-        result2 is Ok &&
-        result3 is Ok &&
-        result4 is Ok &&
-        result5 is Ok
-    ) {
+    val results = listOf(
+        result1,
+        result2,
+        result3,
+        result4,
+        result5
+    )
+
+    return if (results.allOk()) {
         val transformed = transform(
             result1.value,
             result2.value,
             result3.value,
             result4.value,
-            result5.value
+            result5.value,
         )
 
         Ok(transformed)
     } else {
-        val errors = listOf(
-            result1,
-            result2,
-            result3,
-            result4,
-            result5
-        ).mapNotNull { it.getError() }
-
-        Err(errors)
+        Err(results.filterErrors())
     }
 }

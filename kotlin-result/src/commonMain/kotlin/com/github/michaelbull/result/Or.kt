@@ -4,14 +4,14 @@ import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
 /**
- * Returns [result] if this [Result] is [Err], otherwise this [Ok].
+ * Returns [result] if this result [is an error][Result.isErr], otherwise [this].
  *
  * - Rust: [Result.or](https://doc.rust-lang.org/std/result/enum.Result.html#method.or)
  */
 public infix fun <V, E, F> Result<V, E>.or(result: Result<V, F>): Result<V, F> {
-    return when (this) {
-        is Ok -> this
-        is Err -> result
+    return when {
+        isOk -> this.asOk()
+        else -> result
     }
 }
 
@@ -25,8 +25,8 @@ public inline infix fun <V, E, F> Result<V, E>.or(result: () -> Result<V, F>): R
 }
 
 /**
- * Returns the [transformation][transform] of the [error][Err.error] if this [Result] is [Err],
- * otherwise this [Ok].
+ * Returns the [transformation][transform] of the [error][Result.error] if this result
+ * [is an error][Result.isErr], otherwise [this].
  *
  * - Rust: [Result.or_else](https://doc.rust-lang.org/std/result/enum.Result.html#method.or_else)
  */
@@ -35,25 +35,26 @@ public inline infix fun <V, E, F> Result<V, E>.orElse(transform: (E) -> Result<V
         callsInPlace(transform, InvocationKind.AT_MOST_ONCE)
     }
 
-    return when (this) {
-        is Ok -> this
-        is Err -> transform(error)
+    return when {
+        isOk -> this.asOk()
+        else -> transform(error)
     }
 }
 
 /**
- * Throws the [error][Err.error] if this [Result] is [Err], otherwise returns this [Ok].
+ * Throws the [error][Result.error] if this result [is an error][Result.isErr], otherwise returns
+ * [this].
  */
-public fun <V, E : Throwable> Result<V, E>.orElseThrow(): Ok<V> {
-    return when (this) {
-        is Ok -> this
-        is Err -> throw error
+public fun <V, E : Throwable> Result<V, E>.orElseThrow(): Result<V, Nothing> {
+    return when {
+        isOk -> this.asOk()
+        else -> throw error
     }
 }
 
 /**
- * Throws the [error][Err.error] if this [Result] is an [Err] and satisfies the given
- * [predicate], otherwise returns this [Result].
+ * Throws the [error][Result.error] if this result [is an error][Result.isErr] and satisfies the
+ * given [predicate], otherwise returns [this].
  *
  * @see [takeIf]
  */
@@ -63,14 +64,14 @@ public inline fun <V, E : Throwable> Result<V, E>.throwIf(predicate: (E) -> Bool
     }
 
     return when {
-        this is Err && predicate(error) -> throw error
+        isErr && predicate(error) -> throw error
         else -> this
     }
 }
 
 /**
- * Throws the [error][Err.error] if this [Result] is an [Err] and _does not_ satisfy the
- * given [predicate], otherwise returns this [Result].
+ * Throws the [error][Result.error] if this result [is an error][Result.isErr] and _does not_
+ * satisfy the given [predicate], otherwise returns [this].
  *
  * @see [takeUnless]
  */
@@ -79,12 +80,8 @@ public inline fun <V, E : Throwable> Result<V, E>.throwUnless(predicate: (E) -> 
         callsInPlace(predicate, InvocationKind.AT_MOST_ONCE)
     }
 
-    return when (this) {
-        is Ok -> this
-        is Err -> if (!predicate(error)) {
-            throw error
-        } else {
-            this
-        }
+    return when {
+        isErr && !predicate(error) -> throw error
+        else -> this
     }
 }

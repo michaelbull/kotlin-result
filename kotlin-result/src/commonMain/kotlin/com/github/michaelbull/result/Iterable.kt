@@ -1,25 +1,26 @@
 package com.github.michaelbull.result
 
 /**
- * Returns a list containing only elements that are [Ok].
+ * Returns a list containing only elements that [are ok][Result.isOk].
  */
 public fun <V, E> Iterable<Result<V, E>>.filterValues(): List<V> {
     return filterValuesTo(ArrayList())
 }
 
 /**
- * Returns a list containing only elements that are [Err].
+ * Returns a list containing only elements that [are an error][Result.isErr].
  */
 public fun <V, E> Iterable<Result<V, E>>.filterErrors(): List<E> {
     return filterErrorsTo(ArrayList())
 }
 
 /**
- * Appends the [values][Ok.value] of each element that is [Ok] to the given [destination].
+ * Appends the [values][Result.value] of each element that [is ok][Result.isOk] to the given
+ * [destination].
  */
 public fun <V, E, C : MutableCollection<in V>> Iterable<Result<V, E>>.filterValuesTo(destination: C): C {
     for (element in this) {
-        if (element is Ok<V>) {
+        if (element.isOk) {
             destination.add(element.value)
         }
     }
@@ -28,11 +29,12 @@ public fun <V, E, C : MutableCollection<in V>> Iterable<Result<V, E>>.filterValu
 }
 
 /**
- * Appends the [errors][Err.error] of each element that is [Err] to the given [destination].
+ * Appends the [errors][Result.error] of each element that [is an error][Result.isErr] to the given
+ * [destination].
  */
 public fun <V, E, C : MutableCollection<in E>> Iterable<Result<V, E>>.filterErrorsTo(destination: C): C {
     for (element in this) {
-        if (element is Err<E>) {
+        if (element.isErr) {
             destination.add(element.error)
         }
     }
@@ -41,45 +43,45 @@ public fun <V, E, C : MutableCollection<in E>> Iterable<Result<V, E>>.filterErro
 }
 
 /**
- * Returns `true` if each element is [Ok], `false` otherwise.
+ * Returns `true` if each element [is ok][Result.isOk], `false` otherwise.
  */
 public fun <V, E> Iterable<Result<V, E>>.allOk(): Boolean {
-    return all { it is Ok }
+    return all(Result<V, E>::isOk)
 }
 
 /**
- * Returns `true` if each element is [Err], `false` otherwise.
+ * Returns `true` if each element [is an error][Result.isErr], `false` otherwise.
  */
 public fun <V, E> Iterable<Result<V, E>>.allErr(): Boolean {
-    return all { it is Err }
+    return all(Result<V, E>::isErr)
 }
 
 /**
- * Returns `true` if at least one element is [Ok], `false` otherwise.
+ * Returns `true` if at least one element [is ok][Result.isOk], `false` otherwise.
  */
 public fun <V, E> Iterable<Result<V, E>>.anyOk(): Boolean {
-    return any { it is Ok }
+    return any(Result<V, E>::isOk)
 }
 
 /**
- * Returns `true` if at least one element is [Err], `false` otherwise.
+ * Returns `true` if at least one element [is an error][Result.isErr], `false` otherwise.
  */
 public fun <V, E> Iterable<Result<V, E>>.anyErr(): Boolean {
-    return any { it is Err }
+    return any(Result<V, E>::isErr)
 }
 
 /**
- * Returns the number of elements that are [Ok].
+ * Returns the number of elements that [are ok][Result.isOk].
  */
 public fun <V, E> Iterable<Result<V, E>>.countOk(): Int {
-    return count { it is Ok }
+    return count(Result<V, E>::isOk)
 }
 
 /**
- * Returns the number of elements that are [Err].
+ * Returns the number of elements that [are an error][Result.isErr].
  */
 public fun <V, E> Iterable<Result<V, E>>.countErr(): Int {
-    return count { it is Err }
+    return count(Result<V, E>::isErr)
 }
 
 /**
@@ -93,9 +95,11 @@ public inline fun <T, R, E> Iterable<T>.fold(
     var accumulator = initial
 
     for (element in this) {
-        accumulator = when (val result = operation(accumulator, element)) {
-            is Ok -> result.value
-            is Err -> return Err(result.error)
+        val result = operation(accumulator, element)
+
+        accumulator = when {
+            result.isOk -> result.value
+            else -> return Err(result.error)
         }
     }
 
@@ -106,7 +110,7 @@ public inline fun <T, R, E> Iterable<T>.fold(
  * Accumulates value starting with [initial] value and applying [operation] from right to left to
  * each element and current accumulator value.
  */
-public inline fun <T, R, E, C : Result<R, E>> List<T>.foldRight(
+public inline fun <T, R, E> List<T>.foldRight(
     initial: R,
     operation: (T, acc: R) -> Result<R, E>,
 ): Result<R, E> {
@@ -116,9 +120,11 @@ public inline fun <T, R, E, C : Result<R, E>> List<T>.foldRight(
         val iterator = listIterator(size)
 
         while (iterator.hasPrevious()) {
-            accumulator = when (val result = operation(iterator.previous(), accumulator)) {
-                is Ok -> result.value
-                is Err -> return Err(result.error)
+            val result = operation(iterator.previous(), accumulator)
+
+            accumulator = when {
+                result.isOk -> result.value
+                else -> return Err(result.error)
             }
         }
     }
@@ -127,8 +133,8 @@ public inline fun <T, R, E, C : Result<R, E>> List<T>.foldRight(
 }
 
 /**
- * Combines a vararg of [Results][Result] into a single [Result] (holding a [List]). Elements in the returned list
- * are in the same order is the input vararg.
+ * Combines the specified [results] into a single [Result] (holding a [List]). Elements in the
+ * returned list are in the same order as the specified [results].
  *
  * - Elm: [Result.Extra.combine](http://package.elm-lang.org/packages/elm-community/result-extra/2.2.0/Result-Extra#combine)
  */
@@ -137,16 +143,16 @@ public fun <V, E, R : Result<V, E>> combine(vararg results: R): Result<List<V>, 
 }
 
 /**
- * Combines an [Iterable] of [Results][Result] into a single [Result] (holding a [List]). Elements in the returned
- * list are in the input [Iterable] order.
+ * Combines [this] iterable into a single [Result] (holding a [List]). Elements in the returned
+ * list are in the the same order as [this].
  *
  * - Elm: [Result.Extra.combine](http://package.elm-lang.org/packages/elm-community/result-extra/2.2.0/Result-Extra#combine)
  */
 public fun <V, E> Iterable<Result<V, E>>.combine(): Result<List<V>, E> {
-    val values = map {
-        when (it) {
-            is Ok -> it.value
-            is Err -> return it
+    val values = map { result ->
+        when {
+            result.isOk -> result.value
+            else -> return result.asErr()
         }
     }
 
@@ -154,8 +160,9 @@ public fun <V, E> Iterable<Result<V, E>>.combine(): Result<List<V>, E> {
 }
 
 /**
- * Extracts from a vararg of [Results][Result] all the [Ok] elements. All the [Ok] elements are
- * extracted in order.
+ * Returns a [List] containing the [value][Result.value] of each element in the specified [results]
+ * that [is ok][Result.isOk]. Elements in the returned list are in the same order as the specified
+ * [results].
  *
  * - Haskell: [Data.Either.lefts](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Either.html#v:lefts)
  */
@@ -178,8 +185,9 @@ public fun <V, E> Iterable<Result<V, E>>.getAll(): List<V> {
 }
 
 /**
- * Extracts from a vararg of [Results][Result] all the [Err] elements. All the [Err] elements are
- * extracted in order.
+ * Returns a [List] containing the [error][Result.error] of each element in the specified [results]
+ * that [is an error][Result.isErr]. Elements in the returned list are in the same order as the
+ * specified [results].
  *
  * - Haskell: [Data.Either.rights](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Either.html#v:rights)
  */
@@ -202,9 +210,9 @@ public fun <V, E> Iterable<Result<V, E>>.getAllErrors(): List<E> {
 }
 
 /**
- * Partitions a vararg of [Results][Result] into a [Pair] of [Lists][List]. All the [Ok] elements
- * are extracted, in order, to the [first][Pair.first] value. Similarly the [Err] elements are
- * extracted to the [Pair.second] value.
+ * Partitions the specified [results] into a [Pair] of [Lists][List]. An element that
+ * [is ok][Result.isOk] will appear in the [first][Pair.first] list, whereas an element that
+ * [is an error][Result.isErr] will appear in the [second][Pair.second] list.
  *
  * - Haskell: [Data.Either.partitionEithers](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Either.html#v:partitionEithers)
  */
@@ -213,9 +221,10 @@ public fun <V, E, R : Result<V, E>> partition(vararg results: R): Pair<List<V>, 
 }
 
 /**
- * Partitions an [Iterable] of [Results][Result] into a [Pair] of  [Lists][List]. All the [Ok]
- * elements are extracted, in order, to the [first][Pair.first] value. Similarly the [Err] elements
- * are extracted to the [Pair.second] value.
+ *
+ * Partitions this into a [Pair] of [Lists][List]. An element that [is ok][Result.isOk] will appear
+ * in the [first][Pair.first] list, whereas an element that [is an error][Result.isErr] will appear
+ * in the [second][Pair.second] list.
  *
  * - Haskell: [Data.Either.partitionEithers](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Either.html#v:partitionEithers)
  */
@@ -223,10 +232,11 @@ public fun <V, E> Iterable<Result<V, E>>.partition(): Pair<List<V>, List<E>> {
     val values = mutableListOf<V>()
     val errors = mutableListOf<E>()
 
-    forEach { result ->
-        when (result) {
-            is Ok -> values.add(result.value)
-            is Err -> errors.add(result.error)
+    for (result in this) {
+        if (result.isOk) {
+            values += result.value
+        } else {
+            errors += result.error
         }
     }
 
@@ -236,15 +246,17 @@ public fun <V, E> Iterable<Result<V, E>>.partition(): Pair<List<V>, List<E>> {
 /**
  * Returns a [Result<List<U>, E>][Result] containing the results of applying the given [transform]
  * function to each element in the original collection, returning early with the first [Err] if a
- * transformation fails. Elements in the returned list are in the input [Iterable] order.
+ * transformation fails. Elements in the returned list are in the same order as [this].
  */
 public inline fun <V, E, U> Iterable<V>.mapResult(
     transform: (V) -> Result<U, E>,
 ): Result<List<U>, E> {
     val values = map { element ->
-        when (val transformed = transform(element)) {
-            is Ok -> transformed.value
-            is Err -> return transformed
+        val transformed = transform(element)
+
+        when {
+            transformed.isOk -> transformed.value
+            else -> return transformed.asErr()
         }
     }
 
@@ -254,16 +266,18 @@ public inline fun <V, E, U> Iterable<V>.mapResult(
 /**
  * Applies the given [transform] function to each element of the original collection and appends
  * the results to the given [destination], returning early with the first [Err] if a
- * transformation fails. Elements in the returned list are in the input [Iterable] order.
+ * transformation fails. Elements in the returned list are in the same order as [this].
  */
 public inline fun <V, E, U, C : MutableCollection<in U>> Iterable<V>.mapResultTo(
     destination: C,
     transform: (V) -> Result<U, E>,
 ): Result<C, E> {
     val values = mapTo(destination) { element ->
-        when (val transformed = transform(element)) {
-            is Ok -> transformed.value
-            is Err -> return transformed
+        val transformed = transform(element)
+
+        when {
+            transformed.isOk -> transformed.value
+            else -> return transformed.asErr()
         }
     }
 
@@ -273,17 +287,19 @@ public inline fun <V, E, U, C : MutableCollection<in U>> Iterable<V>.mapResultTo
 /**
  * Returns a [Result<List<U>, E>][Result] containing only the non-null results of applying the
  * given [transform] function to each element in the original collection, returning early with the
- * first [Err] if a transformation fails. Elements in the returned list are in the input [Iterable]
- * order.
+ * first [Err] if a transformation fails. Elements in the returned list are in the same order as
+ * [this].
  */
 public inline fun <V, E, U : Any> Iterable<V>.mapResultNotNull(
     transform: (V) -> Result<U, E>?,
 ): Result<List<U>, E> {
     val values = mapNotNull { element ->
-        when (val transformed = transform(element)) {
-            is Ok -> transformed.value
-            is Err -> return transformed
-            null -> null
+        val transformed = transform(element)
+
+        when {
+            transformed == null -> null
+            transformed.isOk -> transformed.value
+            else -> return transformed.asErr()
         }
     }
 
@@ -300,10 +316,12 @@ public inline fun <V, E, U : Any, C : MutableCollection<in U>> Iterable<V>.mapRe
     transform: (V) -> Result<U, E>?,
 ): Result<C, E> {
     val values = mapNotNullTo(destination) { element ->
-        when (val transformed = transform(element)) {
-            is Ok -> transformed.value
-            is Err -> return transformed
-            null -> null
+        val transformed = transform(element)
+
+        when {
+            transformed == null -> null
+            transformed.isOk -> transformed.value
+            else -> return transformed.asErr()
         }
     }
 
@@ -313,16 +331,18 @@ public inline fun <V, E, U : Any, C : MutableCollection<in U>> Iterable<V>.mapRe
 /**
  * Returns a [Result<List<U>, E>][Result] containing the results of applying the given [transform]
  * function to each element and its index in the original collection, returning early with the
- * first [Err] if a transformation fails. Elements in the returned list are in the input [Iterable]
- * order.
+ * first [Err] if a transformation fails. Elements in the returned list are in same order as
+ * [this].
  */
 public inline fun <V, E, U> Iterable<V>.mapResultIndexed(
     transform: (index: Int, V) -> Result<U, E>,
 ): Result<List<U>, E> {
     val values = mapIndexed { index, element ->
-        when (val transformed = transform(index, element)) {
-            is Ok -> transformed.value
-            is Err -> return transformed
+        val transformed = transform(index, element)
+
+        when {
+            transformed.isOk -> transformed.value
+            else -> return transformed.asErr()
         }
     }
 
@@ -339,9 +359,11 @@ public inline fun <V, E, U, C : MutableCollection<in U>> Iterable<V>.mapResultIn
     transform: (index: Int, V) -> Result<U, E>,
 ): Result<C, E> {
     val values = mapIndexedTo(destination) { index, element ->
-        when (val transformed = transform(index, element)) {
-            is Ok -> transformed.value
-            is Err -> return transformed
+        val transformed = transform(index, element)
+
+        when {
+            transformed.isOk -> transformed.value
+            else -> return transformed.asErr()
         }
     }
 
@@ -352,16 +374,18 @@ public inline fun <V, E, U, C : MutableCollection<in U>> Iterable<V>.mapResultIn
  * Returns a [Result<List<U>, E>][Result] containing only the non-null results of applying the
  * given [transform] function to each element and its index in the original collection, returning
  * early with the first [Err] if a transformation fails. Elements in the returned list are in
- * the input [Iterable] order.
+ * the same order as [this].
  */
 public inline fun <V, E, U : Any> Iterable<V>.mapResultIndexedNotNull(
     transform: (index: Int, V) -> Result<U, E>?,
 ): Result<List<U>, E> {
     val values = mapIndexedNotNull { index, element ->
-        when (val transformed = transform(index, element)) {
-            is Ok -> transformed.value
-            is Err -> return transformed
-            null -> null
+        val transformed = transform(index, element)
+
+        when {
+            transformed == null -> null
+            transformed.isOk -> transformed.value
+            else -> return transformed.asErr()
         }
     }
 
@@ -378,10 +402,12 @@ public inline fun <V, E, U : Any, C : MutableCollection<in U>> Iterable<V>.mapRe
     transform: (index: Int, V) -> Result<U, E>?,
 ): Result<C, E> {
     val values = mapIndexedNotNullTo(destination) { index, element ->
-        when (val transformed = transform(index, element)) {
-            is Ok -> transformed.value
-            is Err -> return transformed
-            null -> null
+        val transformed = transform(index, element)
+
+        when {
+            transformed == null -> null
+            transformed.isOk -> transformed.value
+            else -> return transformed.asErr()
         }
     }
 

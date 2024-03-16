@@ -1,8 +1,9 @@
 package com.github.michaelbull.result.coroutines
 
-import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
+import com.github.michaelbull.result.asErr
+import com.github.michaelbull.result.binding
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -12,13 +13,31 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
-import kotlin.coroutines.CoroutineContext
 
 /**
- * Suspending variant of [binding][com.github.michaelbull.result.binding].
- * The suspendable [block] runs in a new [CoroutineScope], inheriting the parent [CoroutineContext].
- * This new scope is [cancelled][CoroutineScope.cancel] once a failing bind is encountered, eagerly cancelling all
- * child [jobs][Job].
+ * Calls the specified function [block] with [CoroutineBindingScope] as its receiver and returns
+ * its [Result].
+ *
+ * When inside a binding [block], the [bind][CoroutineBindingScope.bind] function is accessible on
+ * any [Result]. Calling the [bind][CoroutineBindingScope.bind] function will attempt to unwrap the
+ * [Result] and locally return its [value][Result.value].
+ *
+ * Unlike [binding], this function is designed for _concurrent decomposition_ of work. When any
+ * [bind][CoroutineBindingScope.bind] returns an error, the [CoroutineScope] will be
+ * [cancelled][Job.cancel], cancelling all the other children.
+ *
+ * This function returns as soon as the given [block] and all its child coroutines are completed.
+ *
+ * Example:
+ * ```
+ * suspend fun provideX(): Result<Int, ExampleErr> { ... }
+ * suspend fun provideY(): Result<Int, ExampleErr> { ... }
+ *
+ * val result: Result<Int, ExampleErr> = coroutineBinding {
+ *   val x = async { provideX().bind() }
+ *   val y = async { provideY().bind() }
+ *   x.await() + y.await()
+ * }
  */
 public suspend inline fun <V, E> coroutineBinding(crossinline block: suspend CoroutineBindingScope<E>.() -> V): Result<V, E> {
     contract {
@@ -55,11 +74,12 @@ internal class CoroutineBindingScopeImpl<E>(
     var result: Result<Nothing, E>? = null
 
     override suspend fun <V> Result<V, E>.bind(): V {
-        return when (this) {
-            is Ok -> value
-            is Err -> mutex.withLock {
+        return if (isOk) {
+            value
+        } else {
+            mutex.withLock {
                 if (result == null) {
-                    result = this
+                    result = this.asErr()
                     coroutineContext.cancel(BindCancellationException)
                 }
 

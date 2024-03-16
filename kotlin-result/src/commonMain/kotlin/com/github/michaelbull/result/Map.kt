@@ -5,7 +5,7 @@ import kotlin.contracts.contract
 
 /**
  * Maps this [Result<V, E>][Result] to [Result<U, E>][Result] by either applying the [transform]
- * function to the [value][Ok.value] if this [Result] is [Ok], or returning this [Err].
+ * function to the [value][Result.value] if this result [is ok][Result.isOk], or returning [this].
  *
  * - Elm: [Result.map](http://package.elm-lang.org/packages/elm-lang/core/latest/Result#map)
  * - Haskell: [Data.Bifunctor.first](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Bifunctor.html#v:first)
@@ -16,19 +16,19 @@ public inline infix fun <V, E, U> Result<V, E>.map(transform: (V) -> U): Result<
         callsInPlace(transform, InvocationKind.AT_MOST_ONCE)
     }
 
-    return when (this) {
-        is Ok -> Ok(transform(value))
-        is Err -> this
+    return when {
+        isOk -> Ok(transform(value))
+        else -> this.asErr()
     }
 }
 
 /**
  * Maps this [Result<V, Throwable>][Result] to [Result<U, Throwable>][Result] by either applying
- * the [transform] function to the [value][Ok.value] if this [Result] is [Ok], or returning this
- * [Err].
+ * the [transform] function to the [value][Result.value] if this result [is ok][Result.isOk], or
+ * returning [this].
  *
  * This function catches any [Throwable] exception thrown by [transform] function and encapsulates
- * it as a failure.
+ * it as an [Err].
  *
  * - Elm: [Result.map](http://package.elm-lang.org/packages/elm-lang/core/latest/Result#map)
  * - Haskell: [Data.Bifunctor.first](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Bifunctor.html#v:first)
@@ -39,9 +39,9 @@ public inline infix fun <V, U> Result<V, Throwable>.mapCatching(transform: (V) -
         callsInPlace(transform, InvocationKind.AT_MOST_ONCE)
     }
 
-    return when (this) {
-        is Ok -> runCatching { transform(value) }
-        is Err -> this
+    return when {
+        isOk -> runCatching { transform(value) }
+        else -> this.asErr()
     }
 }
 
@@ -53,14 +53,10 @@ public inline infix fun <V, U> Result<V, Throwable>.mapCatching(transform: (V) -
  * - Rust: [Result.transpose][https://doc.rust-lang.org/std/result/enum.Result.html#method.transpose]
  */
 public inline fun <V, E> Result<V?, E>.transpose(): Result<V, E>? {
-    return when (this) {
-        is Ok -> if (value == null) {
-            null
-        } else {
-            Ok(value)
-        }
-
-        is Err -> this
+    return when {
+        isOk && value == null -> null
+        isOk && value != null -> this.asOk()
+        else -> this.asErr()
     }
 }
 
@@ -69,16 +65,16 @@ public inline fun <V, E> Result<V?, E>.transpose(): Result<V, E>? {
  *
  * - Rust: [Result.flatten](https://doc.rust-lang.org/std/result/enum.Result.html#method.flatten)
  */
-public inline fun <V, E> Result<Result<V, E>, E>.flatten(): Result<V, E> {
-    return when (this) {
-        is Ok -> value
-        is Err -> this
+public fun <V, E> Result<Result<V, E>, E>.flatten(): Result<V, E> {
+    return when {
+        isOk -> value
+        else -> this.asErr()
     }
 }
 
 /**
  * Maps this [Result<V, E>][Result] to [Result<U, E>][Result] by either applying the [transform]
- * function if this [Result] is [Ok], or returning this [Err].
+ * function if this result [is ok][Result.isOk], or returning [this].
  *
  * This is functionally equivalent to [andThen].
  *
@@ -94,7 +90,8 @@ public inline infix fun <V, E, U> Result<V, E>.flatMap(transform: (V) -> Result<
 
 /**
  * Maps this [Result<V, E>][Result] to [U] by applying either the [success] function if this
- * [Result] is [Ok], or the [failure] function if this [Result] is an [Err].
+ * result [is ok][Result.isOk], or the [failure] function if this result
+ * [is an error][Result.isErr].
  *
  * Unlike [mapEither], [success] and [failure] must both return [U].
  *
@@ -110,15 +107,16 @@ public inline fun <V, E, U> Result<V, E>.mapBoth(
         callsInPlace(failure, InvocationKind.AT_MOST_ONCE)
     }
 
-    return when (this) {
-        is Ok -> success(value)
-        is Err -> failure(error)
+    return when {
+        isOk -> success(value)
+        else -> failure(error)
     }
 }
 
 /**
  * Maps this [Result<V, E>][Result] to [U] by applying either the [success] function if this
- * [Result] is [Ok], or the [failure] function if this [Result] is an [Err].
+ * result [is ok][Result.isOk], or the [failure] function if this result
+ * [is an error][Result.isErr].
  *
  * Unlike [mapEither], [success] and [failure] must both return [U].
  *
@@ -141,7 +139,8 @@ public inline fun <V, E, U> Result<V, E>.fold(
 
 /**
  * Maps this [Result<V, E>][Result] to [Result<U, E>][Result] by applying either the [success]
- * function if this [Result] is [Ok], or the [failure] function if this [Result] is an [Err].
+ * function if this result [is ok][Result.isOk], or the [failure] function if this result
+ * [is an error][Result.isErr].
  *
  * Unlike [mapEither], [success] and [failure] must both return [U].
  *
@@ -157,15 +156,16 @@ public inline fun <V, E, U> Result<V, E>.flatMapBoth(
         callsInPlace(failure, InvocationKind.AT_MOST_ONCE)
     }
 
-    return when (this) {
-        is Ok -> success(value)
-        is Err -> failure(error)
+    return when {
+        isOk -> success(value)
+        else -> failure(error)
     }
 }
 
 /**
  * Maps this [Result<V, E>][Result] to [Result<U, F>][Result] by applying either the [success]
- * function if this [Result] is [Ok], or the [failure] function if this [Result] is an [Err].
+ * function if this result [is ok][Result.isOk], or the [failure] function if this result
+ * [is an error][Result.isErr].
  *
  * Unlike [mapBoth], [success] and [failure] may either return [U] or [F] respectively.
  *
@@ -180,15 +180,16 @@ public inline fun <V, E, U, F> Result<V, E>.mapEither(
         callsInPlace(failure, InvocationKind.AT_MOST_ONCE)
     }
 
-    return when (this) {
-        is Ok -> Ok(success(value))
-        is Err -> Err(failure(error))
+    return when {
+        isOk -> Ok(success(value))
+        else -> Err(failure(error))
     }
 }
 
 /**
  * Maps this [Result<V, E>][Result] to [Result<U, F>][Result] by applying either the [success]
- * function if this [Result] is [Ok], or the [failure] function if this [Result] is an [Err].
+ * function if this result [is ok][Result.isOk], or the [failure] function if this result
+ * [is an error][Result.isErr].
  *
  * Unlike [mapBoth], [success] and [failure] may either return [U] or [F] respectively.
  *
@@ -203,15 +204,16 @@ public inline fun <V, E, U, F> Result<V, E>.flatMapEither(
         callsInPlace(failure, InvocationKind.AT_MOST_ONCE)
     }
 
-    return when (this) {
-        is Ok -> success(value)
-        is Err -> failure(error)
+    return when {
+        isOk -> success(value)
+        else -> failure(error)
     }
 }
 
 /**
  * Maps this [Result<V, E>][Result] to [Result<V, F>][Result] by either applying the [transform]
- * function to the [error][Err.error] if this [Result] is [Err], or returning this [Ok].
+ * function to the [error][Result.error] if this result [is an error][Result.isErr], or returning
+ * [this].
  *
  * - Elm: [Result.mapError](http://package.elm-lang.org/packages/elm-lang/core/latest/Result#mapError)
  * - Haskell: [Data.Bifunctor.right](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Bifunctor.html#v:second)
@@ -222,46 +224,52 @@ public inline infix fun <V, E, F> Result<V, E>.mapError(transform: (E) -> F): Re
         callsInPlace(transform, InvocationKind.AT_MOST_ONCE)
     }
 
-    return when (this) {
-        is Ok -> this
-        is Err -> Err(transform(error))
+    return when {
+        isErr -> Err(transform(error))
+        else -> this.asOk()
     }
 }
 
 /**
  * Maps this [Result<V, E>][Result] to [U] by either applying the [transform] function to the
- * [value][Ok.value] if this [Result] is [Ok], or returning the [default] if this [Result] is an
- * [Err].
+ * [value][Result.value] if this result [is ok][Result.isOk], or returning the [default] if this
+ * result [is an error][Result.isErr].
  *
  * - Rust: [Result.map_or](https://doc.rust-lang.org/std/result/enum.Result.html#method.map_or)
  */
-public inline fun <V, E, U> Result<V, E>.mapOr(default: U, transform: (V) -> U): U {
+public inline fun <V, E, U> Result<V, E>.mapOr(
+    default: U,
+    transform: (V) -> U,
+): U {
     contract {
         callsInPlace(transform, InvocationKind.AT_MOST_ONCE)
     }
 
-    return when (this) {
-        is Ok -> transform(value)
-        is Err -> default
+    return when {
+        isOk -> transform(value)
+        else -> default
     }
 }
 
 /**
  * Maps this [Result<V, E>][Result] to [U] by applying either the [transform] function if this
- * [Result] is [Ok], or the [default] function if this [Result] is an [Err]. Both of these
- * functions must return the same type ([U]).
+ * result [is ok][Result.isOk], or the [default] function if this result
+ * [is an error][Result.isErr]. Both of these functions must return the same type ([U]).
  *
  * - Rust: [Result.map_or_else](https://doc.rust-lang.org/std/result/enum.Result.html#method.map_or_else)
  */
-public inline fun <V, E, U> Result<V, E>.mapOrElse(default: (E) -> U, transform: (V) -> U): U {
+public inline fun <V, E, U> Result<V, E>.mapOrElse(
+    default: (E) -> U,
+    transform: (V) -> U,
+): U {
     contract {
         callsInPlace(default, InvocationKind.AT_MOST_ONCE)
         callsInPlace(transform, InvocationKind.AT_MOST_ONCE)
     }
 
-    return when (this) {
-        is Ok -> transform(value)
-        is Err -> default(error)
+    return when {
+        isOk -> transform(value)
+        else -> default(error)
     }
 }
 
@@ -273,35 +281,40 @@ public inline fun <V, E, U> Result<V, E>.mapOrElse(default: (E) -> U, transform:
 public inline infix fun <V, E, U> Result<Iterable<V>, E>.mapAll(transform: (V) -> Result<U, E>): Result<List<U>, E> {
     return map { iterable ->
         iterable.map { element ->
-            when (val transformed = transform(element)) {
-                is Ok -> transformed.value
-                is Err -> return transformed
+            val transformed = transform(element)
+
+            when {
+                transformed.isOk -> transformed.value
+                else -> return transformed.asErr()
             }
         }
     }
 }
 
 /**
- * Returns the [transformation][transform] of the [value][Ok.value] if this [Result] is [Ok]
- * and satisfies the given [predicate], otherwise this [Result].
+ * Returns the [transformation][transform] of the [value][Result.value] if this result
+ * [is ok][Result.isOk] and satisfies the given [predicate], otherwise [this].
  *
  * @see [takeIf]
  */
-public inline fun <V, E> Result<V, E>.toErrorIf(predicate: (V) -> Boolean, transform: (V) -> E): Result<V, E> {
+public inline fun <V, E> Result<V, E>.toErrorIf(
+    predicate: (V) -> Boolean,
+    transform: (V) -> E,
+): Result<V, E> {
     contract {
         callsInPlace(predicate, InvocationKind.AT_MOST_ONCE)
         callsInPlace(transform, InvocationKind.AT_MOST_ONCE)
     }
 
     return when {
-        this is Ok && predicate(value) -> Err(transform(value))
+        isOk && predicate(value) -> Err(transform(value))
         else -> this
     }
 }
 
 /**
- * Returns the supplied [error] if this [Result] is [Ok] and the [value][Ok.value] is `null`,
- * otherwise this [Result].
+ * Returns the supplied [error] if this result [is ok][Result.isOk] and the [value][Result.value]
+ * is `null`, otherwise [this].
  *
  * @see [toErrorIf]
  */
@@ -310,43 +323,37 @@ public inline fun <V, E> Result<V?, E>.toErrorIfNull(error: () -> E): Result<V, 
         callsInPlace(error, InvocationKind.AT_MOST_ONCE)
     }
 
-    return when (this) {
-        is Ok -> if (value == null) {
-            Err(error())
-        } else {
-            Ok(value)
-        }
-
-        is Err -> this
+    return when {
+        isOk && value == null -> Err(error())
+        isOk && value != null -> this.asOk()
+        else -> this.asErr()
     }
 }
 
 /**
- * Returns the [transformation][transform] of the [value][Ok.value] if this [Result] is [Ok]
- * and _does not_ satisfy the given [predicate], otherwise this [Result].
+ * Returns the [transformation][transform] of the [value][Result.value] if this result
+ * [is ok][Result.isOk] and _does not_ satisfy the given [predicate], otherwise [this].
  *
  * @see [takeUnless]
  */
-public inline fun <V, E> Result<V, E>.toErrorUnless(predicate: (V) -> Boolean, transform: (V) -> E): Result<V, E> {
+public inline fun <V, E> Result<V, E>.toErrorUnless(
+    predicate: (V) -> Boolean,
+    transform: (V) -> E,
+): Result<V, E> {
     contract {
         callsInPlace(predicate, InvocationKind.AT_MOST_ONCE)
         callsInPlace(transform, InvocationKind.AT_MOST_ONCE)
     }
 
-    return when (this) {
-        is Ok -> if (!predicate(value)) {
-            Err(transform(value))
-        } else {
-            this
-        }
-
-        is Err -> this
+    return when {
+        isOk && !predicate(value) -> Err(transform(value))
+        else -> this
     }
 }
 
 /**
- * Returns the supplied [error] unless this [Result] is [Ok] and the [value][Ok.value] is `null`,
- * otherwise this [Result].
+ * Returns the supplied [error] unless this result [is ok][Result.isOk] and the
+ * [value][Result.value] is `null`, otherwise [this].
  *
  * @see [toErrorUnless]
  */
@@ -355,13 +362,8 @@ public inline fun <V, E> Result<V, E>.toErrorUnlessNull(error: () -> E): Result<
         callsInPlace(error, InvocationKind.AT_MOST_ONCE)
     }
 
-    return when (this) {
-        is Ok -> if (value == null) {
-            this
-        } else {
-            Err(error())
-        }
-
-        is Err -> Err(error())
+    return when {
+        isOk && value == null -> this
+        else -> Err(error())
     }
 }

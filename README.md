@@ -35,19 +35,32 @@ dependencies {
 
 ## Introduction
 
-The [`Result`][result] monad has two subtypes, [`Ok<V>`][result-ok]
-representing success and containing a `value`, and [`Err<E>`][result-err],
-representing failure and containing an `error`.
+In functional programming, the result [`Result`][result] type is a monadic type
+holding a returned [value][result-value] or an [error][result-error].
 
-Mappings are available on the [wiki][wiki] to assist those with experience
-using the `Result` type in other languages:
+To indicate an operation that succeeded, return an [`Ok(value)`][result-Ok]
+with the successful `value`. If it failed, return an [`Err(error)`][result-Err]
+with the `error` that caused the failure.
 
-- [Elm](https://github.com/michaelbull/kotlin-result/wiki/Elm)
-- [Haskell](https://github.com/michaelbull/kotlin-result/wiki/Haskell)
-- [Rust](https://github.com/michaelbull/kotlin-result/wiki/Rust)
-- [Scala](https://github.com/michaelbull/kotlin-result/wiki/Scala)
+This helps to define a clear happy/unhappy path of execution that is commonly
+referred to as [Railway Oriented Programming][rop], whereby the happy and
+unhappy paths are represented as separate railways.
 
-## Read More
+### Overhead
+
+The `Result` type is modelled as an
+[inline value class][kotlin-inline-classes]. This achieves zero object
+allocations on the happy path.
+
+A full breakdown, with example output Java code, is available in the
+[Overhead][wiki-Overhead] design doc.
+
+### Multiplatform Support
+
+`kotlin-result` targets all three tiers outlined by the
+[Kotlin/Native target support][kotlin-native-target-support]
+
+### Read More
 
 Below is a collection of videos & articles authored on the subject of this
 library. Feel free to open a pull request on [GitHub][github] if you would like
@@ -60,11 +73,18 @@ to include yours.
 - [[JP] KotlinでResult型使うならkotlin-resultを使おう](https://note.com/yasukotelin/n/n6d9e352c344c)
 - [[JP] kotlinのコードにReturn Resultを組み込む](https://nnao45.hatenadiary.com/entry/2019/11/30/224820)
 
+Mappings are available on the [wiki][wiki] to assist those with experience
+using the `Result` type in other languages:
+
+- [Elm](https://github.com/michaelbull/kotlin-result/wiki/Elm)
+- [Haskell](https://github.com/michaelbull/kotlin-result/wiki/Haskell)
+- [Rust](https://github.com/michaelbull/kotlin-result/wiki/Rust)
+- [Scala](https://github.com/michaelbull/kotlin-result/wiki/Scala)
+
 ## Getting Started
 
-The idiomatic approach to modelling operations that may fail in Railway
-Oriented Programming is to avoid throwing an exception and instead make the
-return type of your function a `Result`.
+Below is a simple example of how you may use the `Result` type to model a
+function that may fail.
 
 ```kotlin
 fun checkPrivileges(user: User, command: Command): Result<Command, CommandError> {
@@ -76,10 +96,9 @@ fun checkPrivileges(user: User, command: Command): Result<Command, CommandError>
 }
 ```
 
-To incorporate the `Result` type into an existing codebase that throws
-exceptions, you can wrap functions that may `throw` with
-[`runCatching`][result-runCatching]. This will execute the block of code and
-`catch` any `Throwable`, returning a `Result<T, Throwable>`.
+When interacting with code outside your control that may throw exceptions, wrap
+the call with [`runCatching`][result-runCatching] to capture its execution as a
+`Result<T, Throwable>`:
 
 ```kotlin
 val result: Result<Customer, Throwable> = runCatching {
@@ -100,8 +119,7 @@ val result: Result<Customer, String> = customers
 
 Both success and failure results can be transformed within a stage of the
 railway track. The example below demonstrates how to transform an internal
-program error (`UnlockError`) into an exposed client error
-(`IncorrectPassword`).
+program error `UnlockError` into the exposed client error `IncorrectPassword`.
 
 ```kotlin
 val result: Result<Treasure, UnlockResponse> =
@@ -130,21 +148,22 @@ tokenize(command.toLowerCase())
 
 ### Binding (Monad Comprehension)
 
-The `binding` keyword allows multiple calls that each return a `Result` to be
-chained imperatively. When inside a `binding` block, the `.bind()` function is
-accessible on any `Result`. Each call to `bind` will attempt to unwrap the
-`Result` and store its value, returning early if any `Result` is an `Err`.
+The [`binding`][result-binding] function allows multiple calls that each return
+a `Result` to be chained imperatively. When inside a `binding` block, the
+`bind()` function is accessible on any `Result`. Each call to `bind` will
+attempt to unwrap the `Result` and store its value, returning early if any
+`Result` is an error.
 
-In the example below, should `functionX()` return an `Err`, then execution will
-skip both `functionY()` and `functionZ()`, instead storing the `Err` from
+In the example below, should `functionX()` return an error, then execution will
+skip both `functionY()` and `functionZ()`, instead storing the error from
 `functionX` in the variable named `sum`.
 
 ```kotlin
-fun functionX(): Result<Int, DomainError> { ... }
-fun functionY(): Result<Int, DomainError> { ... }
-fun functionZ(): Result<Int, DomainError> { ... }
+fun functionX(): Result<Int, SumError> { ... }
+fun functionY(): Result<Int, SumError> { ... }
+fun functionZ(): Result<Int, SumError> { ... }
 
-val sum: Result<Int, DomainError> = binding {
+val sum: Result<Int, SumError> = binding {
     val x = functionX().bind()
     val y = functionY().bind()
     val z = functionZ().bind()
@@ -154,18 +173,18 @@ val sum: Result<Int, DomainError> = binding {
 println("The sum is $sum") // prints "The sum is Ok(100)"
 ```
 
-The `binding` keyword primarily draws inspiration from
+The `binding` function primarily draws inspiration from
 [Bow's `binding` function][bow-bindings], however below is a list of other
 resources on the topic of monad comprehensions.
 
-- [Monad comprehensions - Arrow (Kotlin)][arrow-monad-comprehension]
-- [Monad comprehensions - Bow (Swift)][bow-monad-comprehension]
-- [For comprehensions - Scala][scala-for-comprehension]
+- [Monad comprehensions - Arrow (Kotlin)](https://arrow-kt.io/docs/0.10/patterns/monad_comprehensions/)
+- [Monad comprehensions - Bow (Swift)](https://bow-swift.io/docs/patterns/monad-comprehensions)
+- [For comprehensions - Scala](https://docs.scala-lang.org/tour/for-comprehensions.html)
 
-#### Coroutine Support
+#### Coroutine Binding Support
 
-Use of suspending functions within a `binding` block requires an additional
-dependency:
+Use of suspending functions within a `coroutineBinding` block requires an
+additional dependency:
 
 ```kotlin
 dependencies {
@@ -174,9 +193,12 @@ dependencies {
 }
 ```
 
-The coroutine implementation of `binding` has been designed so that the first
-call to `bind()` that fails will cancel all child coroutines within the current
-coroutine scope.
+The [`coroutineBinding`][result-coroutineBinding] function runs inside a
+[`coroutineScope`][kotlin-coroutineScope], facilitating _concurrent
+decomposition of work_.
+
+When any call to `bind()` inside the block fails, the scope fails, cancelling
+all other children.
 
 The example below demonstrates a computationally expensive function that takes
 five milliseconds to compute being eagerly cancelled as soon as a smaller
@@ -187,7 +209,7 @@ suspend fun failsIn5ms(): Result<Int, DomainErrorA> { ... }
 suspend fun failsIn1ms(): Result<Int, DomainErrorB> { ... }
 
 runBlocking {
-    val result: Result<Int, BindingError> = binding {
+    val result: Result<Int, BindingError> = coroutineBinding { // this creates a new CoroutineScope
         val x = async { failsIn5ms().bind() }
         val y = async { failsIn1ms().bind() }
         x.await() + y.await()
@@ -207,20 +229,15 @@ Result monad is present, including:
 - [Rust](https://doc.rust-lang.org/std/result/)
 - [Scala](http://www.scala-lang.org/api/2.12.4/scala/util/Either.html)
 
-It also iterates on other Result libraries written in Kotlin, namely:
+Improvements on existing solutions such the stdlib include:
 
-- [danneu/kotlin-result](https://github.com/danneu/kotlin-result)
-- [kittinunf/Result](https://github.com/kittinunf/Result)
-- [npryce/result4k](https://github.com/npryce/result4k)
-
-Improvements on the existing solutions include:
-
+- Reduced runtime overhead with zero object allocations on the happy path
 - Feature parity with Result types from other languages including Elm, Haskell,
      & Rust
 - Lax constraints on `value`/`error` nullability
 - Lax constraints on the `error` type's inheritance (does not inherit from
     `Exception`)
-- Top level `Ok` and `Err` classes avoids qualifying usages with
+- Top level `Ok` and `Err` functions avoids qualifying usages with
     `Result.Ok`/`Result.Err` respectively
 - Higher-order functions marked with the `inline` keyword for reduced runtime
     overhead
@@ -239,51 +256,9 @@ in a real world scenario.
 It hosts a [ktor][ktor] server on port 9000 with a `/customers` endpoint. The
 endpoint responds to both `GET` and `POST` requests with a provided `id`, e.g.
 `/customers/100`. Upserting a customer id of 42 is hardcoded to throw an
-[`SQLException`][customer-42] to demonstrate how the `Result` type can [map
-internal program errors][update-customer-error] to more appropriate
+[`SQLException`][customer-42] to demonstrate how the `Result` type can
+[map internal program errors][update-customer-error] to more appropriate
 user-facing errors.
-
-### Payloads
-
-#### Fetch customer information
-
-```
-$ curl -i -X GET  'http://localhost:9000/customers/1'
-```
-
-```
-HTTP/1.1 200 OK
-Content-Type: application/json; charset=UTF-8
-Content-Length: 84
-
-{
-  "firstName": "Michael",
-  "lastName": "Bull",
-  "email": "michael@example.com"
-}
-```
-
-#### Add new customer
-
-```
-$ curl -i -X POST \
-   -H "Content-Type:application/json" \
-   -d \
-'{
-  "firstName": "Your",
-  "lastName": "Name",
-  "email": "email@example.com"
-}' \
- 'http://localhost:9000/customers/200'
-```
-
-```
-HTTP/1.1 201 Created
-Content-Type: text/plain; charset=UTF-8
-Content-Length: 16
-
-Customer created
-```
 
 ## Contributing
 
@@ -295,22 +270,27 @@ This project is available under the terms of the ISC license. See the
 [`LICENSE`](LICENSE) file for the copyright information and licensing terms.
 
 [result]: https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/Result.kt#L10
-[result-ok]: https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/Result.kt#L35
-[result-err]: https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/Result.kt#L58
-[result-runCatching]: https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/Factory.kt#L11
+[result-value]: https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/Result.kt#L55
+[result-error]: https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/Result.kt#L59
+[result-Ok]: https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/Result.kt#L9
+[result-Err]: https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/Result.kt#L17
+[kotlin-inline-classes]: https://kotlinlang.org/docs/inline-classes.html
+[wiki-Overhead]: https://github.com/michaelbull/kotlin-result/wiki/Overhead
+[rop]: https://fsharpforfunandprofit.com/rop/
+[kotlin-native-target-support]: https://kotlinlang.org/docs/native-target-support.html
+[github]: https://github.com/michaelbull/kotlin-result
 [wiki]: https://github.com/michaelbull/kotlin-result/wiki
+[result-runCatching]: https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/Factory.kt#L11
+[result-binding]: https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/Binding.kt#L28
+[bow-bindings]: https://bow-swift.io/docs/patterns/monad-comprehensions/#bindings
+[result-coroutineBinding]: https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result-coroutines/src/commonMain/kotlin/com/github/michaelbull/result/coroutines/CoroutineBinding.kt#L42
+[kotlin-coroutineScope]: https://kotlinlang.org/api/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines/coroutine-scope.html
 [unit-tests]: https://github.com/michaelbull/kotlin-result/tree/master/kotlin-result/src/commonTest/kotlin/com/github/michaelbull/result
 [example]: https://github.com/michaelbull/kotlin-result/tree/master/example/src/main/kotlin/com/github/michaelbull/result/example
 [swalschin-example]: https://github.com/swlaschin/Railway-Oriented-Programming-Example
 [ktor]: http://ktor.io/
 [customer-42]: https://github.com/michaelbull/kotlin-result/blob/master/example/src/main/kotlin/com/github/michaelbull/result/example/repository/InMemoryCustomerRepository.kt#L38
 [update-customer-error]: https://github.com/michaelbull/kotlin-result/blob/master/example/src/main/kotlin/com/github/michaelbull/result/example/service/CustomerService.kt#L50
-[github]: https://github.com/michaelbull/kotlin-result
-[bow-bindings]: https://bow-swift.io/docs/patterns/monad-comprehensions/#bindings
-[bow-monad-comprehension]: https://bow-swift.io/docs/patterns/monad-comprehensions
-[scala-for-comprehension]: https://docs.scala-lang.org/tour/for-comprehensions.html
-[arrow-monad-comprehension]: https://arrow-kt.io/docs/0.10/patterns/monad_comprehensions/
-[either-syntax]: https://arrow-kt.io/docs/0.10/apidocs/arrow-core-data/arrow.core/-either/#syntax
 
 [badge-android]: http://img.shields.io/badge/-android-6EDB8D.svg?style=flat
 [badge-android-native]: http://img.shields.io/badge/support-[AndroidNative]-6EDB8D.svg?style=flat

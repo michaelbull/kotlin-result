@@ -166,9 +166,18 @@ public fun <V, E> Iterable<Result<V, E>>.combine(): Result<List<V>, E> {
  *
  * - Haskell: [Data.Either.lefts](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Either.html#v:lefts)
  */
+public fun <V, E, R : Result<V, E>> valuesOf(vararg results: R): List<V> {
+    return results.asIterable().filterValues()
+}
+
+@Deprecated(
+    message = "Use allValuesOf instead",
+    replaceWith = ReplaceWith("valuesOf(results)")
+)
 public fun <V, E, R : Result<V, E>> getAll(vararg results: R): List<V> {
     return results.asIterable().filterValues()
 }
+
 
 /**
  * Extracts from an [Iterable] of [Results][Result] all the [Ok] elements. All the [Ok] elements
@@ -191,6 +200,14 @@ public fun <V, E> Iterable<Result<V, E>>.getAll(): List<V> {
  *
  * - Haskell: [Data.Either.rights](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Either.html#v:rights)
  */
+public fun <V, E, R : Result<V, E>> errorsOf(vararg results: R): List<E> {
+    return results.asIterable().filterErrors()
+}
+
+@Deprecated(
+    message = "Use errorsOf instead",
+    replaceWith = ReplaceWith("errorsOf(results)")
+)
 public fun <V, E, R : Result<V, E>> getAllErrors(vararg results: R): List<E> {
     return results.asIterable().filterErrors()
 }

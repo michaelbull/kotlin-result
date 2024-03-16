@@ -113,11 +113,11 @@ class IterableTest {
         }
     }
 
-    class GetAll {
+    class ValuesOf {
 
         @Test
         fun returnsAllValues() {
-            val result = getAll(
+            val result = valuesOf(
                 Ok("hello"),
                 Ok("big"),
                 Err(IterableError.IterableError2),
@@ -133,11 +133,11 @@ class IterableTest {
         }
     }
 
-    class GetAllErrors {
+    class ErrorsOf {
 
         @Test
         fun returnsAllErrors() {
-            val result = getAllErrors(
+            val result = errorsOf(
                 Err(IterableError.IterableError2),
                 Ok("haskell"),
                 Err(IterableError.IterableError2),

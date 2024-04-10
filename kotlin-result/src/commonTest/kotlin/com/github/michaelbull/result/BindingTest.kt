@@ -78,4 +78,24 @@ class BindingTest {
             actual = result,
         )
     }
+
+    @Test
+    fun runCatchingInsideBindingDoesNotSwallow() {
+        fun squareNumber(): Result<Int, BindingError> = throw RuntimeException()
+
+        val squaredNumbers = binding<List<Int>, BindingError> {
+            val result: Result<List<Int>, Throwable> = runCatching {
+                (0..<10).map { number ->
+                    squareNumber().bind()
+                }
+            }
+
+            result.mapError { BindingError }.bind()
+        }
+
+        assertEquals(
+            expected = Err(BindingError),
+            actual = squaredNumbers,
+        )
+    }
 }

@@ -33,7 +33,7 @@ public inline fun <V, E> binding(crossinline block: BindingScope<E>.() -> V): Re
     return with(BindingScopeImpl<E>()) {
         try {
             Ok(block())
-        } catch (ex: BindException) {
+        } catch (_: BindException) {
             result!!
         }
     }

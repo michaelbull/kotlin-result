@@ -41,7 +41,7 @@ import kotlin.contracts.contract
  */
 public suspend inline fun <V, E> coroutineBinding(crossinline block: suspend CoroutineBindingScope<E>.() -> V): Result<V, E> {
     contract {
-        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+        callsInPlace(block, InvocationKind.AT_MOST_ONCE)
     }
 
     lateinit var receiver: CoroutineBindingScopeImpl<E>

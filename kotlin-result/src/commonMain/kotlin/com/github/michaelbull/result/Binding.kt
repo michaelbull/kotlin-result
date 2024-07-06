@@ -27,7 +27,7 @@ import kotlin.contracts.contract
  */
 public inline fun <V, E> binding(crossinline block: BindingScope<E>.() -> V): Result<V, E> {
     contract {
-        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+        callsInPlace(block, InvocationKind.AT_MOST_ONCE)
     }
 
     return with(BindingScopeImpl<E>()) {

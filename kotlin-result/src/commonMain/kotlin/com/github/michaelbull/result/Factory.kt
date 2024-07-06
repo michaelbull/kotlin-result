@@ -10,7 +10,7 @@ import kotlin.contracts.contract
  */
 public inline fun <V> runCatching(block: () -> V): Result<V, Throwable> {
     contract {
-        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+        callsInPlace(block, InvocationKind.AT_MOST_ONCE)
     }
 
     return try {
@@ -27,7 +27,7 @@ public inline fun <V> runCatching(block: () -> V): Result<V, Throwable> {
  */
 public inline infix fun <T, V> T.runCatching(block: T.() -> V): Result<V, Throwable> {
     contract {
-        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+        callsInPlace(block, InvocationKind.AT_MOST_ONCE)
     }
 
     return try {

@@ -177,7 +177,7 @@ The `binding` function primarily draws inspiration from
 [Bow's `binding` function][bow-bindings], however below is a list of other
 resources on the topic of monad comprehensions.
 
-- [Monad comprehensions - Arrow (Kotlin)](https://arrow-kt.io/docs/0.10/patterns/monad_comprehensions/)
+- [Monad comprehensions - Arrow (Kotlin)](https://old.arrow-kt.io/docs/patterns/monad_comprehensions/)
 - [Monad comprehensions - Bow (Swift)](https://bow-swift.io/docs/patterns/monad-comprehensions)
 - [For comprehensions - Scala](https://docs.scala-lang.org/tour/for-comprehensions.html)
 

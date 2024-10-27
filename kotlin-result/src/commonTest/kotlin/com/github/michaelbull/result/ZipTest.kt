@@ -187,6 +187,52 @@ class ZipTest {
     class ZipOrAccumulate {
 
         @Test
+        fun returnsTransformedValueIfAllOfTwoOk() {
+            val result = zipOrAccumulate(
+                { Ok(10) },
+                { Ok(20) },
+                Int::plus,
+            )
+
+            assertEquals(
+                expected = Ok(30),
+                actual = result,
+            )
+        }
+
+        @Test
+        fun returnsOneErrIfOneOfTwoErr() {
+            val result = zipOrAccumulate(
+                { Ok(10) },
+                { produce(20, "hello") },
+                Int::plus,
+            )
+
+            val expectedErrors = listOf("hello")
+
+            assertEquals(
+                expected = Err(expectedErrors),
+                actual = result,
+            )
+        }
+
+        @Test
+        fun returnsErrsIfAllOfTwoErr() {
+            val result = zipOrAccumulate(
+                { produce(10, "foo") },
+                { produce(20, "bar") },
+                Int::plus,
+            )
+
+            val expectedErrors = listOf("foo", "bar")
+
+            assertEquals(
+                expected = Err(expectedErrors),
+                actual = result,
+            )
+        }
+
+        @Test
         fun returnsTransformedValueIfAllOk() {
             val result = zipOrAccumulate(
                 { Ok(10) },

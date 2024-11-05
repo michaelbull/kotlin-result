@@ -144,8 +144,8 @@ public inline fun <T1, T2, E, V> zipOrAccumulate(
     val result2 = producer2()
 
     val results = listOf(
-        producer1(),
-        producer2(),
+        result1,
+        result2,
     )
 
     return if (results.allOk()) {

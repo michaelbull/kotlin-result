@@ -16,7 +16,7 @@ import kotlin.contracts.contract
  */
 public inline fun <V> runSuspendCatching(block: () -> V): Result<V, Throwable> {
     contract {
-        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+        callsInPlace(block, InvocationKind.AT_MOST_ONCE)
     }
 
     return runCatching(block).throwIf {
@@ -33,7 +33,7 @@ public inline fun <V> runSuspendCatching(block: () -> V): Result<V, Throwable> {
  */
 public inline infix fun <T, V> T.runSuspendCatching(block: T.() -> V): Result<V, Throwable> {
     contract {
-        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+        callsInPlace(block, InvocationKind.AT_MOST_ONCE)
     }
 
     return runCatching(block).throwIf {

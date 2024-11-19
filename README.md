@@ -70,7 +70,7 @@ to include yours.
 - [[EN] A Functional Approach to Exception Handling - Tristan Hamilton](https://youtu.be/bEC_t8dH23c?t=132)
 - [[EN] kotlin: A functional gold mine - Mark Bucciarelli](http://markbucciarelli.com/posts/2020-01-04_kotlin_functional_gold_mine.html)
 - [[EN] Railway Oriented Programming - Scott Wlaschin](https://fsharpforfunandprofit.com/rop/)
-- [[JP] KotlinでResult型使うならkotlin-resultを使おう](https://note.com/yasukotelin/n/n6d9e352c344c)
+- [[JP] KotlinでResult型使うならkotlin-resultを使おう](https://note.com/telin/n/n6d9e352c344c)
 - [[JP] kotlinのコードにReturn Resultを組み込む](https://nnao45.hatenadiary.com/entry/2019/11/30/224820)
 
 Mappings are available on the [wiki][wiki] to assist those with experience

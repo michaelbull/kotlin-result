@@ -130,8 +130,8 @@ public inline fun <T1, T2, T3, T4, T5, E, V> zip(
  * [is an error][Result.isErr] to a [List].
  */
 public inline fun <T1, T2, E, V> zipOrAccumulate(
-    producer1: () -> Result<T1, E>,
-    producer2: () -> Result<T2, E>,
+    producer1: Producer<T1, E>,
+    producer2: Producer<T2, E>,
     transform: (T1, T2) -> V,
 ): Result<V, List<E>> {
     contract {
@@ -165,9 +165,9 @@ public inline fun <T1, T2, E, V> zipOrAccumulate(
  * [is an error][Result.isErr] to a [List].
  */
 public inline fun <T1, T2, T3, E, V> zipOrAccumulate(
-    producer1: () -> Result<T1, E>,
-    producer2: () -> Result<T2, E>,
-    producer3: () -> Result<T3, E>,
+    producer1: Producer<T1, E>,
+    producer2: Producer<T2, E>,
+    producer3: Producer<T3, E>,
     transform: (T1, T2, T3) -> V,
 ): Result<V, List<E>> {
     contract {
@@ -205,10 +205,10 @@ public inline fun <T1, T2, T3, E, V> zipOrAccumulate(
  * [is an error][Result.isErr] to a [List].
  */
 public inline fun <T1, T2, T3, T4, E, V> zipOrAccumulate(
-    producer1: () -> Result<T1, E>,
-    producer2: () -> Result<T2, E>,
-    producer3: () -> Result<T3, E>,
-    producer4: () -> Result<T4, E>,
+    producer1: Producer<T1, E>,
+    producer2: Producer<T2, E>,
+    producer3: Producer<T3, E>,
+    producer4: Producer<T4, E>,
     transform: (T1, T2, T3, T4) -> V,
 ): Result<V, List<E>> {
     contract {
@@ -250,11 +250,11 @@ public inline fun <T1, T2, T3, T4, E, V> zipOrAccumulate(
  * [is an error][Result.isErr] to a [List].
  */
 public inline fun <T1, T2, T3, T4, T5, E, V> zipOrAccumulate(
-    producer1: () -> Result<T1, E>,
-    producer2: () -> Result<T2, E>,
-    producer3: () -> Result<T3, E>,
-    producer4: () -> Result<T4, E>,
-    producer5: () -> Result<T5, E>,
+    producer1: Producer<T1, E>,
+    producer2: Producer<T2, E>,
+    producer3: Producer<T3, E>,
+    producer4: Producer<T4, E>,
+    producer5: Producer<T5, E>,
     transform: (T1, T2, T3, T4, T5) -> V,
 ): Result<V, List<E>> {
     contract {

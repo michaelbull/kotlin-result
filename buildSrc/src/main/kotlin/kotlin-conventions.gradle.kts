@@ -28,6 +28,7 @@ kotlin {
     macosArm64()
     iosSimulatorArm64()
     iosX64()
+    iosArm64()
 
     /* https://kotlinlang.org/docs/native-target-support.html#tier-2 */
 
@@ -42,8 +43,6 @@ kotlin {
     tvosSimulatorArm64()
     tvosX64()
     tvosArm64()
-
-    iosArm64()
 
     /* https://kotlinlang.org/docs/native-target-support.html#tier-3 */
 

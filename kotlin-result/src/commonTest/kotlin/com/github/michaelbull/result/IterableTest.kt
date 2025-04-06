@@ -199,4 +199,36 @@ class IterableTest {
             )
         }
     }
+
+    class Traverse {
+        @Test
+        fun returnTraverseValueIfOk() {
+            val input = listOf(1, 2, 3)
+            val transform: (Int) -> Result<String, String> = { Ok(it.toString()) }
+            val result = input.traverse(transform)
+
+            assertEquals(Ok(listOf("1", "2", "3")), result)
+        }
+
+        @Test
+        fun returnsFirstErrorIfErr() {
+            val input = listOf(1, 2, 3)
+            val transform: (Int) -> Result<String, String> = {
+                if (it == 1) Err("Error at 1") else Ok(it.toString())
+            }
+            val result = input.traverse(transform)
+
+            assertEquals(Err("Error at 1"), result)
+        }
+
+        @Test
+        fun traverseWithEmptyListReturnsEmptyOkList() {
+            val input = emptyList<Int>()
+            val transform: (Int) -> Result<String, String> = { Ok(it.toString()) }
+            val result = input.traverse(transform)
+
+            assertEquals(Ok(emptyList()), result)
+        }
+
+    }
 }

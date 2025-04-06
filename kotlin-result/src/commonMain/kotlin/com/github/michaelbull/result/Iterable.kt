@@ -385,3 +385,22 @@ public inline fun <V, E, U : Any, C : MutableCollection<in U>> Iterable<V>.mapRe
 
     return Ok(values)
 }
+
+/**
+ * Applies the given [transform] function to each element in this [Iterable<V>], collecting the results into a [Result<List<U>, E>].
+ * If all transformations succeed, returns an [Ok] containing a list of [U] values in the same order as the original [Iterable].
+ * If any transformation fails, immediately returns the first [Err]
+ * encountered and stops processing further elements.
+ */
+public fun <V, E, U> Iterable<V>.traverse(transform: (V) -> Result<U, E>): Result<List<U>, E> {
+    val results = mutableListOf<U>()
+    for (item in this) {
+        val result = transform(item)
+        val element  = when {
+            result.isOk -> result.value
+            else -> return Err(result.error)
+        }
+        results.add(element)
+    }
+    return Ok(results)
+}

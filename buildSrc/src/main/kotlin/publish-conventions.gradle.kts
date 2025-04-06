@@ -1,7 +1,3 @@
-import org.gradle.api.publish.maven.MavenPublication
-import org.gradle.api.tasks.bundling.Jar
-import org.gradle.kotlin.dsl.`maven-publish`
-
 plugins {
     `maven-publish`
     signing
@@ -165,6 +161,31 @@ publishing {
                 contributor {
                     name.set("Dmitry Bock")
                     url.set("https://github.com/Jhabkin")
+                }
+
+                contributor {
+                    name.set("Eichisanden")
+                    url.set("https://blog.a-1.dev/")
+                }
+
+                contributor {
+                    name.set("Ryoko Hirai")
+                    url.set("https://github.com/rhirai-line")
+                }
+
+                contributor {
+                    name.set("Hoang Chung")
+                    url.set("https://github.com/hoangchungk53qx1")
+                }
+
+                contributor {
+                    name.set("Daiji")
+                    url.set("https://daiji256.github.io/")
+                }
+
+                contributor {
+                    name.set("Yusuke Katsuragawa")
+                    url.set("https://kaleidot.net/")
                 }
             }
 

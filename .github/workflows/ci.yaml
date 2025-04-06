@@ -46,7 +46,7 @@ jobs:
       - name: Setup JDK
         uses: actions/setup-java@9704b39bf258b59bc04b50fa2dd55e9ed76b47a8 # v4.1.0
         with:
-          distribution: temurin
+          distribution: zulu
           java-version: 8
 
       - name: Setup Gradle
@@ -112,7 +112,7 @@ jobs:
       - name: Setup JDK
         uses: actions/setup-java@9704b39bf258b59bc04b50fa2dd55e9ed76b47a8 # v4.1.0
         with:
-          distribution: temurin
+          distribution: zulu
           java-version: 8
 
       - name: Setup Gradle

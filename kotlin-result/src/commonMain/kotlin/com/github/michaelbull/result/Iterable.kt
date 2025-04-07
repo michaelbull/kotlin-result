@@ -392,15 +392,13 @@ public inline fun <V, E, U : Any, C : MutableCollection<in U>> Iterable<V>.mapRe
  * If any transformation fails, immediately returns the first [Err]
  * encountered and stops processing further elements.
  */
-public fun <V, E, U> Iterable<V>.traverse(transform: (V) -> Result<U, E>): Result<List<U>, E> {
-    val results = mutableListOf<U>()
-    for (item in this) {
-        val result = transform(item)
-        val element  = when {
-            result.isOk -> result.value
-            else -> return Err(result.error)
+public inline fun <V, E, U> Iterable<V>.traverse(transform: (V) -> Result<U, E>): Result<List<U>, E> {
+    return fold(
+        initial = emptyList<U>(),
+        operation = { acc: List<U>, element: V ->
+            transform(element).map { value ->
+                acc + value
+            }
         }
-        results.add(element)
-    }
-    return Ok(results)
+    )
 }

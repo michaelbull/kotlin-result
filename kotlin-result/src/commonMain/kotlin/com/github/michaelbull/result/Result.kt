@@ -1,5 +1,7 @@
 package com.github.michaelbull.result
 
+import com.github.michaelbull.result.annotation.UnsafeResultErrorAccess
+import com.github.michaelbull.result.annotation.UnsafeResultValueAccess
 import kotlin.jvm.JvmInline
 
 /**
@@ -52,10 +54,12 @@ public value class Result<out V, out E> internal constructor(
 ) {
 
     @Suppress("UNCHECKED_CAST")
+    @UnsafeResultValueAccess
     public val value: V
         get() = inlineValue as V
 
     @Suppress("UNCHECKED_CAST")
+    @UnsafeResultErrorAccess
     public val error: E
         get() = (inlineValue as Failure<E>).error
 

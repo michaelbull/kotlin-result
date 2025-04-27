@@ -5,4 +5,9 @@ plugins {
 
 kotlin {
     explicitApi()
+
+    compilerOptions {
+        optIn.add("com.github.michaelbull.result.annotation.UnsafeResultValueAccess")
+        optIn.add("com.github.michaelbull.result.annotation.UnsafeResultErrorAccess")
+    }
 }

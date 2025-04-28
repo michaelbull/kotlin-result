@@ -6,6 +6,11 @@ plugins {
 }
 
 kotlin {
+    compilerOptions {
+        optIn.add("kotlin.contracts.ExperimentalContracts")
+        freeCompilerArgs.add("-Xexpect-actual-classes")
+    }
+
     jvm {
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_1_8)
@@ -57,12 +62,6 @@ kotlin {
     watchosDeviceArm64()
 
     sourceSets {
-        all {
-            languageSettings.apply {
-                optIn("kotlin.contracts.ExperimentalContracts")
-            }
-        }
-
         commonTest {
             dependencies {
                 implementation(kotlin("test"))

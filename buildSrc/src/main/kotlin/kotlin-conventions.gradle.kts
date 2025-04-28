@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask
@@ -56,9 +57,13 @@ kotlin {
     watchosDeviceArm64()
 
     sourceSets {
+        @OptIn(ExperimentalKotlinGradlePluginApi::class)
         all {
             languageSettings.apply {
                 optIn("kotlin.contracts.ExperimentalContracts")
+                compilerOptions {
+                    freeCompilerArgs.add("-Xexpect-actual-classes")
+                }
             }
         }
 

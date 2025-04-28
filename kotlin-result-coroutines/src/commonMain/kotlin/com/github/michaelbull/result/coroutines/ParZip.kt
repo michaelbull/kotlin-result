@@ -1,23 +1,14 @@
 package com.github.michaelbull.result.coroutines
 
 import com.github.michaelbull.result.Err
-import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
-import com.github.michaelbull.result.getOrThrow
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
-import kotlin.jvm.JvmField
-import kotlin.jvm.Transient
 
 private typealias Producer<T, E> = suspend CoroutineScope.() -> Result<T, E>
-
-private class ParZipException(
-    @JvmField @Transient val error: Any?
-) : RuntimeException("parZip failed with error: $error")
 
 private suspend inline fun <T, E, V> parZipInternal(
     producers: List<Producer<T, E>>,
@@ -26,16 +17,11 @@ private suspend inline fun <T, E, V> parZipInternal(
     contract {
         callsInPlace(transform, InvocationKind.AT_MOST_ONCE)
     }
-    return try {
-        coroutineScope {
-            val values = producers
-                .map { producer -> async { producer().getOrThrow(::ParZipException) } }
-                .awaitAll()
-            Ok(transform(values))
-        }
-    } catch (e: ParZipException) {
-        @Suppress("UNCHECKED_CAST")
-        Err(e.error as E)
+    return coroutineBinding {
+        val values = producers
+            .map { producer -> async { producer().bind() } }
+            .awaitAll()
+        transform(values)
     }
 }
 

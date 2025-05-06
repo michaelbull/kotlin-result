@@ -51,10 +51,12 @@ public value class Result<out V, out E> internal constructor(
     private val inlineValue: Any?,
 ) {
 
+    @UnsafeResultValueAccess
     @Suppress("UNCHECKED_CAST")
     public val value: V
         get() = inlineValue as V
 
+    @UnsafeResultValueAccess
     @Suppress("UNCHECKED_CAST")
     public val error: E
         get() = (inlineValue as Failure<E>).error
@@ -102,3 +104,19 @@ private class Failure<out E>(
         return "Failure($error)"
     }
 }
+
+/**
+ * Marks access to [Result.value] or [Result.error] as potentially unsafe unless the [Result]
+ * is explicitly checked for [Result.isOk] or [Result.isErr] beforehand.
+ *
+ * Ensure that you verify the [Result] state using [Result.isOk] or [Result.isErr] before accessing its value.
+ * Alternatively, consider using the [Result.fold] function to safely handle the result.
+ */
+@RequiresOptIn(
+    level = RequiresOptIn.Level.ERROR,
+    message = "Accessing Result.value or Result.error without checking the Result state may lead to unsafe behavior.",
+)
+@MustBeDocumented
+@Retention(AnnotationRetention.BINARY)
+@Target(AnnotationTarget.PROPERTY)
+public annotation class UnsafeResultValueAccess

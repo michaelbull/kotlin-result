@@ -59,6 +59,7 @@ kotlin {
         all {
             languageSettings.apply {
                 optIn("kotlin.contracts.ExperimentalContracts")
+                optIn("com.github.michaelbull.result.UnsafeResultValueAccess")
             }
         }
 

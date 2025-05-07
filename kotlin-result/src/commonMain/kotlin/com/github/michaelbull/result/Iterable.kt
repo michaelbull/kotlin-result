@@ -137,6 +137,7 @@ public inline fun <T, R, E> List<T>.foldRight(
  * returned list are in the same order as the specified [results].
  *
  * - Elm: [Result.Extra.combine](http://package.elm-lang.org/packages/elm-community/result-extra/2.2.0/Result-Extra#combine)
+ * - Haskell: [Data.Traversable.sequenceA](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Traversable.html#v:sequenceA)
  */
 public fun <V, E, R : Result<V, E>> combine(vararg results: R): Result<List<V>, E> {
     return results.asIterable().combine()
@@ -147,6 +148,7 @@ public fun <V, E, R : Result<V, E>> combine(vararg results: R): Result<List<V>, 
  * list are in the the same order as [this].
  *
  * - Elm: [Result.Extra.combine](http://package.elm-lang.org/packages/elm-community/result-extra/2.2.0/Result-Extra#combine)
+ * - Haskell: [Data.Traversable.sequenceA](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Traversable.html#v:sequenceA)
  */
 public fun <V, E> Iterable<Result<V, E>>.combine(): Result<List<V>, E> {
     val values = map { result ->

@@ -20,6 +20,8 @@ ktor-serialization-jackson = { module = "io.ktor:ktor-serialization-jackson", ve
 ktor-server-content-negotiation = { module = "io.ktor:ktor-server-content-negotiation", version.ref = "ktor" }
 ktor-server-netty = { module = "io.ktor:ktor-server-netty", version.ref = "ktor" }
 
+arrow = { module = "io.arrow-kt:arrow-core", version = "2.1.2" }
+
 [plugins]
 kotlin-allopen = { id = "org.jetbrains.kotlin.plugin.allopen", version.ref = "kotlin" }
 kotlin-benchmark = { id = "org.jetbrains.kotlinx.benchmark", version.ref = "kotlin-benchmark" }

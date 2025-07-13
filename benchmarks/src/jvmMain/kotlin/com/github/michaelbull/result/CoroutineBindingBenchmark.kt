@@ -1,5 +1,8 @@
 package com.github.michaelbull.result
 
+import arrow.core.Either
+import arrow.core.raise.either
+import arrow.core.right
 import com.github.michaelbull.result.coroutines.coroutineBinding
 import kotlinx.benchmark.Benchmark
 import kotlinx.benchmark.BenchmarkMode
@@ -10,6 +13,7 @@ import kotlinx.benchmark.OutputTimeUnit
 import kotlinx.benchmark.Scope
 import kotlinx.benchmark.State
 import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 
@@ -32,6 +36,25 @@ class CoroutineBindingBenchmark {
 
     @Benchmark
     fun asyncSuspendableBinding(blackhole: Blackhole) {
+        runBlocking {
+            blackhole.consume(withAsyncSuspend().get())
+        }
+    }
+
+    @Benchmark
+    fun arrowNonSuspendableBinding(blackhole: Blackhole) {
+        blackhole.consume(nonSuspend().get())
+    }
+
+    @Benchmark
+    fun arrowSuspendableBinding(blackhole: Blackhole) {
+        runBlocking {
+            blackhole.consume(withSuspend().get())
+        }
+    }
+
+    @Benchmark
+    fun arrowAsyncSuspendableBinding(blackhole: Blackhole) {
         runBlocking {
             blackhole.consume(withAsyncSuspend().get())
         }
@@ -77,5 +100,45 @@ class CoroutineBindingBenchmark {
     private suspend fun provideY(): Result<Int, Error> {
         delay(time)
         return Ok(2)
+    }
+
+    private fun arrowNonSuspend(): Either<Error, Int> = either {
+        val x = arrowProvideXBlocking().bind()
+        val y = arrowProvideYBlocking().bind()
+        x + y
+    }
+
+    private suspend fun arrowWithSuspend(): Either<Error, Int> = either {
+        val x = arrowProvideX().bind()
+        val y = arrowProvideY().bind()
+        x + y
+    }
+
+    private suspend fun arrowWithAsyncSuspend(): Either<Error, Int> = either {
+        coroutineScope {
+            val x = async { arrowProvideX().bind() }
+            val y = async { arrowProvideY().bind() }
+            x.await() + y.await()
+        }
+    }
+
+    private fun arrowProvideXBlocking(): Either<Error, Int> {
+        Thread.sleep(time)
+        return 1.right()
+    }
+
+    private fun arrowProvideYBlocking(): Either<Error, Int> {
+        Thread.sleep(time)
+        return 2.right()
+    }
+
+    private suspend fun arrowProvideX(): Either<Error, Int> {
+        delay(time)
+        return 1.right()
+    }
+
+    private suspend fun arrowProvideY(): Either<Error, Int> {
+        delay(time)
+        return 2.right()
     }
 }

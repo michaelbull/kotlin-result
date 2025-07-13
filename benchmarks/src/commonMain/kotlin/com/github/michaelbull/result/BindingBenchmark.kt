@@ -1,5 +1,10 @@
 package com.github.michaelbull.result
 
+import arrow.core.raise.either
+import arrow.core.Either
+import arrow.core.flatMap
+import arrow.core.left
+import arrow.core.right
 import kotlinx.benchmark.Benchmark
 import kotlinx.benchmark.BenchmarkMode
 import kotlinx.benchmark.BenchmarkTimeUnit
@@ -37,6 +42,28 @@ class BindingBenchmark {
     }
 
     @Benchmark
+    fun arrowBindingSuccess(blackhole: Blackhole) {
+        val result: Either<Error, Int> = either {
+            val x = arrowProvideX().bind()
+            val y = arrowProvideY().bind()
+            x + y
+        }
+
+        blackhole.consume(result)
+    }
+
+    @Benchmark
+    fun arrowBindingFailure(blackhole: Blackhole) {
+        val result: Either<Error, Int> = either {
+            val x = arrowProvideX().bind()
+            val z = arrowProvideZ().bind()
+            x + z
+        }
+
+        blackhole.consume(result)
+    }
+
+    @Benchmark
     fun andThenSuccess(blackhole: Blackhole) {
         val result = provideX().andThen { x ->
             provideY().andThen { y ->
@@ -58,9 +85,35 @@ class BindingBenchmark {
         blackhole.consume(result)
     }
 
+    @Benchmark
+    fun arrowFlatMapSuccess(blackhole: Blackhole) {
+        val result = arrowProvideX().flatMap { x ->
+            arrowProvideY().flatMap { y ->
+                (x + y).right()
+            }
+        }
+
+        blackhole.consume(result)
+    }
+
+    @Benchmark
+    fun arrowFlatMapFailure(blackhole: Blackhole) {
+        val result = arrowProvideX().flatMap { x ->
+            arrowProvideZ().flatMap { z ->
+                (x + z).right()
+            }
+        }
+
+        blackhole.consume(result)
+    }
+
     private object Error
 
     private fun provideX(): Result<Int, Error> = Ok(1)
     private fun provideY(): Result<Int, Error> = Ok(2)
     private fun provideZ(): Result<Int, Error> = Err(Error)
+
+    private fun arrowProvideX(): Either<Error, Int> = 1.right()
+    private fun arrowProvideY(): Either<Error, Int> = 2.right()
+    private fun arrowProvideZ(): Either<Error, Int> = Error.left()
 }

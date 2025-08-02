@@ -7,10 +7,6 @@ application {
     mainClass.set("com.github.michaelbull.result.example.ApplicationKt")
 }
 
-kotlin {
-    jvmToolchain(8)
-}
-
 dependencies {
     implementation(project(":kotlin-result"))
     implementation(libs.kotlin.stdlib.jdk8)

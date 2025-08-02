@@ -63,35 +63,35 @@ jobs:
         include:
           - os: ubuntu-latest
             tasks: >
-              publishAndroidNativeArm32PublicationToMavenRepository
-              publishAndroidNativeArm64PublicationToMavenRepository
-              publishAndroidNativeX64PublicationToMavenRepository
-              publishAndroidNativeX86PublicationToMavenRepository
-              publishJsPublicationToMavenRepository
-              publishJvmPublicationToMavenRepository
-              publishKotlinMultiplatformPublicationToMavenRepository
-              publishLinuxArm64PublicationToMavenRepository
-              publishLinuxX64PublicationToMavenRepository
-              publishWasmJsPublicationToMavenRepository
+              publishAndroidNativeArm32PublicationToMavenCentralRepository
+              publishAndroidNativeArm64PublicationToMavenCentralRepository
+              publishAndroidNativeX64PublicationToMavenCentralRepository
+              publishAndroidNativeX86PublicationToMavenCentralRepository
+              publishJsPublicationToMavenCentralRepository
+              publishJvmPublicationToMavenCentralRepository
+              publishKotlinMultiplatformPublicationToMavenCentralRepository
+              publishLinuxArm64PublicationToMavenCentralRepository
+              publishLinuxX64PublicationToMavenCentralRepository
+              publishWasmJsPublicationToMavenCentralRepository
 
           - os: windows-latest
-            tasks: publishMingwX64PublicationToMavenRepository
+            tasks: publishMingwX64PublicationToMavenCentralRepository
 
           - os: macos-latest
             tasks: >
-              publishIosArm64PublicationToMavenRepository
-              publishIosSimulatorArm64PublicationToMavenRepository
-              publishIosX64PublicationToMavenRepository
-              publishMacosArm64PublicationToMavenRepository
-              publishMacosX64PublicationToMavenRepository
-              publishTvosArm64PublicationToMavenRepository
-              publishTvosSimulatorArm64PublicationToMavenRepository
-              publishTvosX64PublicationToMavenRepository
-              publishWatchosArm32PublicationToMavenRepository
-              publishWatchosArm64PublicationToMavenRepository
-              publishWatchosDeviceArm64PublicationToMavenRepository
-              publishWatchosSimulatorArm64PublicationToMavenRepository
-              publishWatchosX64PublicationToMavenRepository
+              publishIosArm64PublicationToMavenCentralRepository
+              publishIosSimulatorArm64PublicationToMavenCentralRepository
+              publishIosX64PublicationToMavenCentralRepository
+              publishMacosArm64PublicationToMavenCentralRepository
+              publishMacosX64PublicationToMavenCentralRepository
+              publishTvosArm64PublicationToMavenCentralRepository
+              publishTvosSimulatorArm64PublicationToMavenCentralRepository
+              publishTvosX64PublicationToMavenCentralRepository
+              publishWatchosArm32PublicationToMavenCentralRepository
+              publishWatchosArm64PublicationToMavenCentralRepository
+              publishWatchosDeviceArm64PublicationToMavenCentralRepository
+              publishWatchosSimulatorArm64PublicationToMavenCentralRepository
+              publishWatchosX64PublicationToMavenCentralRepository
 
     steps:
       - name: Checkout Project
@@ -115,8 +115,8 @@ jobs:
       - name: Publish with Gradle Wrapper
         run: ./gradlew ${{ matrix.tasks }}
         env:
-          ORG_GRADLE_PROJECT_ossrhUsername: ${{ secrets.OSSRH_USERNAME }}
-          ORG_GRADLE_PROJECT_ossrhPassword: ${{ secrets.OSSRH_PASSWORD }}
-          ORG_GRADLE_PROJECT_signingKeyId: ${{ secrets.SIGNING_KEY_ID }}
-          ORG_GRADLE_PROJECT_signingKey: ${{ secrets.SIGNING_KEY }}
-          ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.SIGNING_PASSWORD }}
+          ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+          ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+          ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.SIGNING_KEY }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyId: ${{ secrets.SIGNING_KEY_ID }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.SIGNING_KEY_PASSWORD }}

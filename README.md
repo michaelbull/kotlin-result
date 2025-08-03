@@ -29,7 +29,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.michael-bull.kotlin-result:kotlin-result:2.0.1")
+    implementation("com.michael-bull.kotlin-result:kotlin-result:2.0.2")
 }
 ```
 
@@ -188,8 +188,8 @@ additional dependency:
 
 ```kotlin
 dependencies {
-    implementation("com.michael-bull.kotlin-result:kotlin-result:2.0.1")
-    implementation("com.michael-bull.kotlin-result:kotlin-result-coroutines:2.0.1")
+    implementation("com.michael-bull.kotlin-result:kotlin-result:2.0.2")
+    implementation("com.michael-bull.kotlin-result:kotlin-result-coroutines:2.0.2")
 }
 ```
 

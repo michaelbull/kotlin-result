@@ -18,7 +18,7 @@ benchmark {
 
 kotlin {
     sourceSets {
-        val commonMain by getting {
+        commonMain {
             dependencies {
                 implementation(project(":kotlin-result-coroutines"))
                 implementation(libs.kotlin.benchmark.runtime)

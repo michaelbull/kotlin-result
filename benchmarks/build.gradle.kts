@@ -23,6 +23,11 @@ kotlin {
                 implementation(project(":kotlin-result-coroutines"))
                 implementation(libs.kotlin.benchmark.runtime)
                 implementation(libs.kotlin.coroutines.core)
+            }
+        }
+
+        jvmMain {
+            dependencies {
                 implementation(libs.arrow)
             }
         }

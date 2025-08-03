@@ -33,6 +33,7 @@ ktor-server-content-negotiation = { module = "io.ktor:ktor-server-content-negoti
 ktor-server-netty = { module = "io.ktor:ktor-server-netty", version.ref = "ktor" }
 logback = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
 
+
 [plugins]
 versions = { id = "com.github.ben-manes.versions", version.ref = "versions-plugin" }
 

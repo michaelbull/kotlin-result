@@ -7,6 +7,10 @@ plugins {
 kotlin {
     explicitApi()
 
+    compilerOptions {
+        optIn.add("kotlinx.coroutines.ExperimentalCoroutinesApi")
+    }
+
     sourceSets {
         commonMain {
             dependencies {

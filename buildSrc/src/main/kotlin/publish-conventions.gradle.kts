@@ -158,18 +158,33 @@ mavenPublishing {
             }
 
             contributor {
-                name.set("Hoang Chung")
+                name.set("Hoàng Anh Chung")
                 url.set("https://github.com/hoangchungk53qx1")
             }
 
             contributor {
-                name.set("Daiji")
+                name.set("Daiji Suzuki")
                 url.set("https://daiji256.github.io/")
             }
 
             contributor {
                 name.set("Yusuke Katsuragawa")
                 url.set("https://kaleidot.net/")
+            }
+
+            contributor {
+                name.set("Petrus Nguyễn Thái Học")
+                url.set("https://hoc081098.github.io/profile/")
+            }
+
+            contributor {
+                name.set("Alpha Ho")
+                url.set("https://github.com/alphaho")
+            }
+
+            contributor {
+                name.set("Raika Nakamura")
+                url.set("https://github.com/nakamuraraika")
             }
         }
 

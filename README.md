@@ -72,6 +72,8 @@ to include yours.
 - [[EN] Railway Oriented Programming - Scott Wlaschin](https://fsharpforfunandprofit.com/rop/)
 - [[JP] KotlinでResult型使うならkotlin-resultを使おう](https://note.com/telin/n/n6d9e352c344c)
 - [[JP] kotlinのコードにReturn Resultを組み込む](https://nnao45.hatenadiary.com/entry/2019/11/30/224820)
+- [[JP] kotlin-resultを半年使ってみて](https://zenn.dev/loglass/articles/try-using-kotlin-result)
+- [[JP] kotlin-result入門](https://blog.nnn.dev/entry/2023/06/22/110000)
 
 Mappings are available on the [wiki][wiki] to assist those with experience
 using the `Result` type in other languages:

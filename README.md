@@ -216,8 +216,10 @@ it as a return type for generic business logic.
 - The Kotlin team admits its "half-baked" and discourages use for "domain-specific error conditions".
 - The Kotlin team do not use it, and are sending increasingly mixed messages on how users should be dealing with
   domain-specific errors.
-- The Kotlin team keep inventing their own domain-specific versions, e.g. [`ChannelResult`][ChannelResult]) in the
-  coroutines library, thus proving the need for such a type but lacking commitment to a standardised solution.
+- JetBrains keep inventing their own domain-specific versions: [one][MetadataDeclarationsComparator],
+  [two][parametersMap], [three][ChannelResult], [four][LineStatusTrackerManager],
+  [five][LazyLoadingAccountsDetailsProvider], [six][VcsCodeVisionProvider] - thus proving the need for such a type but
+  lacking commitment to a standardised solution.
 - It was initially unusable as a return type and usage was discouraged. This restriction was then lifted and users
   guided towards context receivers. Context receivers were abandoned in favour of the (still experimental) context
   parameters. Rich errors have been proposed to supersede context parameters by providing a language-level solution.
@@ -358,7 +360,12 @@ information and licensing terms.
 [stdlib-result-return-type-lifted]: https://discuss.kotlinlang.org/t/state-of-kotlin-result-vs-kotlin-result/21103/5
 [stdlib-result-keep]: https://github.com/Kotlin/KEEP/blob/master/proposals/stdlib/result.md#error-handling-style-and-exceptions
 [stdlib-result-runCatching]: https://github.com/JetBrains/kotlin/blob/v2.2.20/libraries/stdlib/src/kotlin/util/Result.kt#L144
+[MetadataDeclarationsComparator]: https://github.com/JetBrains/kotlin/blob/c811992b611b8a725b6b55dafa574a0b145b5da3/native/commonizer/src/org/jetbrains/kotlin/commonizer/metadata/utils/MetadataDeclarationsComparator.kt#L43
+[parametersMap]: https://github.com/JetBrains/kotlin/blob/c811992b611b8a725b6b55dafa574a0b145b5da3/compiler/cli/cli-common/src/org/jetbrains/kotlin/utils/parametersMap.kt#L60
 [ChannelResult]: https://kotlinlang.org/api/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines.channels/-channel-result/
+[LineStatusTrackerManager]: https://github.com/JetBrains/intellij-community/blob/d73a081b09fcb0f53308352a57ad54c0721f0443/platform/vcs-impl/src/com/intellij/openapi/vcs/impl/LineStatusTrackerManager.kt#L1406
+[LazyLoadingAccountsDetailsProvider]: https://github.com/JetBrains/intellij-community/blob/d73a081b09fcb0f53308352a57ad54c0721f0443/platform/collaboration-tools/src/com/intellij/collaboration/auth/ui/LazyLoadingAccountsDetailsProvider.kt#L92
+[VcsCodeVisionProvider]: https://github.com/JetBrains/intellij-community/blob/d73a081b09fcb0f53308352a57ad54c0721f0443/platform/vcs-impl/lang/src/com/intellij/codeInsight/hints/VcsCodeVisionProvider.kt#L287
 [CancellationException]: https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.coroutines.cancellation/-cancellation-exception/
 [rich-hickey-maybe-not]: https://www.youtube.com/watch?v=YR5WdGrpoug&t=657s
 

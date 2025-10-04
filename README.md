@@ -19,7 +19,8 @@
 ![badge][badge-android-native]
 ![badge][badge-apple-silicon]
 
-A multiplatform Result monad for modelling success or failure operations.
+A multiplatform Result monad for modelling success or failure operations, providing all three tiers
+of [Kotlin/Native target support][kotlin-native-target-support].
 
 ## Installation
 
@@ -44,38 +45,6 @@ return an [`Err(error)`][result-Err] with the `error` that caused the failure.
 This helps to define a clear happy/unhappy path of execution that is commonly referred to
 as [Railway Oriented Programming][rop], whereby the happy and unhappy paths are represented as separate railways.
 
-### Overhead
-
-The `Result` type is modelled as an [inline value class][kotlin-inline-classes]. This achieves zero object allocations
-on the happy path.
-
-A full breakdown, with example output Java code, is available in the [Overhead][wiki-Overhead] design doc.
-
-### Multiplatform Support
-
-`kotlin-result` targets all three tiers outlined by the [Kotlin/Native target support][kotlin-native-target-support]
-
-### Read More
-
-Below is a collection of videos & articles authored on the subject of this library. Feel free to open a pull request
-on [GitHub][github] if you would like to include yours.
-
-- [[EN] The Result Monad - Adam Bennett](https://adambennett.dev/2020/05/the-result-monad/)
-- [[EN] A Functional Approach to Exception Handling - Tristan Hamilton](https://youtu.be/bEC_t8dH23c?t=132)
-- [[EN] kotlin: A functional gold mine - Mark Bucciarelli](http://markbucciarelli.com/posts/2020-01-04_kotlin_functional_gold_mine.html)
-- [[EN] Railway Oriented Programming - Scott Wlaschin](https://fsharpforfunandprofit.com/rop/)
-- [[JP] KotlinでResult型使うならkotlin-resultを使おう](https://note.com/telin/n/n6d9e352c344c)
-- [[JP] kotlinのコードにReturn Resultを組み込む](https://nnao45.hatenadiary.com/entry/2019/11/30/224820)
-- [[JP] kotlin-resultを半年使ってみて](https://zenn.dev/loglass/articles/try-using-kotlin-result)
-- [[JP] kotlin-result入門](https://blog.nnn.dev/entry/2023/06/22/110000)
-
-Mappings are available on the [wiki][wiki] to assist those with experience using the `Result` type in other languages:
-
-- [Elm](https://github.com/michaelbull/kotlin-result/wiki/Elm)
-- [Haskell](https://github.com/michaelbull/kotlin-result/wiki/Haskell)
-- [Rust](https://github.com/michaelbull/kotlin-result/wiki/Rust)
-- [Scala](https://github.com/michaelbull/kotlin-result/wiki/Scala)
-
 ## Getting Started
 
 Below is a simple example of how you may use the `Result` type to model a function that may fail.
@@ -90,7 +59,7 @@ fun checkPrivileges(user: User, command: Command): Result<Command, CommandError>
 }
 ```
 
-When interacting with code outside your control that may throw exceptions, wrap the call
+When interacting with code outside of your control that may throw exceptions, wrap the call
 with [`runCatching`][result-runCatching] to capture its execution as a `Result<T, Throwable>`:
 
 ```kotlin
@@ -137,9 +106,10 @@ tokenize(command.toLowerCase())
     )
 ```
 
-### Binding (Monad Comprehension)
+## Advanced Usage - Binding (Monad Comprehension)
 
 The [`binding`][result-binding] function allows multiple calls that each return a `Result` to be chained imperatively.
+
 When inside a `binding` block, the `bind()` function is accessible on any `Result`. Each call to `bind` will attempt to
 unwrap the `Result` and store its value, returning early if any `Result` is an error.
 
@@ -147,15 +117,9 @@ In the example below, should `functionX()` return an error, then execution will 
 `functionZ()`, instead storing the error from `functionX` in the variable named `sum`.
 
 ```kotlin
-fun functionX(): Result<Int, SumError> {
-    ...
-}
-fun functionY(): Result<Int, SumError> {
-    ...
-}
-fun functionZ(): Result<Int, SumError> {
-    ...
-}
+fun functionX(): Result<Int, SumError> = TODO()
+fun functionY(): Result<Int, SumError> = TODO()
+fun functionZ(): Result<Int, SumError> = TODO()
 
 val sum: Result<Int, SumError> = binding {
     val x = functionX().bind()
@@ -194,12 +158,8 @@ The example below demonstrates a computationally expensive function that takes f
 eagerly cancelled as soon as a smaller function fails in just one millisecond:
 
 ```kotlin
-suspend fun failsIn5ms(): Result<Int, DomainErrorA> {
-    ...
-}
-suspend fun failsIn1ms(): Result<Int, DomainErrorB> {
-    ...
-}
+suspend fun failsIn5ms(): Result<Int, DomainErrorA> = TODO()
+suspend fun failsIn1ms(): Result<Int, DomainErrorB> = TODO()
 
 runBlocking {
     val result: Result<Int, BindingError> = coroutineBinding { // this creates a new CoroutineScope
@@ -212,7 +172,122 @@ runBlocking {
 }
 ```
 
-## Inspiration
+## FAQs
+
+### 1. What is the performance cost?
+
+The `Result` type is modelled as an [inline value class][kotlin-inline-classes]. This achieves zero object allocations
+on the happy path. A full breakdown, with example output Java code, is available in the [Overhead][wiki-Overhead] design
+doc.
+
+### 2. Why not use `kotlin.Result` from the standard library?
+
+> "`kotlin.Result` is half-baked"
+>
+> — [Ilmir Usmanov, JetBrains][stdlib-result-half-baked]
+
+This library was created in Oct 2017. The JetBrains team introduced `kotlin.Result` to the standard library in version
+1.3 of the language in Oct 2018 as an experimental feature. Initially, it was limited to internal use only as it was
+"intended to be used by compiler generated code only - namely coroutines".
+
+Less than one week after stating that "we do not encourage use of kotlin.Result", the JetBrains team announced that they
+["will allow returning kotlin.Result from functions"][stdlib-result-return-type-lifted]. This came at the time when they
+were considering guiding users towards contextual receivers to replace the Result paradigm. In later years, the context
+receivers experiment was superseded by the more recent context parameters, which are still in an experimental state.
+
+Michail Zarečenskij, the Lead Language Designer for Kotlin, announced at KotlinConf 2025 the development of
+["Rich Errors in Kotlin"](https://2025.kotlinconf.com/talks/762779/), providing yet another potential solution for error
+handling.
+
+As of the time of writing, the KEEP for `kotlin.Result` states that it is ["not designed to represent domain-specific
+error conditions"][stdlib-result-keep]. This statement should help to inform most users with their decision of adopting
+it as a return type for generic business logic.
+
+> "The Result class is not designed to represent domain-specific error conditions."
+>
+> — [Kotlin Evolution and Enhancement Process #127][stdlib-result-keep]
+
+#### Reasons against `kotlin.Result`:
+
+- The functionality it provides does not match that of a first class citizen Result type found in other languages, nor
+  the functionality offered by this library.
+- The Kotlin team admits its "half-baked" and discourages use for "domain-specific error conditions".
+- The Kotlin team do not use it, and are sending increasingly mixed messages on how users should be dealing with
+  domain-specific errors.
+- The Kotlin team keep inventing their own domain-specific versions, e.g. [`ChannelResult`][ChannelResult]) in the
+  coroutines library, thus proving the need for such a type but lacking commitment to a standardised solution.
+- It was initially unusable as a return type and usage was discouraged. This restriction was then lifted and users
+  guided towards context receivers. Context receivers were abandoned in favour of the (still experimental) context
+  parameters. Rich errors have been proposed to supersede context parameters by providing a language-level solution.
+- The [`runCatching`][stdlib-result-runCatching] implementation is **incompatible** with cooperatively cancelled
+  coroutines. It catches all child types of `Throwable`, therefore catching a `CancellationException`. This is a special
+  type of exception that ["indicates normal cancellation of a coroutine"][CancellationException]. Catching and not
+  rethrowing it **will break** this behaviour. This library provides [`runSuspendCatching`][result-runSuspendCatching]
+  to address this.
+- Error types are constrained to being subclasses of `Throwable`. This means you must inherit from `Throwable` in all of
+  your domain-specific errors. This comes with the trappings of stacktraces being computed per-instantiation, and errors
+  now being throwable generally across your codebase regardless of whether you intend for consumers to throw them.
+- Instantiation is verbose with factory functions being under the `Result` companion object: `Result.success`,
+  `Result.failure`
+
+#### Reasons for `kotlin-result` over `kotlin.Result`:
+
+- Consistent naming with existing Result libraries from other languages (e.g. `map`, `mapError`, `mapBoth`, `mapEither`,
+  `and`, `andThen`, `or`, `orElse`, `unwrap`)
+- Feature parity with Result types from other languages including Elm, Haskell, & Rust
+- Extension functions on `Iterable` & `List` for folding, combining, partitioning
+- Monadic comprehension support via the `binding` and `coroutineBinding` functions for imperative use
+- Coroutine-aware primitives e.g. `coroutineBinding` and `runSuspendCatching`
+- Lax constraints on the `error` type's inheritance (does not inherit from `Throwable`)
+- Top-level `Ok` and `Err` functions for instantiation brevity
+
+### 3. Why not call it `Either`?
+
+> "`Either` in particular, wow it is just not a beautiful thing. It does not mean OR. It's got a left and a right, it
+> should have been called 'left right thingy'. Then you'd have a better sense of the true semantics; there are no
+> semantics except what you superimpose on top of it."
+>
+> — [Rich Hickey, author of Closure][rich-hickey-maybe-not]
+
+`Result` is opinionated in name and nature with a strict definition. It models its success as the left generic
+parameter and failure on the right. This decision removes the need for users to choose a "biased" side which is a
+repeated point of contention for anyone using the more broadly named `Either` type. As such there is no risk of
+different libraries/teams/projects using different sides for bias.
+
+`Either` itself is misleading and harmful. It is a naive attempt to add a true `OR` type to the type system. It has no
+pre-defined semantics, and is missing the properties of a truly mathematical `OR`:
+
+- **Not Commutative**: `Either<String, Int>` is not the same as the type `Either<Int, String>`. The order of the types
+  is fixed, as the positions themselves have different conventional meanings.
+- **Not Symmetric**: `Either<String, Int>` has left and right components are not treated as equals. They are designed
+  for different roles: `String` for the success value and `Int` for the error value. They are not interchangeable.
+
+### 4. Why does [`runCatching`][result-runCatching] catch `Throwable`?
+
+For consistency with the standard libraries own [`runCatching`][stdlib-result-runCatching].
+
+To address the issue of breaking coroutine cancellation behaviour, we introduced the
+[`runSuspendCatching`][result-runSuspendCatching] variant which explicitly rethrows any
+[`CancellationException`][CancellationException].
+
+Should you need to rethrow a specific type of throwable, use [`throwIf`][result-throwIf]:
+
+```kotlin
+runCatching(block).throwIf { error ->
+    error is IOException
+}
+```
+
+### 5. I've used `Result` in another language, how does it translate?
+
+Mappings are available on the [wiki][wiki] to assist those with experience using the `Result` type in other languages:
+
+- [Elm](https://github.com/michaelbull/kotlin-result/wiki/Elm)
+- [Haskell](https://github.com/michaelbull/kotlin-result/wiki/Haskell)
+- [Rust](https://github.com/michaelbull/kotlin-result/wiki/Rust)
+- [Scala](https://github.com/michaelbull/kotlin-result/wiki/Scala)
+
+### 6. What other languages & libraries inspired this one?
 
 Inspiration for this library has been drawn from other languages in which the Result monad is present, including:
 
@@ -227,12 +302,26 @@ Improvements on existing solutions such the stdlib include:
 - Feature parity with Result types from other languages including Elm, Haskell, & Rust
 - Lax constraints on `value`/`error` nullability
 - Lax constraints on the `error` type's inheritance (does not inherit from `Exception`)
-- Top level `Ok` and `Err` functions avoids qualifying usages with `Result.Ok`/`Result.Err` respectively
+- Top-level `Ok` and `Err` functions avoids qualifying usages with `Result.Ok`/`Result.Err` respectively
 - Higher-order functions marked with the `inline` keyword for reduced runtime overhead
 - Extension functions on `Iterable` & `List` for folding, combining, partitioning
 - Consistent naming with existing Result libraries from other languages (e.g. `map`, `mapError`, `mapBoth`, `mapEither`,
   `and`, `andThen`, `or`, `orElse`, `unwrap`)
 - Extensive test suite with almost 100 [unit tests][unit-tests] covering every library method
+
+### 7. Where can I learn more?
+
+Below is a collection of videos & articles authored on the subject of this library. Feel free to open a pull request
+on [GitHub][github] if you would like to include yours.
+
+- [[EN] The Result Monad - Adam Bennett](https://adambennett.dev/2020/05/the-result-monad/)
+- [[EN] A Functional Approach to Exception Handling - Tristan Hamilton](https://youtu.be/bEC_t8dH23c?t=132)
+- [[EN] kotlin: A functional gold mine - Mark Bucciarelli](http://markbucciarelli.com/posts/2020-01-04_kotlin_functional_gold_mine.html)
+- [[EN] Railway Oriented Programming - Scott Wlaschin](https://fsharpforfunandprofit.com/rop/)
+- [[JP] KotlinでResult型使うならkotlin-resultを使おう](https://note.com/telin/n/n6d9e352c344c)
+- [[JP] kotlinのコードにReturn Resultを組み込む](https://nnao45.hatenadiary.com/entry/2019/11/30/224820)
+- [[JP] kotlin-resultを半年使ってみて](https://zenn.dev/loglass/articles/try-using-kotlin-result)
+- [[JP] kotlin-result入門](https://blog.nnn.dev/entry/2023/06/22/110000)
 
 ## Contributing
 
@@ -243,6 +332,7 @@ Bug reports and pull requests are welcome on [GitHub][github].
 This project is available under the terms of the ISC license. See the [`LICENSE`](LICENSE) file for the copyright
 information and licensing terms.
 
+[//]: # (@formatter:off)
 [result]: https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/Result.kt#L10
 [result-value]: https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/Result.kt#L55
 [result-error]: https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/Result.kt#L59
@@ -255,11 +345,20 @@ information and licensing terms.
 [github]: https://github.com/michaelbull/kotlin-result
 [wiki]: https://github.com/michaelbull/kotlin-result/wiki
 [result-runCatching]: https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/Factory.kt#L11
+[result-runSuspendCatching]: https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result-coroutines/src/commonMain/kotlin/com/github/michaelbull/result/coroutines/RunSuspendCatching.kt#L17
+[result-throwIf]: https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/Or.kt#L52
 [result-binding]: https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/Binding.kt#L28
 [bow-bindings]: https://bow-swift.io/docs/patterns/monad-comprehensions/#bindings
 [result-coroutineBinding]: https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result-coroutines/src/commonMain/kotlin/com/github/michaelbull/result/coroutines/CoroutineBinding.kt#L42
 [kotlin-coroutineScope]: https://kotlinlang.org/api/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines/coroutine-scope.html
 [unit-tests]: https://github.com/michaelbull/kotlin-result/tree/master/kotlin-result/src/commonTest/kotlin/com/github/michaelbull/result
+[stdlib-result-half-baked]: https://discuss.kotlinlang.org/t/state-of-kotlin-result-vs-kotlin-result/21103/4
+[stdlib-result-return-type-lifted]: https://discuss.kotlinlang.org/t/state-of-kotlin-result-vs-kotlin-result/21103/5
+[stdlib-result-keep]: https://github.com/Kotlin/KEEP/blob/master/proposals/stdlib/result.md#error-handling-style-and-exceptions
+[stdlib-result-runCatching]: https://github.com/JetBrains/kotlin/blob/v2.2.20/libraries/stdlib/src/kotlin/util/Result.kt#L144
+[ChannelResult]: https://kotlinlang.org/api/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines.channels/-channel-result/
+[CancellationException]: https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.coroutines.cancellation/-cancellation-exception/
+[rich-hickey-maybe-not]: https://www.youtube.com/watch?v=YR5WdGrpoug&t=657s
 
 [badge-android]: http://img.shields.io/badge/-android-6EDB8D.svg?style=flat
 [badge-android-native]: http://img.shields.io/badge/support-[AndroidNative]-6EDB8D.svg?style=flat
@@ -275,3 +374,4 @@ information and licensing terms.
 [badge-mac]: http://img.shields.io/badge/-macos-111111.svg?style=flat
 [badge-watchos]: http://img.shields.io/badge/-watchos-C0C0C0.svg?style=flat
 [badge-tvos]: http://img.shields.io/badge/-tvos-808080.svg?style=flat
+[//]: # (@formatter:on)

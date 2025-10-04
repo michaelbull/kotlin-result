@@ -83,6 +83,10 @@ kotlin {
 }
 
 tasks.withType<Jar> {
+    manifest {
+        attributes(mapOf("SPDX-License-Identifier" to "ISC"))
+    }
+
     from(rootDir.resolve("LICENSE")) {
         into("META-INF")
     }

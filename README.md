@@ -187,15 +187,15 @@ doc.
 > — [Ilmir Usmanov, JetBrains][stdlib-result-half-baked]
 
 This library was created in Oct 2017. The JetBrains team introduced `kotlin.Result` to the standard library in version
-1.3 of the language in Oct 2018 as an experimental feature. Initially, it was limited to internal use only as it was
+1.3 of the language in Oct 2018 as an experimental feature. Initially, it could not be used as a return type as it was
 "intended to be used by compiler generated code only - namely coroutines".
 
-Less than one week after stating that ["we do not encourage use of kotlin.Result"][stdlib-result-half-baked], the
+Less than one week after stating that they ["do not encourage use of kotlin.Result"][stdlib-result-half-baked], the
 JetBrains team announced that
-they ["will allow returning kotlin.Result from functions"][stdlib-result-return-type-lifted]. This came at the time when
-they were considering guiding users towards contextual receivers to replace the Result paradigm. In later years, the
-context receivers experiment was superseded by the more recent context parameters, which are still in an experimental
-state.
+they ["will allow returning kotlin.Result from functions"][stdlib-result-return-type-lifted] in version 1.5, releasing
+May 2021 — three years after its introduction in 1.3. At this time, the team were deliberating on whether to guide users
+towards contextual receivers to replace the Result paradigm. In later years, the context receivers experiment was
+superseded by context parameters, which are still in an experimental state.
 
 Michail Zarečenskij, the Lead Language Designer for Kotlin, announced at KotlinConf 2025 the development of
 ["Rich Errors in Kotlin"](https://2025.kotlinconf.com/talks/762779/), providing yet another potential solution for error

@@ -164,4 +164,128 @@ class AsyncCoroutineBindingTest {
         assertTrue(yStateChange)
         assertFalse(zStateChange)
     }
+
+    @Test
+    fun shouldHandleNestedBindings() = runTest {
+        var xStateChange = false
+        var yStateChange = false
+        var zStateChange = false
+
+        suspend fun provideX(): Result<Int, BindingError> {
+            delay(1)
+            xStateChange = true
+            return Ok(1)
+        }
+
+        suspend fun provideXWrapped() = coroutineBinding {
+            provideX().bind()
+        }
+
+        suspend fun provideY(): Result<Int, BindingError.BindingErrorA> {
+            delay(20)
+            yStateChange = true
+            return Ok(1)
+        }
+
+        suspend fun provideYWrapped() = coroutineBinding {
+            provideY().bind()
+        }
+
+        suspend fun provideZ(): Result<Int, BindingError.BindingErrorB> {
+            delay(100)
+            zStateChange = true
+            return Ok(1)
+        }
+
+        suspend fun provideZWrapped() = coroutineBinding {
+            provideZ().bind()
+        }
+
+        val dispatcherA = StandardTestDispatcher(testScheduler)
+        val dispatcherB = StandardTestDispatcher(testScheduler)
+        val dispatcherC = StandardTestDispatcher(testScheduler)
+
+        val result: Result<Int, BindingError> = coroutineBinding {
+            val x = async(dispatcherA) { provideXWrapped().bind() }
+            val y = async(dispatcherB) { provideYWrapped().bind() }
+
+            testScheduler.advanceTimeBy(2)
+            testScheduler.runCurrent()
+
+            val z = async(dispatcherC) { provideZWrapped().bind() }
+
+            x.await() + y.await() + z.await()
+        }
+
+        assertEquals(
+            expected = Ok(3),
+            actual = result
+        )
+
+        assertTrue(xStateChange)
+        assertTrue(yStateChange)
+        assertTrue(zStateChange)
+    }
+
+    @Test
+    fun shouldHandleExceptionsWithNestedBindings() = runTest {
+        var xStateChange = false
+        var yStateChange = false
+        var zStateChange = false
+
+        suspend fun provideX(): Result<Int, BindingError> {
+            delay(1)
+            xStateChange = true
+            return Ok(1)
+        }
+
+        suspend fun provideXWrapped() = coroutineBinding {
+            provideX().bind()
+        }
+
+        suspend fun provideY(): Result<Int, BindingError.BindingErrorA> {
+            delay(20)
+            yStateChange = true
+            return Err(BindingError.BindingErrorA)
+        }
+
+        suspend fun provideYWrapped() = coroutineBinding {
+            provideY().bind()
+        }
+
+        suspend fun provideZ(): Result<Int, BindingError.BindingErrorB> {
+            delay(100)
+            zStateChange = true
+            return Ok(1)
+        }
+
+        suspend fun provideZWrapped() = coroutineBinding {
+            provideZ().bind()
+        }
+
+        val dispatcherA = StandardTestDispatcher(testScheduler)
+        val dispatcherB = StandardTestDispatcher(testScheduler)
+        val dispatcherC = StandardTestDispatcher(testScheduler)
+
+        val result: Result<Int, BindingError> = coroutineBinding {
+            val x = async(dispatcherA) { provideXWrapped().bind() }
+            val y = async(dispatcherB) { provideYWrapped().bind() }
+
+            testScheduler.advanceTimeBy(2)
+            testScheduler.runCurrent()
+
+            val z = async(dispatcherC) { provideZWrapped().bind() }
+
+            x.await() + y.await() + z.await()
+        }
+
+        assertEquals(
+            expected = Err(BindingError.BindingErrorA),
+            actual = result
+        )
+
+        assertTrue(xStateChange)
+        assertTrue(yStateChange)
+        assertFalse(zStateChange)
+    }
 }

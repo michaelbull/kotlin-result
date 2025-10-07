@@ -12,7 +12,11 @@ import kotlin.test.assertTrue
 
 class CoroutineBindingTest {
 
-    private object BindingError
+    private sealed interface BindingError {
+        data object BindingErrorA : BindingError
+        data object BindingErrorB : BindingError
+        data object BindingErrorC : BindingError
+    }
 
     @Test
     fun returnsOkIfAllBindsSuccessful() = runTest {
@@ -71,7 +75,7 @@ class CoroutineBindingTest {
 
         suspend fun provideY(): Result<Int, BindingError> {
             delay(1)
-            return Err(BindingError)
+            return Err(BindingError.BindingErrorA)
         }
 
         suspend fun provideZ(): Result<Int, BindingError> {
@@ -87,7 +91,7 @@ class CoroutineBindingTest {
         }
 
         assertEquals(
-            expected = Err(BindingError),
+            expected = Err(BindingError.BindingErrorA),
             actual = result,
         )
     }
@@ -107,13 +111,13 @@ class CoroutineBindingTest {
         suspend fun provideY(): Result<Int, BindingError> {
             delay(10)
             yStateChange = true
-            return Err(BindingError)
+            return Err(BindingError.BindingErrorA)
         }
 
         suspend fun provideZ(): Result<Int, BindingError> {
             delay(1)
             zStateChange = true
-            return Err(BindingError)
+            return Err(BindingError.BindingErrorA)
         }
 
         val result: Result<Int, BindingError> = coroutineBinding {
@@ -124,7 +128,7 @@ class CoroutineBindingTest {
         }
 
         assertEquals(
-            expected = Err(BindingError),
+            expected = Err(BindingError.BindingErrorA),
             actual = result,
         )
 
@@ -142,7 +146,7 @@ class CoroutineBindingTest {
 
         suspend fun provideY(): Result<String, BindingError> {
             delay(1)
-            return Err(BindingError)
+            return Err(BindingError.BindingErrorA)
         }
 
         suspend fun provideZ(): Result<Int, BindingError> {
@@ -158,8 +162,32 @@ class CoroutineBindingTest {
         }
 
         assertEquals(
-            expected = Err(BindingError),
+            expected = Err(BindingError.BindingErrorA),
             actual = result,
+        )
+    }
+
+    @Test
+    fun shouldHandleExceptionsWithMultipleNestedBindings() = runTest {
+        val result: Result<Int, BindingError> = coroutineBinding {
+            val b: Result<Int, BindingError> = coroutineBinding {
+                val c: Result<Int, BindingError> = coroutineBinding {
+                    Err(BindingError.BindingErrorC).bind()
+                }
+
+                assertEquals(Err(BindingError.BindingErrorC), c)
+
+                Ok(2).bind()
+            }
+
+            assertEquals(Ok(2), b)
+
+            Err(BindingError.BindingErrorB).bind()
+        }
+
+        assertEquals(
+            expected = Err(BindingError.BindingErrorB),
+            actual = result
         )
     }
 }

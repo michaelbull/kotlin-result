@@ -56,7 +56,7 @@ public suspend inline fun <V, E> coroutineBinding(crossinline block: suspend Cor
             }
         }
     } catch (ex: BindCancellationException) {
-        receiver.result!!
+        receiver.result ?: throw ex
     }
 }
 

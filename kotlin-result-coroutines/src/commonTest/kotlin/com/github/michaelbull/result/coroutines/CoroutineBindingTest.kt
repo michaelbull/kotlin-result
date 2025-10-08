@@ -170,7 +170,7 @@ class CoroutineBindingTest {
     @Test
     fun shouldHandleExceptionsWithMultipleNestedBindings() = runTest {
         val result: Result<Int, BindingError> = coroutineBinding {
-            val b1: Result<Int, BindingError> = coroutineBinding {
+            val b: Result<Int, BindingError> = coroutineBinding {
                 val c: Result<Int, BindingError> = coroutineBinding {
                     Err(BindingError.BindingErrorC).bind()
                 }
@@ -180,7 +180,7 @@ class CoroutineBindingTest {
                 Ok(2).bind()
             }
 
-            assertEquals(Ok(2), b1)
+            assertEquals(Ok(2), b)
 
             Err(BindingError.BindingErrorB).bind()
         }

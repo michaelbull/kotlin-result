@@ -1,6 +1,6 @@
 package com.github.michaelbull.result
 
-internal actual object BindException : Exception() {
+public actual object BindingException : Exception() {
     override fun fillInStackTrace(): Throwable {
         return this
     }

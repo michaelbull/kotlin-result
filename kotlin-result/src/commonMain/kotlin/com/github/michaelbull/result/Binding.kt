@@ -33,13 +33,13 @@ public inline fun <V, E> binding(crossinline block: BindingScope<E>.() -> V): Re
     return with(BindingScopeImpl<E>()) {
         try {
             Ok(block())
-        } catch (_: BindException) {
+        } catch (_: BindingException) {
             result!!
         }
     }
 }
 
-internal expect object BindException : Exception
+public expect object BindingException : Exception
 
 public interface BindingScope<E> {
     public fun <V> Result<V, E>.bind(): V
@@ -55,7 +55,7 @@ internal class BindingScopeImpl<E> : BindingScope<E> {
             value
         } else {
             result = this.asErr()
-            throw BindException
+            throw BindingException
         }
     }
 }

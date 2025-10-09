@@ -60,7 +60,7 @@ public suspend inline fun <V, E> coroutineBinding(crossinline block: suspend Cor
     }
 }
 
-public object BindingCancellationException : CancellationException(null as String?)
+public class BindingCancellationException() : CancellationException(null as String?)
 
 public interface CoroutineBindingScope<E> : CoroutineScope {
     public suspend fun <V> Result<V, E>.bind(): V
@@ -82,10 +82,10 @@ internal class CoroutineBindingScopeImpl<E>(
             mutex.withLock {
                 if (result == null) {
                     result = this.asErr()
-                    coroutineContext.cancel(BindingCancellationException)
+                    coroutineContext.cancel(BindingCancellationException())
                 }
 
-                throw BindingCancellationException
+                throw BindingCancellationException()
             }
         }
     }

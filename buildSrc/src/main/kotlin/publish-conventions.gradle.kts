@@ -186,6 +186,11 @@ mavenPublishing {
                 name.set("Raika Nakamura")
                 url.set("https://github.com/nakamuraraika")
             }
+
+            contributor {
+                name.set("Daniele Bottillo")
+                url.set("https://github.com/dbottillo")
+            }
         }
 
         scm {

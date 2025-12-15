@@ -40,14 +40,16 @@ jobs:
             ~/.konan
           key: "${{ runner.os }}-${{ hashFiles('**/.lock') }}"
 
-      - name: Setup JDK
-        uses: actions/setup-java@c5195efecf7bdfc987ee8bae7a71cb8b11521c00 # v4.7.1
-        with:
-          distribution: zulu
-          java-version: 11
+      - name: Setup Mise
+        uses: jdx/mise-action@146a28175021df8ca24f8ee1828cc2a60f980bd5 # v3.5.1
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@06832c7b30a0129d7fb559bcc6e43d26f6374244 # v4.3.1
+
+      - name: Verify Versions
+        run: |
+          java --version
+          ./gradlew --version
 
       - name: Build with Gradle Wrapper
         run: ./gradlew ${{ matrix.tasks }}
@@ -103,14 +105,16 @@ jobs:
             ~/.konan
           key: "${{ runner.os }}-${{ hashFiles('**/.lock') }}"
 
-      - name: Setup JDK
-        uses: actions/setup-java@c5195efecf7bdfc987ee8bae7a71cb8b11521c00 # v4.7.1
-        with:
-          distribution: zulu
-          java-version: 11
+      - name: Setup Mise
+        uses: jdx/mise-action@146a28175021df8ca24f8ee1828cc2a60f980bd5 # v3.5.1
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@06832c7b30a0129d7fb559bcc6e43d26f6374244 # v4.3.1
+
+      - name: Verify Versions
+        run: |
+          java --version
+          ./gradlew --version
 
       - name: Publish with Gradle Wrapper
         run: ./gradlew ${{ matrix.tasks }}

@@ -14,13 +14,17 @@
 !.editorconfig
 
 # IntelliJ Idea
-out/
+*.iws
 *.iml
 *.ipr
-*.iws
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
 
 # Gradle
 build/
+!**/src/main/**/build/
+!**/src/test/**/build/
 local.properties
 
 # JVM error logs

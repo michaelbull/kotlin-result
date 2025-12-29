@@ -7,6 +7,13 @@ application {
     mainClass.set("com.github.michaelbull.result.example.ApplicationKt")
 }
 
+
+kotlin {
+    compilerOptions {
+        freeCompilerArgs.add("-Xreturn-value-checker=check")
+    }
+}
+
 dependencies {
     implementation(project(":kotlin-result"))
     implementation(libs.kotlin.stdlib.jdk8)

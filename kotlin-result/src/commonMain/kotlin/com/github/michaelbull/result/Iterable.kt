@@ -90,6 +90,7 @@ public fun <V, E, C : MutableCollection<in E>> Iterable<Result<V, E>>.filterErrT
  * Performs the given [action] on each [ok][Result.isOk] value and returns the collection itself
  * afterwards.
  */
+@IgnorableReturnValue
 public inline fun <V, E> Iterable<Result<V, E>>.onEachOk(action: (V) -> Unit): Iterable<Result<V, E>> {
     return onEach { result ->
         result.onOk(action)
@@ -100,6 +101,7 @@ public inline fun <V, E> Iterable<Result<V, E>>.onEachOk(action: (V) -> Unit): I
  * Performs the given [action] on each [ok][Result.isOk] value and its index and returns the
  * collection itself afterwards.
  */
+@IgnorableReturnValue
 public inline fun <V, E> Iterable<Result<V, E>>.onEachOkIndexed(action: (index: Int, V) -> Unit): Iterable<Result<V, E>> {
     return onEachIndexed { index, result ->
         if (result.isOk) {
@@ -112,6 +114,7 @@ public inline fun <V, E> Iterable<Result<V, E>>.onEachOkIndexed(action: (index: 
  * Performs the given [action] on each [error][Result.isErr] value and returns the collection itself
  * afterwards.
  */
+@IgnorableReturnValue
 public inline fun <V, E> Iterable<Result<V, E>>.onEachErr(action: (E) -> Unit): Iterable<Result<V, E>> {
     return onEach { result ->
         result.onErr(action)
@@ -122,6 +125,7 @@ public inline fun <V, E> Iterable<Result<V, E>>.onEachErr(action: (E) -> Unit): 
  * Performs the given [action] on each [error][Result.isErr] value and its index and returns the
  * collection itself afterwards.
  */
+@IgnorableReturnValue
 public inline fun <V, E> Iterable<Result<V, E>>.onEachErrIndexed(action: (index: Int, E) -> Unit): Iterable<Result<V, E>> {
     return onEachIndexed { index, result ->
         if (result.isErr) {

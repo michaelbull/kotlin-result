@@ -47,6 +47,7 @@ public fun <V, E> Flow<Result<V, E>>.filterErr(): Flow<E> {
  *
  * This is the [Flow] equivalent of [Iterable.onEachOk][com.github.michaelbull.result.onEachOk].
  */
+@IgnorableReturnValue
 public inline fun <V, E> Flow<Result<V, E>>.onEachOk(
     crossinline action: suspend (V) -> Unit,
 ): Flow<Result<V, E>> {
@@ -63,6 +64,7 @@ public inline fun <V, E> Flow<Result<V, E>>.onEachOk(
  *
  * This is the [Flow] equivalent of [Iterable.onEachErr][com.github.michaelbull.result.onEachErr].
  */
+@IgnorableReturnValue
 public inline fun <V, E> Flow<Result<V, E>>.onEachErr(
     crossinline action: suspend (E) -> Unit,
 ): Flow<Result<V, E>> {

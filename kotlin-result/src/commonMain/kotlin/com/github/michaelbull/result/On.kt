@@ -8,6 +8,7 @@ import kotlin.contracts.contract
  *
  * - Rust: [Result.inspect](https://doc.rust-lang.org/std/result/enum.Result.html#method.inspect)
  */
+@IgnorableReturnValue
 public inline infix fun <V, E> Result<V, E>.onSuccess(action: (V) -> Unit): Result<V, E> {
     contract {
         callsInPlace(action, InvocationKind.AT_MOST_ONCE)
@@ -25,6 +26,7 @@ public inline infix fun <V, E> Result<V, E>.onSuccess(action: (V) -> Unit): Resu
  *
  * - Rust [Result.inspect_err](https://doc.rust-lang.org/std/result/enum.Result.html#method.inspect_err)
  */
+@IgnorableReturnValue
 public inline infix fun <V, E> Result<V, E>.onFailure(action: (E) -> Unit): Result<V, E> {
     contract {
         callsInPlace(action, InvocationKind.AT_MOST_ONCE)

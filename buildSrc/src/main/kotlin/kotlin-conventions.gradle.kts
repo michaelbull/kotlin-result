@@ -7,7 +7,10 @@ plugins {
 kotlin {
     compilerOptions {
         optIn.add("kotlin.contracts.ExperimentalContracts")
-        freeCompilerArgs.add("-Xexpect-actual-classes")
+        freeCompilerArgs.addAll(
+            "-Xexpect-actual-classes",
+            "-Xreturn-value-checker=full",
+        )
     }
 
     jvm()

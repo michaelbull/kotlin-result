@@ -145,7 +145,11 @@ public fun <V, E, R : Result<V, E>> combine(vararg results: R): Result<List<V>, 
 
 /**
  * Combines [this] iterable into a single [Result] (holding a [List]). Elements in the returned
- * list are in the the same order as [this].
+ * list are in the same order as [this].
+ *
+ * - If all results [are ok][Result.isOk], returns [Ok] with all values.
+ * - If any result [is an error][Result.isErr], returns the first [Err] encountered.
+ * - If the iterable is empty, returns [Ok] with an empty list.
  *
  * - Elm: [Result.Extra.combine](http://package.elm-lang.org/packages/elm-community/result-extra/2.2.0/Result-Extra#combine)
  * - Haskell: [Data.Traversable.sequenceA](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Traversable.html#v:sequenceA)

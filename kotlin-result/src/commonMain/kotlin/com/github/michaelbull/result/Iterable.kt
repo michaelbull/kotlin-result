@@ -3,22 +3,32 @@ package com.github.michaelbull.result
 /**
  * Returns a list containing only elements that [are ok][Result.isOk].
  */
+public fun <V, E> Iterable<Result<V, E>>.filterOk(): List<V> {
+    return filterOkTo(ArrayList())
+}
+
+@Deprecated("Use filterOk instead.", ReplaceWith("filterOk()"))
 public fun <V, E> Iterable<Result<V, E>>.filterValues(): List<V> {
-    return filterValuesTo(ArrayList())
+    return filterOk()
 }
 
 /**
  * Returns a list containing only elements that [are an error][Result.isErr].
  */
+public fun <V, E> Iterable<Result<V, E>>.filterErr(): List<E> {
+    return filterErrTo(ArrayList())
+}
+
+@Deprecated("Use filterErr instead.", ReplaceWith("filterErr()"))
 public fun <V, E> Iterable<Result<V, E>>.filterErrors(): List<E> {
-    return filterErrorsTo(ArrayList())
+    return filterErr()
 }
 
 /**
  * Appends the [values][Result.value] of each element that [is ok][Result.isOk] to the given
  * [destination].
  */
-public fun <V, E, C : MutableCollection<in V>> Iterable<Result<V, E>>.filterValuesTo(destination: C): C {
+public fun <V, E, C : MutableCollection<in V>> Iterable<Result<V, E>>.filterOkTo(destination: C): C {
     for (element in this) {
         if (element.isOk) {
             destination.add(element.value)
@@ -28,11 +38,16 @@ public fun <V, E, C : MutableCollection<in V>> Iterable<Result<V, E>>.filterValu
     return destination
 }
 
+@Deprecated("Use filterOkTo instead.", ReplaceWith("filterOkTo(destination)"))
+public fun <V, E, C : MutableCollection<in V>> Iterable<Result<V, E>>.filterValuesTo(destination: C): C {
+    return filterOkTo(destination)
+}
+
 /**
  * Appends the [errors][Result.error] of each element that [is an error][Result.isErr] to the given
  * [destination].
  */
-public fun <V, E, C : MutableCollection<in E>> Iterable<Result<V, E>>.filterErrorsTo(destination: C): C {
+public fun <V, E, C : MutableCollection<in E>> Iterable<Result<V, E>>.filterErrTo(destination: C): C {
     for (element in this) {
         if (element.isErr) {
             destination.add(element.error)
@@ -40,6 +55,11 @@ public fun <V, E, C : MutableCollection<in E>> Iterable<Result<V, E>>.filterErro
     }
 
     return destination
+}
+
+@Deprecated("Use filterErrTo instead.", ReplaceWith("filterErrTo(destination)"))
+public fun <V, E, C : MutableCollection<in E>> Iterable<Result<V, E>>.filterErrorsTo(destination: C): C {
+    return filterErrTo(destination)
 }
 
 /**
@@ -173,7 +193,7 @@ public fun <V, E> Iterable<Result<V, E>>.combine(): Result<List<V>, E> {
  * - Haskell: [Data.Either.lefts](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Either.html#v:lefts)
  */
 public fun <V, E, R : Result<V, E>> valuesOf(vararg results: R): List<V> {
-    return results.asIterable().filterValues()
+    return results.asIterable().filterOk()
 }
 
 /**
@@ -184,7 +204,7 @@ public fun <V, E, R : Result<V, E>> valuesOf(vararg results: R): List<V> {
  * - Haskell: [Data.Either.rights](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Either.html#v:rights)
  */
 public fun <V, E, R : Result<V, E>> errorsOf(vararg results: R): List<E> {
-    return results.asIterable().filterErrors()
+    return results.asIterable().filterErr()
 }
 
 /**

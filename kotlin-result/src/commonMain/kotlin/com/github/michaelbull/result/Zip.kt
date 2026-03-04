@@ -156,7 +156,7 @@ public inline fun <T1, T2, E, V> zipOrAccumulate(
 
         Ok(transformed)
     } else {
-        Err(results.filterErrors())
+        Err(results.filterErr())
     }
 }
 
@@ -196,7 +196,7 @@ public inline fun <T1, T2, T3, E, V> zipOrAccumulate(
 
         Ok(transformed)
     } else {
-        Err(results.filterErrors())
+        Err(results.filterErr())
     }
 }
 
@@ -241,7 +241,7 @@ public inline fun <T1, T2, T3, T4, E, V> zipOrAccumulate(
 
         Ok(transformed)
     } else {
-        Err(results.filterErrors())
+        Err(results.filterErr())
     }
 }
 
@@ -291,6 +291,6 @@ public inline fun <T1, T2, T3, T4, T5, E, V> zipOrAccumulate(
 
         Ok(transformed)
     } else {
-        Err(results.filterErrors())
+        Err(results.filterErr())
     }
 }

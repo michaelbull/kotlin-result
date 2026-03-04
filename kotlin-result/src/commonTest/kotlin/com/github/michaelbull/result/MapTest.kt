@@ -155,76 +155,6 @@ class MapTest {
         }
     }
 
-    class MapError {
-
-        @Test
-        fun returnsValueIfOk() {
-            val value: Result<Int, MapErr> = Ok(70)
-
-            assertEquals(
-                expected = Ok(70),
-                actual = value.mapError { MapErr.WorldError },
-            )
-        }
-
-        @Test
-        fun returnsErrorIfErr() {
-            val value: Result<Int, MapErr> = Err(MapErr.HelloError)
-
-            assertEquals(
-                expected = Err(MapErr.WorldError),
-                actual = value.mapError { MapErr.WorldError },
-            )
-        }
-    }
-
-    class MapOr {
-
-        @Test
-        fun returnsTransformedValueIfOk() {
-            val value: Result<String, String> = Ok("foo")
-
-            assertEquals(
-                expected = 3,
-                actual = value.mapOr(42, String::length),
-            )
-        }
-
-        @Test
-        fun returnsDefaultValueIfErr() {
-            val value: Result<String, String> = Err("foo")
-
-            assertEquals(
-                expected = 42,
-                actual = value.mapOr(42, String::length),
-            )
-        }
-    }
-
-    class MapOrElse {
-        private val k = 21
-
-        @Test
-        fun returnsTransformedValueIfOk() {
-            val value: Result<String, String> = Ok("foo")
-
-            assertEquals(
-                expected = 3,
-                actual = value.mapOrElse({ k * 2 }, String::length),
-            )
-        }
-
-        @Test
-        fun returnsDefaultValueIfErr() {
-            val value: Result<String, String> = Err("foo")
-
-            assertEquals(
-                expected = 42,
-                actual = value.mapOrElse({ k * 2 }, String::length),
-            )
-        }
-    }
-
     class MapBoth {
 
         @Test
@@ -357,6 +287,149 @@ class MapTest {
         }
     }
 
+    class MapError {
+
+        @Test
+        fun returnsValueIfOk() {
+            val value: Result<Int, MapErr> = Ok(70)
+
+            assertEquals(
+                expected = Ok(70),
+                actual = value.mapError { MapErr.WorldError },
+            )
+        }
+
+        @Test
+        fun returnsErrorIfErr() {
+            val value: Result<Int, MapErr> = Err(MapErr.HelloError)
+
+            assertEquals(
+                expected = Err(MapErr.WorldError),
+                actual = value.mapError { MapErr.WorldError },
+            )
+        }
+    }
+
+    class MapOr {
+
+        @Test
+        fun returnsTransformedValueIfOk() {
+            val value: Result<String, String> = Ok("foo")
+
+            assertEquals(
+                expected = 3,
+                actual = value.mapOr(42, String::length),
+            )
+        }
+
+        @Test
+        fun returnsDefaultValueIfErr() {
+            val value: Result<String, String> = Err("foo")
+
+            assertEquals(
+                expected = 42,
+                actual = value.mapOr(42, String::length),
+            )
+        }
+    }
+
+    class MapOrElse {
+        private val k = 21
+
+        @Test
+        fun returnsTransformedValueIfOk() {
+            val value: Result<String, String> = Ok("foo")
+
+            assertEquals(
+                expected = 3,
+                actual = value.mapOrElse({ k * 2 }, String::length),
+            )
+        }
+
+        @Test
+        fun returnsDefaultValueIfErr() {
+            val value: Result<String, String> = Err("foo")
+
+            assertEquals(
+                expected = 42,
+                actual = value.mapOrElse({ k * 2 }, String::length),
+            )
+        }
+    }
+
+    class MapAll {
+
+        @Test
+        fun returnsTransformedValuesIfAllOk() {
+            val result = Ok(listOf(1, 2, 3)).mapAll { Ok(it * 10) }
+
+            assertEquals(
+                expected = Ok(listOf(10, 20, 30)),
+                actual = result,
+            )
+        }
+
+        @Test
+        fun returnsFirstErrorIfTransformFails() {
+            val result: Result<List<Int>, String> = Ok(listOf(1, 2, 3)).mapAll { element ->
+                if (element == 2) {
+                    Err("bad")
+                } else {
+                    Ok(element * 10)
+                }
+            }
+
+            assertEquals(
+                expected = Err("bad"),
+                actual = result,
+            )
+        }
+
+        @Test
+        fun returnsErrorIfErr() {
+            val result = Err("error").mapAll { element: Int -> Ok(element) }
+
+            assertEquals(
+                expected = Err("error"),
+                actual = result,
+            )
+        }
+    }
+
+    class ToErrorIf {
+
+        @Test
+        fun returnsErrIfPredicateMatches() {
+            val result = Ok(10).toErrorIf({ it > 5 }, { MapErr.CustomError("too big") })
+
+            assertEquals(
+                expected = Err(MapErr.CustomError("too big")),
+                actual = result,
+            )
+        }
+
+        @Test
+        fun returnsOkIfPredicateDoesNotMatch() {
+            val result = Ok(3).toErrorIf({ it > 5 }, { MapErr.CustomError("too big") })
+
+            assertEquals(
+                expected = Ok(3),
+                actual = result,
+            )
+        }
+
+        @Test
+        fun returnsErrIfErr() {
+            val result: Result<Int, MapErr> =
+                Err(MapErr.HelloError).toErrorIf({ true }, { MapErr.CustomError("too big") })
+
+            assertEquals(
+                expected = Err(MapErr.HelloError),
+                actual = result,
+            )
+        }
+    }
+
     class ToErrorIfNull {
 
         @Test
@@ -380,6 +453,40 @@ class MapTest {
             assertEquals(
                 expected = Err("a"),
                 actual = Err("a").toErrorIfNull { "b" },
+            )
+        }
+    }
+
+    class ToErrorUnless {
+
+        @Test
+        fun returnsOkIfPredicateMatches() {
+            val result = Ok(10).toErrorUnless({ it > 5 }, { MapErr.CustomError("too small") })
+
+            assertEquals(
+                expected = Ok(10),
+                actual = result,
+            )
+        }
+
+        @Test
+        fun returnsErrIfPredicateDoesNotMatch() {
+            val result = Ok(3).toErrorUnless({ it > 5 }, { MapErr.CustomError("too small") })
+
+            assertEquals(
+                expected = Err(MapErr.CustomError("too small")),
+                actual = result,
+            )
+        }
+
+        @Test
+        fun returnsErrIfErr() {
+            val result: Result<Int, MapErr> =
+                Err(MapErr.HelloError).toErrorUnless({ true }, { MapErr.CustomError("too small") })
+
+            assertEquals(
+                expected = Err(MapErr.HelloError),
+                actual = result,
             )
         }
     }

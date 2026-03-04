@@ -2,7 +2,6 @@ package com.github.michaelbull.result.coroutines
 
 import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
-import com.github.michaelbull.result.annotation.UnsafeResultValueAccess
 import com.github.michaelbull.result.asErr
 import com.github.michaelbull.result.binding
 import kotlinx.coroutines.CancellationException
@@ -74,7 +73,6 @@ internal class CoroutineBindingScopeImpl<E>(
     private val mutex = Mutex()
     var result: Result<Nothing, E>? = null
 
-    @OptIn(UnsafeResultValueAccess::class)
     override suspend fun <V> Result<V, E>.bind(): V {
         return if (isOk) {
             value

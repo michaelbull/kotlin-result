@@ -8,6 +8,8 @@ kotlin {
 
     compilerOptions {
         optIn.add("kotlinx.coroutines.ExperimentalCoroutinesApi")
+        optIn.add("com.github.michaelbull.result.annotation.UnsafeResultValueAccess")
+        optIn.add("com.github.michaelbull.result.annotation.UnsafeResultErrorAccess")
     }
 
     sourceSets {

@@ -338,7 +338,7 @@ class IterableTest {
         }
     }
 
-    class OnEachSuccess {
+    class OnEachOk {
 
         @Test
         fun invokesActionForOkResults() {
@@ -348,7 +348,7 @@ class IterableTest {
                 Ok(1),
                 Err("error"),
                 Ok(2),
-            ).onEachSuccess(collected::add)
+            ).onEachOk(collected::add)
 
             assertEquals(
                 expected = listOf(1, 2),
@@ -364,7 +364,7 @@ class IterableTest {
                 Ok(2),
             )
 
-            val result = items.onEachSuccess { }
+            val result = items.onEachOk { }
 
             assertEquals(
                 expected = items,
@@ -373,7 +373,7 @@ class IterableTest {
         }
     }
 
-    class OnEachSuccessIndexed {
+    class OnEachOkIndexed {
 
         @Test
         fun invokesActionWithIndexForOkResults() {
@@ -385,7 +385,7 @@ class IterableTest {
                 Ok(20),
                 Err("error"),
                 Ok(30),
-            ).onEachSuccessIndexed { index, value -> collected.add(index to value) }
+            ).onEachOkIndexed { index, value -> collected.add(index to value) }
 
             assertEquals(
                 expected = listOf(0 to 10, 2 to 20, 4 to 30),
@@ -394,7 +394,7 @@ class IterableTest {
         }
     }
 
-    class OnEachFailure {
+    class OnEachErr {
 
         @Test
         fun invokesActionForErrResults() {
@@ -405,7 +405,7 @@ class IterableTest {
                 Err("error1"),
                 Ok(2),
                 Err("error2"),
-            ).onEachFailure(collected::add)
+            ).onEachErr(collected::add)
 
             assertEquals(
                 expected = listOf("error1", "error2"),
@@ -421,7 +421,7 @@ class IterableTest {
                 Ok(2),
             )
 
-            val result = items.onEachFailure { }
+            val result = items.onEachErr { }
 
             assertEquals(
                 expected = items,
@@ -430,7 +430,7 @@ class IterableTest {
         }
     }
 
-    class OnEachFailureIndexed {
+    class OnEachErrIndexed {
 
         @Test
         fun invokesActionWithIndexForErrResults() {
@@ -442,7 +442,7 @@ class IterableTest {
                 Ok(2),
                 Err("error2"),
                 Ok(3),
-            ).onEachFailureIndexed { index, error -> collected.add(index to error) }
+            ).onEachErrIndexed { index, error -> collected.add(index to error) }
 
             assertEquals(
                 expected = listOf(1 to "error1", 3 to "error2"),

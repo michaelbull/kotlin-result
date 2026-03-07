@@ -2,7 +2,7 @@ package com.github.michaelbull.result.coroutines
 
 import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Ok
-import com.github.michaelbull.result.onSuccess
+import com.github.michaelbull.result.onOk
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
@@ -27,7 +27,7 @@ class RunSuspendCatchingTest {
                 }
 
                 // The coroutine should be cancelled before reaching here
-                result.onSuccess { value = it }
+                result.onOk { value = it }
             }
 
             testScheduler.advanceTimeBy(2_000)

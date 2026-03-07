@@ -7,13 +7,13 @@ class OnTest {
     object CounterError
     class Counter(var count: Int)
 
-    class OnSuccess {
+    class OnOk {
 
         @Test
         fun invokesActionIfOk() {
             val counter = Counter(50)
 
-            Ok(counter).onSuccess { it.count += 50 }
+            Ok(counter).onOk { it.count += 50 }
 
             assertEquals(
                 expected = 100,
@@ -25,7 +25,7 @@ class OnTest {
         fun invokesNothingIfErr() {
             val counter = Counter(200)
 
-            Err(CounterError).onSuccess { counter.count -= 50 }
+            Err(CounterError).onOk { counter.count -= 50 }
 
             assertEquals(
                 expected = 200,
@@ -34,13 +34,13 @@ class OnTest {
         }
     }
 
-    class OnFailure {
+    class OnErr {
 
         @Test
         fun invokesActionIfErr() {
             val counter = Counter(555)
 
-            Err(CounterError).onFailure { counter.count += 100 }
+            Err(CounterError).onErr { counter.count += 100 }
 
             assertEquals(
                 expected = 655,
@@ -52,7 +52,7 @@ class OnTest {
         fun invokesNothingIfOk() {
             val counter = Counter(1020)
 
-            Ok("hello").onFailure { counter.count = 1030 }
+            Ok("hello").onErr { counter.count = 1030 }
 
             assertEquals(
                 expected = 1020,

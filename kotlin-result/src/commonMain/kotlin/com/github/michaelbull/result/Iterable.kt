@@ -307,9 +307,9 @@ public inline fun <V, E, U : Any, C : MutableCollection<in U>> Iterable<V>.mapRe
  * Performs the given [action] on each [ok][Result.isOk] value and returns the collection itself
  * afterwards.
  */
-public inline fun <V, E> Iterable<Result<V, E>>.onEachSuccess(action: (V) -> Unit): Iterable<Result<V, E>> {
+public inline fun <V, E> Iterable<Result<V, E>>.onEachOk(action: (V) -> Unit): Iterable<Result<V, E>> {
     return onEach { result ->
-        result.onSuccess(action)
+        result.onOk(action)
     }
 }
 
@@ -317,7 +317,7 @@ public inline fun <V, E> Iterable<Result<V, E>>.onEachSuccess(action: (V) -> Uni
  * Performs the given [action] on each [ok][Result.isOk] value and its index and returns the
  * collection itself afterwards.
  */
-public inline fun <V, E> Iterable<Result<V, E>>.onEachSuccessIndexed(action: (index: Int, V) -> Unit): Iterable<Result<V, E>> {
+public inline fun <V, E> Iterable<Result<V, E>>.onEachOkIndexed(action: (index: Int, V) -> Unit): Iterable<Result<V, E>> {
     return onEachIndexed { index, result ->
         if (result.isOk) {
             action(index, result.value)
@@ -329,9 +329,9 @@ public inline fun <V, E> Iterable<Result<V, E>>.onEachSuccessIndexed(action: (in
  * Performs the given [action] on each [error][Result.isErr] value and returns the collection itself
  * afterwards.
  */
-public inline fun <V, E> Iterable<Result<V, E>>.onEachFailure(action: (E) -> Unit): Iterable<Result<V, E>> {
+public inline fun <V, E> Iterable<Result<V, E>>.onEachErr(action: (E) -> Unit): Iterable<Result<V, E>> {
     return onEach { result ->
-        result.onFailure(action)
+        result.onErr(action)
     }
 }
 
@@ -339,7 +339,7 @@ public inline fun <V, E> Iterable<Result<V, E>>.onEachFailure(action: (E) -> Uni
  * Performs the given [action] on each [error][Result.isErr] value and its index and returns the
  * collection itself afterwards.
  */
-public inline fun <V, E> Iterable<Result<V, E>>.onEachFailureIndexed(action: (index: Int, E) -> Unit): Iterable<Result<V, E>> {
+public inline fun <V, E> Iterable<Result<V, E>>.onEachErrIndexed(action: (index: Int, E) -> Unit): Iterable<Result<V, E>> {
     return onEachIndexed { index, result ->
         if (result.isErr) {
             action(index, result.error)

@@ -538,7 +538,7 @@ class IterableTest {
 
         @Test
         fun returnsErrorsIfAllErr() {
-            val result = combineErrors(
+            val result = combineErr(
                 Err(IterableError.IterableError1),
                 Err(IterableError.IterableError2),
             )
@@ -551,7 +551,7 @@ class IterableTest {
 
         @Test
         fun returnsFirstOkIfAnyOk() {
-            val result = combineErrors(
+            val result = combineErr(
                 Err(IterableError.IterableError1),
                 Ok(1),
                 Err(IterableError.IterableError2),
@@ -567,7 +567,7 @@ class IterableTest {
         @Test
         fun returnsErrEmptyListIfEmpty() {
             val result = emptyList<Result<Int, IterableError>>()
-                .combineErrors()
+                .combineErr()
 
             assertEquals(
                 expected = Err(emptyList()),

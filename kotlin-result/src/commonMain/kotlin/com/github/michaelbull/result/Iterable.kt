@@ -186,6 +186,33 @@ public fun <V, E> Iterable<Result<V, E>>.combine(): Result<List<V>, E> {
 }
 
 /**
+ * Combines the specified [results] into a single [Result] (holding a [List] of errors). Elements
+ * in the returned list are in the same order as the specified [results].
+ */
+public fun <V, E, R : Result<V, E>> combineErrors(vararg results: R): Result<V, List<E>> {
+    return results.asIterable().combineErrors()
+}
+
+/**
+ * Combines [this] iterable into a single [Result] (holding a [List] of errors). Elements in the
+ * returned list are in the same order as [this].
+ *
+ * - If all results [are errors][Result.isErr], returns [Err] with all errors.
+ * - If any result [is ok][Result.isOk], returns the first [Ok] encountered.
+ * - If the iterable is empty, returns [Err] with an empty list.
+ */
+public fun <V, E> Iterable<Result<V, E>>.combineErrors(): Result<V, List<E>> {
+    val errors = map { result ->
+        when {
+            result.isErr -> result.error
+            else -> return result.asOk()
+        }
+    }
+
+    return Err(errors)
+}
+
+/**
  * Returns a [List] containing the [value][Result.value] of each element in the specified [results]
  * that [is ok][Result.isOk]. Elements in the returned list are in the same order as the specified
  * [results].

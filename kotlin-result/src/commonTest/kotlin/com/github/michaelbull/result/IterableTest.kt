@@ -370,6 +370,59 @@ class IterableTest {
                 actual = result,
             )
         }
+
+        @Test
+        fun returnsOkEmptyListIfEmpty() {
+            val result = emptyList<Result<Int, IterableError>>()
+                .combine()
+
+            assertEquals(
+                expected = Ok(emptyList()),
+                actual = result,
+            )
+        }
+    }
+
+    class CombineErrors {
+
+        @Test
+        fun returnsErrorsIfAllErr() {
+            val result = combineErrors(
+                Err(IterableError.IterableError1),
+                Err(IterableError.IterableError2),
+            )
+
+            assertEquals(
+                expected = Err(listOf(IterableError.IterableError1, IterableError.IterableError2)),
+                actual = result,
+            )
+        }
+
+        @Test
+        fun returnsFirstOkIfAnyOk() {
+            val result = combineErrors(
+                Err(IterableError.IterableError1),
+                Ok(1),
+                Err(IterableError.IterableError2),
+                Ok(2),
+            )
+
+            assertEquals(
+                expected = Ok(1),
+                actual = result,
+            )
+        }
+
+        @Test
+        fun returnsErrEmptyListIfEmpty() {
+            val result = emptyList<Result<Int, IterableError>>()
+                .combineErrors()
+
+            assertEquals(
+                expected = Err(emptyList()),
+                actual = result,
+            )
+        }
     }
 
     class ValuesOf {

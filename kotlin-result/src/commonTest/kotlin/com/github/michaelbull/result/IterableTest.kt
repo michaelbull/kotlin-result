@@ -9,105 +9,6 @@ class IterableTest {
         data object IterableError2 : IterableError
     }
 
-    class FilterOk {
-
-        @Test
-        fun returnsOnlyOkValues() {
-            val result = listOf(
-                Ok(1),
-                Err("error"),
-                Ok(2),
-                Err("another"),
-                Ok(3),
-            ).filterOk()
-
-            assertEquals(
-                expected = listOf(1, 2, 3),
-                actual = result,
-            )
-        }
-
-        @Test
-        fun returnsEmptyListIfAllErr() {
-            val result = listOf(
-                Err("a"),
-                Err("b"),
-            ).filterOk()
-
-            assertEquals(
-                expected = emptyList(),
-                actual = result,
-            )
-        }
-    }
-
-    class FilterErr {
-
-        @Test
-        fun returnsOnlyErrValues() {
-            val result = listOf(
-                Ok(1),
-                Err("error"),
-                Ok(2),
-                Err("another"),
-            ).filterErr()
-
-            assertEquals(
-                expected = listOf("error", "another"),
-                actual = result,
-            )
-        }
-
-        @Test
-        fun returnsEmptyListIfAllOk() {
-            val result = listOf(Ok(1), Ok(2)).filterErr()
-
-            assertEquals(
-                expected = emptyList(),
-                actual = result,
-            )
-        }
-    }
-
-    class FilterOkTo {
-
-        @Test
-        fun appendsOkValuesToDestination() {
-            val destination = mutableListOf(0)
-
-            listOf(
-                Ok(1),
-                Err("error"),
-                Ok(2),
-            ).filterOkTo(destination)
-
-            assertEquals(
-                expected = listOf(0, 1, 2),
-                actual = destination,
-            )
-        }
-    }
-
-    class FilterErrTo {
-
-        @Test
-        fun appendsErrValuesToDestination() {
-            val destination = mutableListOf("existing")
-
-            listOf(
-                Ok(1),
-                Err("error"),
-                Ok(2),
-                Err("another"),
-            ).filterErrTo(destination)
-
-            assertEquals(
-                expected = listOf("existing", "error", "another"),
-                actual = destination,
-            )
-        }
-    }
-
     class AllOk {
 
         @Test
@@ -268,6 +169,105 @@ class IterableTest {
         }
     }
 
+    class FilterOk {
+
+        @Test
+        fun returnsOnlyOkValues() {
+            val result = listOf(
+                Ok(1),
+                Err("error"),
+                Ok(2),
+                Err("another"),
+                Ok(3),
+            ).filterOk()
+
+            assertEquals(
+                expected = listOf(1, 2, 3),
+                actual = result,
+            )
+        }
+
+        @Test
+        fun returnsEmptyListIfAllErr() {
+            val result = listOf(
+                Err("a"),
+                Err("b"),
+            ).filterOk()
+
+            assertEquals(
+                expected = emptyList(),
+                actual = result,
+            )
+        }
+    }
+
+    class FilterErr {
+
+        @Test
+        fun returnsOnlyErrValues() {
+            val result = listOf(
+                Ok(1),
+                Err("error"),
+                Ok(2),
+                Err("another"),
+            ).filterErr()
+
+            assertEquals(
+                expected = listOf("error", "another"),
+                actual = result,
+            )
+        }
+
+        @Test
+        fun returnsEmptyListIfAllOk() {
+            val result = listOf(Ok(1), Ok(2)).filterErr()
+
+            assertEquals(
+                expected = emptyList(),
+                actual = result,
+            )
+        }
+    }
+
+    class FilterOkTo {
+
+        @Test
+        fun appendsOkValuesToDestination() {
+            val destination = mutableListOf(0)
+
+            listOf(
+                Ok(1),
+                Err("error"),
+                Ok(2),
+            ).filterOkTo(destination)
+
+            assertEquals(
+                expected = listOf(0, 1, 2),
+                actual = destination,
+            )
+        }
+    }
+
+    class FilterErrTo {
+
+        @Test
+        fun appendsErrValuesToDestination() {
+            val destination = mutableListOf("existing")
+
+            listOf(
+                Ok(1),
+                Err("error"),
+                Ok(2),
+                Err("another"),
+            ).filterErrTo(destination)
+
+            assertEquals(
+                expected = listOf("existing", "error", "another"),
+                actual = destination,
+            )
+        }
+    }
+
     class Fold {
 
         @Test
@@ -333,6 +333,157 @@ class IterableTest {
 
             assertEquals(
                 expected = Err(IterableError.IterableError2),
+                actual = result,
+            )
+        }
+    }
+
+    class OnEachSuccess {
+
+        @Test
+        fun invokesActionForOkResults() {
+            val collected = mutableListOf<Int>()
+
+            listOf(
+                Ok(1),
+                Err("error"),
+                Ok(2),
+            ).onEachSuccess(collected::add)
+
+            assertEquals(
+                expected = listOf(1, 2),
+                actual = collected,
+            )
+        }
+
+        @Test
+        fun returnsIterableUnmodified() {
+            val items = listOf(
+                Ok(1),
+                Err("error"),
+                Ok(2),
+            )
+
+            val result = items.onEachSuccess { }
+
+            assertEquals(
+                expected = items,
+                actual = result,
+            )
+        }
+    }
+
+    class OnEachSuccessIndexed {
+
+        @Test
+        fun invokesActionWithIndexForOkResults() {
+            val collected = mutableListOf<Pair<Int, Int>>()
+
+            listOf(
+                Ok(10),
+                Err("error"),
+                Ok(20),
+                Err("error"),
+                Ok(30),
+            ).onEachSuccessIndexed { index, value -> collected.add(index to value) }
+
+            assertEquals(
+                expected = listOf(0 to 10, 2 to 20, 4 to 30),
+                actual = collected,
+            )
+        }
+    }
+
+    class OnEachFailure {
+
+        @Test
+        fun invokesActionForErrResults() {
+            val collected = mutableListOf<String>()
+
+            listOf(
+                Ok(1),
+                Err("error1"),
+                Ok(2),
+                Err("error2"),
+            ).onEachFailure(collected::add)
+
+            assertEquals(
+                expected = listOf("error1", "error2"),
+                actual = collected,
+            )
+        }
+
+        @Test
+        fun returnsIterableUnmodified() {
+            val items = listOf(
+                Ok(1),
+                Err("error"),
+                Ok(2),
+            )
+
+            val result = items.onEachFailure { }
+
+            assertEquals(
+                expected = items,
+                actual = result,
+            )
+        }
+    }
+
+    class OnEachFailureIndexed {
+
+        @Test
+        fun invokesActionWithIndexForErrResults() {
+            val collected = mutableListOf<Pair<Int, String>>()
+
+            listOf(
+                Ok(1),
+                Err("error1"),
+                Ok(2),
+                Err("error2"),
+                Ok(3),
+            ).onEachFailureIndexed { index, error -> collected.add(index to error) }
+
+            assertEquals(
+                expected = listOf(1 to "error1", 3 to "error2"),
+                actual = collected,
+            )
+        }
+    }
+
+    class Partition {
+
+        @Test
+        fun returnsPairOfValuesAndErrors() {
+            val strings = listOf(
+                "haskell",
+                "f#",
+                "elm",
+                "clojure",
+            )
+
+            val errors = listOf(
+                IterableError.IterableError2,
+                IterableError.IterableError2,
+                IterableError.IterableError1,
+                IterableError.IterableError1,
+                IterableError.IterableError2,
+            )
+
+            val result = partition(
+                Err(IterableError.IterableError2),
+                Ok("haskell"),
+                Err(IterableError.IterableError2),
+                Ok("f#"),
+                Err(IterableError.IterableError1),
+                Ok("elm"),
+                Err(IterableError.IterableError1),
+                Ok("clojure"),
+                Err(IterableError.IterableError2),
+            )
+
+            assertEquals(
+                expected = Pair(strings, errors),
                 actual = result,
             )
         }
@@ -425,26 +576,6 @@ class IterableTest {
         }
     }
 
-    class ValuesOf {
-
-        @Test
-        fun returnsAllValues() {
-            val result = valuesOf(
-                Ok("hello"),
-                Ok("big"),
-                Err(IterableError.IterableError2),
-                Ok("wide"),
-                Err(IterableError.IterableError1),
-                Ok("world"),
-            )
-
-            assertEquals(
-                expected = listOf("hello", "big", "wide", "world"),
-                actual = result
-            )
-        }
-    }
-
     class ErrorsOf {
 
         @Test
@@ -474,40 +605,22 @@ class IterableTest {
         }
     }
 
-    class Partition {
+    class ValuesOf {
 
         @Test
-        fun returnsPairOfValuesAndErrors() {
-            val strings = listOf(
-                "haskell",
-                "f#",
-                "elm",
-                "clojure",
-            )
-
-            val errors = listOf(
-                IterableError.IterableError2,
-                IterableError.IterableError2,
-                IterableError.IterableError1,
-                IterableError.IterableError1,
-                IterableError.IterableError2,
-            )
-
-            val result = partition(
+        fun returnsAllValues() {
+            val result = valuesOf(
+                Ok("hello"),
+                Ok("big"),
                 Err(IterableError.IterableError2),
-                Ok("haskell"),
-                Err(IterableError.IterableError2),
-                Ok("f#"),
+                Ok("wide"),
                 Err(IterableError.IterableError1),
-                Ok("elm"),
-                Err(IterableError.IterableError1),
-                Ok("clojure"),
-                Err(IterableError.IterableError2),
+                Ok("world"),
             )
 
             assertEquals(
-                expected = Pair(strings, errors),
-                actual = result,
+                expected = listOf("hello", "big", "wide", "world"),
+                actual = result
             )
         }
     }

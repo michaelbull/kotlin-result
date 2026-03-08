@@ -279,15 +279,8 @@ public inline fun <V, E, U> Result<V, E>.mapOrElse(
  * transformation fails.
  */
 public inline infix fun <V, E, U> Result<Iterable<V>, E>.mapAll(transform: (V) -> Result<U, E>): Result<List<U>, E> {
-    return map { iterable ->
-        iterable.map { element ->
-            val transformed = transform(element)
-
-            when {
-                transformed.isOk -> transformed.value
-                else -> return transformed.asErr()
-            }
-        }
+    return andThen { iterable ->
+        iterable.mapResult(transform)
     }
 }
 

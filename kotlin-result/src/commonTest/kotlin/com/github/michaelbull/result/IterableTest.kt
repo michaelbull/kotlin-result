@@ -534,6 +534,51 @@ class IterableTest {
         }
     }
 
+    class CombineTo {
+
+        @Test
+        fun returnsValuesIfAllOk() {
+            val result: Result<Collection<Int>, IterableError> = listOf(
+                Ok(10),
+                Ok(20),
+                Ok(30),
+            ).combineTo(mutableListOf())
+
+            assertEquals(
+                expected = Ok(listOf(10, 20, 30)),
+                actual = result,
+            )
+        }
+
+        @Test
+        fun returnsFirstErrorIfErr() {
+            val result: Result<Collection<Int>, IterableError> = listOf(
+                Ok(20),
+                Ok(40),
+                Err(IterableError.IterableError1),
+                Ok(60),
+                Err(IterableError.IterableError2),
+                Ok(80),
+            ).combineTo(mutableListOf())
+
+            assertEquals(
+                expected = Err(IterableError.IterableError1),
+                actual = result,
+            )
+        }
+
+        @Test
+        fun returnsOkEmptyCollectionIfEmpty() {
+            val result: Result<Collection<Int>, IterableError> = emptyList<Result<Int, IterableError>>()
+                .combineTo(mutableListOf())
+
+            assertEquals(
+                expected = Ok(emptyList()),
+                actual = result,
+            )
+        }
+    }
+
     class CombineErrors {
 
         @Test
@@ -568,6 +613,48 @@ class IterableTest {
         fun returnsErrEmptyListIfEmpty() {
             val result = emptyList<Result<Int, IterableError>>()
                 .combineErr()
+
+            assertEquals(
+                expected = Err(emptyList()),
+                actual = result,
+            )
+        }
+    }
+
+    class CombineErrTo {
+
+        @Test
+        fun returnsErrorsIfAllErr() {
+            val result: Result<Int, Collection<IterableError>> = listOf(
+                Err(IterableError.IterableError1),
+                Err(IterableError.IterableError2),
+            ).combineErrTo(mutableListOf())
+
+            assertEquals(
+                expected = Err(listOf(IterableError.IterableError1, IterableError.IterableError2)),
+                actual = result,
+            )
+        }
+
+        @Test
+        fun returnsFirstOkIfAnyOk() {
+            val result: Result<Int, Collection<IterableError>> = listOf(
+                Err(IterableError.IterableError1),
+                Ok(1),
+                Err(IterableError.IterableError2),
+                Ok(2),
+            ).combineErrTo(mutableListOf())
+
+            assertEquals(
+                expected = Ok(1),
+                actual = result,
+            )
+        }
+
+        @Test
+        fun returnsErrEmptyCollectionIfEmpty() {
+            val result: Result<Int, Collection<IterableError>> = emptyList<Result<Int, IterableError>>()
+                .combineErrTo(mutableListOf())
 
             assertEquals(
                 expected = Err(emptyList()),

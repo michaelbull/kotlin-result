@@ -414,6 +414,27 @@ public fun <V, E> Iterable<Result<V, E>>.combine(): Result<List<V>, E> {
 }
 
 /**
+ * Combines [this] iterable into a single [Result], appending all [ok][Result.isOk] values to the
+ * given [destination]. Elements in the returned collection are in the same order as [this].
+ *
+ * - If all results [are ok][Result.isOk], returns [Ok] with the [destination].
+ * - If any result [is an error][Result.isErr], returns the first [Err] encountered.
+ * - If the iterable is empty, returns [Ok] with the (empty) [destination].
+ */
+public fun <V, E, C : MutableCollection<in V>> Iterable<Result<V, E>>.combineTo(
+    destination: C,
+): Result<C, E> {
+    val values = mapTo(destination) { result ->
+        when {
+            result.isOk -> result.value
+            else -> return result.asErr()
+        }
+    }
+
+    return Ok(values)
+}
+
+/**
  * Combines the specified [results] into a single [Result] (holding a [List] of errors). Elements
  * in the returned list are in the same order as the specified [results].
  */
@@ -431,6 +452,27 @@ public fun <V, E, R : Result<V, E>> combineErr(vararg results: R): Result<V, Lis
  */
 public fun <V, E> Iterable<Result<V, E>>.combineErr(): Result<V, List<E>> {
     val errors = map { result ->
+        when {
+            result.isErr -> result.error
+            else -> return result.asOk()
+        }
+    }
+
+    return Err(errors)
+}
+
+/**
+ * Combines [this] iterable into a single [Result], appending all [error][Result.isErr] values to
+ * the given [destination]. Elements in the returned collection are in the same order as [this].
+ *
+ * - If all results [are errors][Result.isErr], returns [Err] with the [destination].
+ * - If any result [is ok][Result.isOk], returns the first [Ok] encountered.
+ * - If the iterable is empty, returns [Err] with the (empty) [destination].
+ */
+public fun <V, E, C : MutableCollection<in E>> Iterable<Result<V, E>>.combineErrTo(
+    destination: C,
+): Result<V, C> {
+    val errors = mapTo(destination) { result ->
         when {
             result.isErr -> result.error
             else -> return result.asOk()

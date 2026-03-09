@@ -56,6 +56,399 @@ public inline fun <T, E> Iterable<T>.tryFindLast(
 }
 
 /**
+ * Returns a [Result] containing a list of elements for which the fallible [predicate] returns
+ * [Ok]`(true)`, returning early with the first [Err] if the [predicate] fails.
+ *
+ * - Haskell: [Control.Monad.filterM](https://hackage.haskell.org/package/base/docs/Control-Monad.html#v:filterM)
+ */
+public inline fun <T, E> Iterable<T>.tryFilter(
+    predicate: (T) -> Result<Boolean, E>,
+): Result<List<T>, E> {
+    return tryFilterTo(ArrayList(), predicate)
+}
+
+/**
+ * Appends elements for which the fallible [predicate] returns [Ok]`(true)` to the given
+ * [destination], returning early with the first [Err] if the [predicate] fails.
+ *
+ * - Haskell: [Control.Monad.filterM](https://hackage.haskell.org/package/base/docs/Control-Monad.html#v:filterM)
+ */
+public inline fun <T, E, C : MutableCollection<in T>> Iterable<T>.tryFilterTo(
+    destination: C,
+    predicate: (T) -> Result<Boolean, E>,
+): Result<C, E> {
+    for (element in this) {
+        val result = predicate(element)
+
+        when {
+            result.isErr -> return Err(result.error)
+            result.value -> destination.add(element)
+        }
+    }
+
+    return Ok(destination)
+}
+
+/**
+ * Returns a [Result] containing a list of elements for which the fallible [predicate] returns
+ * [Ok]`(false)`, returning early with the first [Err] if the [predicate] fails.
+ *
+ * - Haskell: [Control.Monad.filterM](https://hackage.haskell.org/package/base/docs/Control-Monad.html#v:filterM)
+ */
+public inline fun <T, E> Iterable<T>.tryFilterNot(
+    predicate: (T) -> Result<Boolean, E>,
+): Result<List<T>, E> {
+    return tryFilterNotTo(ArrayList(), predicate)
+}
+
+/**
+ * Appends elements for which the fallible [predicate] returns [Ok]`(false)` to the given
+ * [destination], returning early with the first [Err] if the [predicate] fails.
+ *
+ * - Haskell: [Control.Monad.filterM](https://hackage.haskell.org/package/base/docs/Control-Monad.html#v:filterM)
+ */
+public inline fun <T, E, C : MutableCollection<in T>> Iterable<T>.tryFilterNotTo(
+    destination: C,
+    predicate: (T) -> Result<Boolean, E>,
+): Result<C, E> {
+    for (element in this) {
+        val result = predicate(element)
+
+        when {
+            result.isErr -> return Err(result.error)
+            !result.value -> destination.add(element)
+        }
+    }
+
+    return Ok(destination)
+}
+
+/**
+ * Returns a [Result] containing a list of elements for which the fallible [predicate] returns
+ * [Ok]`(true)`, returning early with the first [Err] if the [predicate] fails. The [predicate]
+ * receives the index of the element being processed.
+ *
+ * - Haskell: [Control.Monad.filterM](https://hackage.haskell.org/package/base/docs/Control-Monad.html#v:filterM)
+ */
+public inline fun <T, E> Iterable<T>.tryFilterIndexed(
+    predicate: (index: Int, T) -> Result<Boolean, E>,
+): Result<List<T>, E> {
+    return tryFilterIndexedTo(ArrayList(), predicate)
+}
+
+/**
+ * Appends elements for which the fallible [predicate] returns [Ok]`(true)` to the given
+ * [destination], returning early with the first [Err] if the [predicate] fails. The [predicate]
+ * receives the index of the element being processed.
+ *
+ * - Haskell: [Control.Monad.filterM](https://hackage.haskell.org/package/base/docs/Control-Monad.html#v:filterM)
+ */
+public inline fun <T, E, C : MutableCollection<in T>> Iterable<T>.tryFilterIndexedTo(
+    destination: C,
+    predicate: (index: Int, T) -> Result<Boolean, E>,
+): Result<C, E> {
+    var index = 0
+
+    for (element in this) {
+        val result = predicate(index++, element)
+
+        when {
+            result.isErr -> return Err(result.error)
+            result.value -> destination.add(element)
+        }
+    }
+
+    return Ok(destination)
+}
+
+/**
+ * Returns a [Result] containing a [Map] of key-value pairs provided by the fallible [transform]
+ * function applied to elements of [this], returning early with the first [Err] if the [transform]
+ * fails.
+ */
+public inline fun <T, K, V, E> Iterable<T>.tryAssociate(
+    transform: (T) -> Result<Pair<K, V>, E>,
+): Result<Map<K, V>, E> {
+    return tryAssociateTo(LinkedHashMap(), transform)
+}
+
+/**
+ * Populates and returns the [destination] mutable map with key-value pairs provided by the
+ * fallible [transform] function applied to each element of [this], returning early with the
+ * first [Err] if the [transform] fails.
+ */
+public inline fun <T, K, V, E, M : MutableMap<in K, in V>> Iterable<T>.tryAssociateTo(
+    destination: M,
+    transform: (T) -> Result<Pair<K, V>, E>,
+): Result<M, E> {
+    for (element in this) {
+        val result = transform(element)
+
+        if (result.isErr) {
+            return Err(result.error)
+        } else {
+            val (key, value) = result.value
+            destination[key] = value
+        }
+    }
+
+    return Ok(destination)
+}
+
+/**
+ * Returns a [Result] containing a [Map] where keys are provided by the fallible [keySelector]
+ * function applied to each element of [this], and values are the elements themselves, returning
+ * early with the first [Err] if the [keySelector] fails.
+ */
+public inline fun <T, K, E> Iterable<T>.tryAssociateBy(
+    keySelector: (T) -> Result<K, E>,
+): Result<Map<K, T>, E> {
+    return tryAssociateByTo(LinkedHashMap(), keySelector)
+}
+
+/**
+ * Returns a [Result] containing a [Map] where keys are provided by the fallible [keySelector]
+ * function and values are provided by the fallible [valueTransform] function, both applied to
+ * each element of [this], returning early with the first [Err] if either function fails.
+ */
+public inline fun <T, K, V, E> Iterable<T>.tryAssociateBy(
+    keySelector: (T) -> Result<K, E>,
+    valueTransform: (T) -> Result<V, E>,
+): Result<Map<K, V>, E> {
+    return tryAssociateByTo(LinkedHashMap(), keySelector, valueTransform)
+}
+
+/**
+ * Populates and returns the [destination] mutable map with key-value pairs, where keys are
+ * provided by the fallible [keySelector] function applied to each element of [this], and values
+ * are the elements themselves, returning early with the first [Err] if the [keySelector] fails.
+ */
+public inline fun <T, K, E, M : MutableMap<in K, in T>> Iterable<T>.tryAssociateByTo(
+    destination: M,
+    keySelector: (T) -> Result<K, E>,
+): Result<M, E> {
+    for (element in this) {
+        val keyResult = keySelector(element)
+
+        if (keyResult.isErr) {
+            return Err(keyResult.error)
+        } else {
+            destination[keyResult.value] = element
+        }
+    }
+
+    return Ok(destination)
+}
+
+/**
+ * Populates and returns the [destination] mutable map with key-value pairs, where keys are
+ * provided by the fallible [keySelector] function and values are provided by the fallible
+ * [valueTransform] function, both applied to each element of [this], returning early with the
+ * first [Err] if either function fails.
+ */
+public inline fun <T, K, V, E, M : MutableMap<in K, in V>> Iterable<T>.tryAssociateByTo(
+    destination: M,
+    keySelector: (T) -> Result<K, E>,
+    valueTransform: (T) -> Result<V, E>,
+): Result<M, E> {
+    for (element in this) {
+        val keyResult = keySelector(element)
+
+        if (keyResult.isErr) {
+            return Err(keyResult.error)
+        }
+
+        val valueResult = valueTransform(element)
+
+        if (valueResult.isErr) {
+            return Err(valueResult.error)
+        }
+
+        destination[keyResult.value] = valueResult.value
+    }
+
+    return Ok(destination)
+}
+
+/**
+ * Returns a [Result] containing a [Map] where keys are elements of [this] and values are
+ * provided by the fallible [valueSelector] function applied to each element, returning early
+ * with the first [Err] if the [valueSelector] fails.
+ */
+public inline fun <K, V, E> Iterable<K>.tryAssociateWith(
+    valueSelector: (K) -> Result<V, E>,
+): Result<Map<K, V>, E> {
+    return tryAssociateWithTo(LinkedHashMap(), valueSelector)
+}
+
+/**
+ * Populates and returns the [destination] mutable map with key-value pairs for each element of
+ * [this], where the key is the element itself and the value is provided by the fallible
+ * [valueSelector] function, returning early with the first [Err] if the [valueSelector] fails.
+ */
+public inline fun <K, V, E, M : MutableMap<in K, in V>> Iterable<K>.tryAssociateWithTo(
+    destination: M,
+    valueSelector: (K) -> Result<V, E>,
+): Result<M, E> {
+    for (element in this) {
+        val result = valueSelector(element)
+
+        if (result.isErr) {
+            return Err(result.error)
+        } else {
+            destination[element] = result.value
+        }
+    }
+
+    return Ok(destination)
+}
+
+/**
+ * Returns a [Result] containing a single list of all elements yielded from the fallible
+ * [transform] function being invoked on each element of [this], returning early with the first
+ * [Err] if the [transform] fails.
+ */
+public inline fun <T, U, E> Iterable<T>.tryFlatMap(
+    transform: (T) -> Result<Iterable<U>, E>,
+): Result<List<U>, E> {
+    return tryFlatMapTo(ArrayList(), transform)
+}
+
+/**
+ * Appends all elements yielded from the fallible [transform] function being invoked on each
+ * element of [this] to the given [destination], returning early with the first [Err] if the
+ * [transform] fails.
+ */
+public inline fun <T, U, E, C : MutableCollection<in U>> Iterable<T>.tryFlatMapTo(
+    destination: C,
+    transform: (T) -> Result<Iterable<U>, E>,
+): Result<C, E> {
+    for (element in this) {
+        val result = transform(element)
+
+        if (result.isErr) {
+            return Err(result.error)
+        } else {
+            destination.addAll(result.value)
+        }
+    }
+
+    return Ok(destination)
+}
+
+/**
+ * Returns a [Result] containing a single list of all elements yielded from the fallible
+ * [transform] function being invoked on each element and its index of [this], returning early
+ * with the first [Err] if the [transform] fails.
+ */
+public inline fun <T, U, E> Iterable<T>.tryFlatMapIndexed(
+    transform: (index: Int, T) -> Result<Iterable<U>, E>,
+): Result<List<U>, E> {
+    return tryFlatMapIndexedTo(ArrayList(), transform)
+}
+
+/**
+ * Appends all elements yielded from the fallible [transform] function being invoked on each
+ * element and its index of [this] to the given [destination], returning early with the first
+ * [Err] if the [transform] fails.
+ */
+public inline fun <T, U, E, C : MutableCollection<in U>> Iterable<T>.tryFlatMapIndexedTo(
+    destination: C,
+    transform: (index: Int, T) -> Result<Iterable<U>, E>,
+): Result<C, E> {
+    var index = 0
+
+    for (element in this) {
+        val result = transform(index++, element)
+
+        if (result.isErr) {
+            return Err(result.error)
+        } else {
+            destination.addAll(result.value)
+        }
+    }
+
+    return Ok(destination)
+}
+
+/**
+ * Returns a [Result] containing a [Map] where keys are provided by the fallible [keySelector]
+ * function applied to each element of [this], and values are lists of elements corresponding to
+ * each key, returning early with the first [Err] if the [keySelector] fails.
+ */
+public inline fun <T, K, E> Iterable<T>.tryGroupBy(
+    keySelector: (T) -> Result<K, E>,
+): Result<Map<K, List<T>>, E> {
+    return tryGroupByTo(LinkedHashMap(), keySelector)
+}
+
+/**
+ * Returns a [Result] containing a [Map] where keys are provided by the fallible [keySelector]
+ * function and values are lists of results of the fallible [valueTransform] function, both
+ * applied to each element of [this], returning early with the first [Err] if either function
+ * fails.
+ */
+public inline fun <T, K, V, E> Iterable<T>.tryGroupBy(
+    keySelector: (T) -> Result<K, E>,
+    valueTransform: (T) -> Result<V, E>,
+): Result<Map<K, List<V>>, E> {
+    return tryGroupByTo(LinkedHashMap(), keySelector, valueTransform)
+}
+
+/**
+ * Populates the [destination] map by grouping elements of [this] by the key returned from the
+ * fallible [keySelector] function applied to each element, returning early with the first [Err]
+ * if the [keySelector] fails.
+ */
+public inline fun <T, K, E, M : MutableMap<in K, MutableList<T>>> Iterable<T>.tryGroupByTo(
+    destination: M,
+    keySelector: (T) -> Result<K, E>,
+): Result<M, E> {
+    for (element in this) {
+        val keyResult = keySelector(element)
+
+        if (keyResult.isErr) {
+            return Err(keyResult.error)
+        }
+
+        val list = destination.getOrPut(keyResult.value) { ArrayList() }
+        list.add(element)
+    }
+
+    return Ok(destination)
+}
+
+/**
+ * Populates the [destination] map by grouping elements of [this] by the key returned from the
+ * fallible [keySelector] function and transforming values with the fallible [valueTransform]
+ * function, returning early with the first [Err] if either function fails.
+ */
+public inline fun <T, K, V, E, M : MutableMap<in K, MutableList<V>>> Iterable<T>.tryGroupByTo(
+    destination: M,
+    keySelector: (T) -> Result<K, E>,
+    valueTransform: (T) -> Result<V, E>,
+): Result<M, E> {
+    for (element in this) {
+        val keyResult = keySelector(element)
+
+        if (keyResult.isErr) {
+            return Err(keyResult.error)
+        }
+
+        val valueResult = valueTransform(element)
+
+        if (valueResult.isErr) {
+            return Err(valueResult.error)
+        }
+
+        val list = destination.getOrPut(keyResult.value) { ArrayList() }
+        list.add(valueResult.value)
+    }
+
+    return Ok(destination)
+}
+
+/**
  * Returns a [Result<List<U>, E>][Result] containing the results of applying the given [transform]
  * function to each element in the original collection, returning early with the first [Err] if a
  * transformation fails. Elements in the returned list are in the same order as [this].
@@ -410,4 +803,29 @@ public inline fun <T, E> Iterable<T>.tryReduceIndexed(
     }
 
     return Ok(accumulator)
+}
+
+/**
+ * Returns a [Result] containing a [Pair] of lists, where the [first][Pair.first] list contains
+ * elements for which the fallible [predicate] returns [Ok]`(true)`, and the [second][Pair.second]
+ * list contains elements for which the fallible [predicate] returns [Ok]`(false)`, returning
+ * early with the first [Err] if the [predicate] fails.
+ */
+public inline fun <T, E> Iterable<T>.tryPartition(
+    predicate: (T) -> Result<Boolean, E>,
+): Result<Pair<List<T>, List<T>>, E> {
+    val first = ArrayList<T>()
+    val second = ArrayList<T>()
+
+    for (element in this) {
+        val result = predicate(element)
+
+        when {
+            result.isErr -> return Err(result.error)
+            result.value -> first.add(element)
+            else -> second.add(element)
+        }
+    }
+
+    return Ok(Pair(first, second))
 }

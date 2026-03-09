@@ -95,6 +95,790 @@ class TryTest {
         }
     }
 
+    class TryFilter {
+
+        @Test
+        fun returnsFilteredElementsIfAllOk() {
+            val result = listOf(1, 2, 3, 4, 5).tryFilter { element ->
+                Ok(element % 2 == 0)
+            }
+
+            assertEquals(
+                expected = Ok(listOf(2, 4)),
+                actual = result,
+            )
+        }
+
+        @Test
+        fun returnsFirstErrIfPredicateFails() {
+            val result: Result<List<Int>, String> = listOf(1, 2, 3, 4).tryFilter { element ->
+                if (element == 3) {
+                    Err("bad")
+                } else {
+                    Ok(element % 2 == 0)
+                }
+            }
+
+            assertEquals(
+                expected = Err("bad"),
+                actual = result,
+            )
+        }
+    }
+
+    class TryFilterTo {
+
+        @Test
+        fun appendsFilteredElementsIfAllOk() {
+            val destination = mutableListOf(0)
+
+            val result = listOf(1, 2, 3, 4, 5).tryFilterTo(destination) { element ->
+                Ok(element % 2 == 0)
+            }
+
+            assertEquals(
+                expected = Ok(listOf(0, 2, 4)),
+                actual = result,
+            )
+        }
+
+        @Test
+        fun returnsFirstErrIfPredicateFails() {
+            val destination = mutableListOf(0)
+
+            val result: Result<MutableList<Int>, String> = listOf(1, 2, 3).tryFilterTo(destination) { element ->
+                if (element == 2) {
+                    Err("bad")
+                } else {
+                    Ok(true)
+                }
+            }
+
+            assertEquals(
+                expected = Err("bad"),
+                actual = result,
+            )
+        }
+    }
+
+    class TryFilterNot {
+
+        @Test
+        fun returnsNonMatchingElementsIfAllOk() {
+            val result = listOf(1, 2, 3, 4, 5).tryFilterNot { element ->
+                Ok(element % 2 == 0)
+            }
+
+            assertEquals(
+                expected = Ok(listOf(1, 3, 5)),
+                actual = result,
+            )
+        }
+
+        @Test
+        fun returnsFirstErrIfPredicateFails() {
+            val result: Result<List<Int>, String> = listOf(1, 2, 3).tryFilterNot { element ->
+                if (element == 2) {
+                    Err("bad")
+                } else {
+                    Ok(element % 2 == 0)
+                }
+            }
+
+            assertEquals(
+                expected = Err("bad"),
+                actual = result,
+            )
+        }
+    }
+
+    class TryFilterNotTo {
+
+        @Test
+        fun appendsNonMatchingElementsIfAllOk() {
+            val destination = mutableListOf(0)
+
+            val result = listOf(1, 2, 3, 4, 5).tryFilterNotTo(destination) { element ->
+                Ok(element % 2 == 0)
+            }
+
+            assertEquals(
+                expected = Ok(listOf(0, 1, 3, 5)),
+                actual = result,
+            )
+        }
+
+        @Test
+        fun returnsFirstErrIfPredicateFails() {
+            val destination = mutableListOf(0)
+
+            val result: Result<MutableList<Int>, String> = listOf(1, 2, 3).tryFilterNotTo(destination) { element ->
+                if (element == 2) {
+                    Err("bad")
+                } else {
+                    Ok(false)
+                }
+            }
+
+            assertEquals(
+                expected = Err("bad"),
+                actual = result,
+            )
+        }
+    }
+
+    class TryFilterIndexed {
+
+        @Test
+        fun returnsFilteredElementsByIndexIfAllOk() {
+            val result = listOf(10, 20, 30, 40).tryFilterIndexed { index, _ ->
+                Ok(index % 2 == 0)
+            }
+
+            assertEquals(
+                expected = Ok(listOf(10, 30)),
+                actual = result,
+            )
+        }
+
+        @Test
+        fun returnsFirstErrIfPredicateFails() {
+            val result: Result<List<Int>, String> = listOf(10, 20, 30).tryFilterIndexed { index, _ ->
+                if (index == 1) {
+                    Err("bad")
+                } else {
+                    Ok(true)
+                }
+            }
+
+            assertEquals(
+                expected = Err("bad"),
+                actual = result,
+            )
+        }
+    }
+
+    class TryFilterIndexedTo {
+
+        @Test
+        fun appendsFilteredElementsByIndexIfAllOk() {
+            val destination = mutableListOf(0)
+
+            val result = listOf(10, 20, 30, 40).tryFilterIndexedTo(destination) { index, _ ->
+                Ok(index % 2 == 0)
+            }
+
+            assertEquals(
+                expected = Ok(listOf(0, 10, 30)),
+                actual = result,
+            )
+        }
+
+        @Test
+        fun returnsFirstErrIfPredicateFails() {
+            val destination = mutableListOf(0)
+
+            val result: Result<MutableList<Int>, String> = listOf(10, 20, 30).tryFilterIndexedTo(destination) { index, _ ->
+                if (index == 1) {
+                    Err("bad")
+                } else {
+                    Ok(true)
+                }
+            }
+
+            assertEquals(
+                expected = Err("bad"),
+                actual = result,
+            )
+        }
+    }
+
+    class TryAssociate {
+
+        @Test
+        fun returnsMapIfAllOk() {
+            val result = listOf(1, 2, 3).tryAssociate { element ->
+                Ok(element.toString() to element * 10)
+            }
+
+            assertEquals(
+                expected = Ok(mapOf("1" to 10, "2" to 20, "3" to 30)),
+                actual = result,
+            )
+        }
+
+        @Test
+        fun returnsFirstErrIfTransformFails() {
+            val result: Result<Map<String, Int>, String> = listOf(1, 2, 3).tryAssociate { element ->
+                if (element == 2) {
+                    Err("bad")
+                } else {
+                    Ok(element.toString() to element * 10)
+                }
+            }
+
+            assertEquals(
+                expected = Err("bad"),
+                actual = result,
+            )
+        }
+    }
+
+    class TryAssociateTo {
+
+        @Test
+        fun appendsPairsToDestinationIfAllOk() {
+            val destination = mutableMapOf("0" to 0)
+
+            val result = listOf(1, 2, 3).tryAssociateTo(destination) { element ->
+                Ok(element.toString() to element * 10)
+            }
+
+            assertEquals(
+                expected = Ok(mapOf("0" to 0, "1" to 10, "2" to 20, "3" to 30)),
+                actual = result,
+            )
+        }
+
+        @Test
+        fun returnsFirstErrIfTransformFails() {
+            val destination = mutableMapOf("0" to 0)
+
+            val result: Result<MutableMap<String, Int>, String> = listOf(1, 2, 3).tryAssociateTo(destination) { element ->
+                if (element == 2) {
+                    Err("bad")
+                } else {
+                    Ok(element.toString() to element * 10)
+                }
+            }
+
+            assertEquals(
+                expected = Err("bad"),
+                actual = result,
+            )
+        }
+    }
+
+    class TryAssociateByKeyOnly {
+
+        @Test
+        fun returnsMapWithKeysIfAllOk() {
+            val result = listOf(1, 2, 3).tryAssociateBy { element ->
+                Ok(element.toString())
+            }
+
+            assertEquals(
+                expected = Ok(mapOf("1" to 1, "2" to 2, "3" to 3)),
+                actual = result,
+            )
+        }
+
+        @Test
+        fun returnsFirstErrIfKeySelectorFails() {
+            val result: Result<Map<String, Int>, String> = listOf(1, 2, 3).tryAssociateBy { element ->
+                if (element == 2) {
+                    Err("bad")
+                } else {
+                    Ok(element.toString())
+                }
+            }
+
+            assertEquals(
+                expected = Err("bad"),
+                actual = result,
+            )
+        }
+    }
+
+    class TryAssociateByKeyAndValue {
+
+        @Test
+        fun returnsMapIfAllOk() {
+            val result = listOf(1, 2, 3).tryAssociateBy(
+                keySelector = { Ok(it.toString()) },
+                valueTransform = { Ok(it * 10) },
+            )
+
+            assertEquals(
+                expected = Ok(mapOf("1" to 10, "2" to 20, "3" to 30)),
+                actual = result,
+            )
+        }
+
+        @Test
+        fun returnsFirstErrIfKeySelectorFails() {
+            val result: Result<Map<String, Int>, String> = listOf(1, 2, 3).tryAssociateBy(
+                keySelector = { element ->
+                    if (element == 2) {
+                        Err("bad key")
+                    } else {
+                        Ok(element.toString())
+                    }
+                },
+                valueTransform = { Ok(it * 10) },
+            )
+
+            assertEquals(
+                expected = Err("bad key"),
+                actual = result,
+            )
+        }
+
+        @Test
+        fun returnsFirstErrIfValueTransformFails() {
+            val result: Result<Map<String, Int>, String> = listOf(1, 2, 3).tryAssociateBy(
+                keySelector = { Ok(it.toString()) },
+                valueTransform = { element ->
+                    if (element == 2) {
+                        Err("bad value")
+                    } else {
+                        Ok(element * 10)
+                    }
+                },
+            )
+
+            assertEquals(
+                expected = Err("bad value"),
+                actual = result,
+            )
+        }
+    }
+
+    class TryAssociateByToKeyOnly {
+
+        @Test
+        fun appendsToDestinationIfAllOk() {
+            val destination = mutableMapOf("0" to 0)
+
+            val result = listOf(1, 2, 3).tryAssociateByTo(destination) { element ->
+                Ok(element.toString())
+            }
+
+            assertEquals(
+                expected = Ok(mapOf("0" to 0, "1" to 1, "2" to 2, "3" to 3)),
+                actual = result,
+            )
+        }
+
+        @Test
+        fun returnsFirstErrIfKeySelectorFails() {
+            val destination = mutableMapOf("0" to 0)
+
+            val result: Result<MutableMap<String, Int>, String> = listOf(1, 2, 3).tryAssociateByTo(destination) { element ->
+                if (element == 2) {
+                    Err("bad")
+                } else {
+                    Ok(element.toString())
+                }
+            }
+
+            assertEquals(
+                expected = Err("bad"),
+                actual = result,
+            )
+        }
+    }
+
+    class TryAssociateByToKeyAndValue {
+
+        @Test
+        fun appendsToDestinationIfAllOk() {
+            val destination = mutableMapOf("0" to 0)
+
+            val result = listOf(1, 2, 3).tryAssociateByTo(
+                destination = destination,
+                keySelector = { Ok(it.toString()) },
+                valueTransform = { Ok(it * 10) },
+            )
+
+            assertEquals(
+                expected = Ok(mapOf("0" to 0, "1" to 10, "2" to 20, "3" to 30)),
+                actual = result,
+            )
+        }
+
+        @Test
+        fun returnsFirstErrIfKeySelectorFails() {
+            val destination = mutableMapOf("0" to 0)
+
+            val result: Result<MutableMap<String, Int>, String> = listOf(1, 2, 3).tryAssociateByTo(
+                destination = destination,
+                keySelector = { element ->
+                    if (element == 2) {
+                        Err("bad")
+                    } else {
+                        Ok(element.toString())
+                    }
+                },
+                valueTransform = { Ok(it * 10) },
+            )
+
+            assertEquals(
+                expected = Err("bad"),
+                actual = result,
+            )
+        }
+    }
+
+    class TryAssociateWith {
+
+        @Test
+        fun returnsMapIfAllOk() {
+            val result = listOf(1, 2, 3).tryAssociateWith { element ->
+                Ok(element * 10)
+            }
+
+            assertEquals(
+                expected = Ok(mapOf(1 to 10, 2 to 20, 3 to 30)),
+                actual = result,
+            )
+        }
+
+        @Test
+        fun returnsFirstErrIfValueSelectorFails() {
+            val result: Result<Map<Int, Int>, String> = listOf(1, 2, 3).tryAssociateWith { element ->
+                if (element == 2) {
+                    Err("bad")
+                } else {
+                    Ok(element * 10)
+                }
+            }
+
+            assertEquals(
+                expected = Err("bad"),
+                actual = result,
+            )
+        }
+    }
+
+    class TryAssociateWithTo {
+
+        @Test
+        fun appendsToDestinationIfAllOk() {
+            val destination = mutableMapOf(0 to 0)
+
+            val result = listOf(1, 2, 3).tryAssociateWithTo(destination) { element ->
+                Ok(element * 10)
+            }
+
+            assertEquals(
+                expected = Ok(mapOf(0 to 0, 1 to 10, 2 to 20, 3 to 30)),
+                actual = result,
+            )
+        }
+
+        @Test
+        fun returnsFirstErrIfValueSelectorFails() {
+            val destination = mutableMapOf(0 to 0)
+
+            val result: Result<MutableMap<Int, Int>, String> = listOf(1, 2, 3).tryAssociateWithTo(destination) { element ->
+                if (element == 2) {
+                    Err("bad")
+                } else {
+                    Ok(element * 10)
+                }
+            }
+
+            assertEquals(
+                expected = Err("bad"),
+                actual = result,
+            )
+        }
+    }
+
+    class TryFlatMap {
+
+        @Test
+        fun returnsFlattenedListIfAllOk() {
+            val result = listOf(1, 2, 3).tryFlatMap { element ->
+                Ok(listOf(element, element * 10))
+            }
+
+            assertEquals(
+                expected = Ok(listOf(1, 10, 2, 20, 3, 30)),
+                actual = result,
+            )
+        }
+
+        @Test
+        fun returnsFirstErrIfTransformFails() {
+            val result: Result<List<Int>, String> = listOf(1, 2, 3).tryFlatMap { element ->
+                if (element == 2) {
+                    Err("bad")
+                } else {
+                    Ok(listOf(element, element * 10))
+                }
+            }
+
+            assertEquals(
+                expected = Err("bad"),
+                actual = result,
+            )
+        }
+    }
+
+    class TryFlatMapTo {
+
+        @Test
+        fun appendsFlattenedElementsIfAllOk() {
+            val destination = mutableListOf(0)
+
+            val result = listOf(1, 2, 3).tryFlatMapTo(destination) { element ->
+                Ok(listOf(element, element * 10))
+            }
+
+            assertEquals(
+                expected = Ok(listOf(0, 1, 10, 2, 20, 3, 30)),
+                actual = result,
+            )
+        }
+
+        @Test
+        fun returnsFirstErrIfTransformFails() {
+            val destination = mutableListOf(0)
+
+            val result: Result<MutableList<Int>, String> = listOf(1, 2, 3).tryFlatMapTo(destination) { element ->
+                if (element == 2) {
+                    Err("bad")
+                } else {
+                    Ok(listOf(element, element * 10))
+                }
+            }
+
+            assertEquals(
+                expected = Err("bad"),
+                actual = result,
+            )
+        }
+    }
+
+    class TryFlatMapIndexed {
+
+        @Test
+        fun returnsFlattenedListWithIndicesIfAllOk() {
+            val result = listOf(10, 20, 30).tryFlatMapIndexed { index, value ->
+                Ok(listOf(index, value))
+            }
+
+            assertEquals(
+                expected = Ok(listOf(0, 10, 1, 20, 2, 30)),
+                actual = result,
+            )
+        }
+
+        @Test
+        fun returnsFirstErrIfTransformFails() {
+            val result: Result<List<Int>, String> = listOf(10, 20, 30).tryFlatMapIndexed { index, value ->
+                if (index == 1) {
+                    Err("bad")
+                } else {
+                    Ok(listOf(index, value))
+                }
+            }
+
+            assertEquals(
+                expected = Err("bad"),
+                actual = result,
+            )
+        }
+    }
+
+    class TryFlatMapIndexedTo {
+
+        @Test
+        fun appendsFlattenedElementsWithIndicesIfAllOk() {
+            val destination = mutableListOf(-1)
+
+            val result = listOf(10, 20, 30).tryFlatMapIndexedTo(destination) { index, value ->
+                Ok(listOf(index, value))
+            }
+
+            assertEquals(
+                expected = Ok(listOf(-1, 0, 10, 1, 20, 2, 30)),
+                actual = result,
+            )
+        }
+
+        @Test
+        fun returnsFirstErrIfTransformFails() {
+            val destination = mutableListOf(-1)
+
+            val result: Result<MutableList<Int>, String> = listOf(10, 20, 30).tryFlatMapIndexedTo(destination) { index, value ->
+                if (index == 1) {
+                    Err("bad")
+                } else {
+                    Ok(listOf(index, value))
+                }
+            }
+
+            assertEquals(
+                expected = Err("bad"),
+                actual = result,
+            )
+        }
+    }
+
+    class TryGroupByKeyOnly {
+
+        @Test
+        fun returnsGroupedMapIfAllOk() {
+            val result = listOf(1, 2, 3, 4, 5).tryGroupBy { element ->
+                Ok(element % 2 == 0)
+            }
+
+            assertEquals(
+                expected = Ok(mapOf(false to listOf(1, 3, 5), true to listOf(2, 4))),
+                actual = result,
+            )
+        }
+
+        @Test
+        fun returnsFirstErrIfKeySelectorFails() {
+            val result: Result<Map<Boolean, List<Int>>, String> = listOf(1, 2, 3).tryGroupBy { element ->
+                if (element == 2) {
+                    Err("bad")
+                } else {
+                    Ok(element % 2 == 0)
+                }
+            }
+
+            assertEquals(
+                expected = Err("bad"),
+                actual = result,
+            )
+        }
+    }
+
+    class TryGroupByKeyAndValue {
+
+        @Test
+        fun returnsGroupedTransformedMapIfAllOk() {
+            val result = listOf(1, 2, 3, 4, 5).tryGroupBy(
+                keySelector = { Ok(it % 2 == 0) },
+                valueTransform = { Ok(it * 10) },
+            )
+
+            assertEquals(
+                expected = Ok(mapOf(false to listOf(10, 30, 50), true to listOf(20, 40))),
+                actual = result,
+            )
+        }
+
+        @Test
+        fun returnsFirstErrIfKeySelectorFails() {
+            val result: Result<Map<Boolean, List<Int>>, String> = listOf(1, 2, 3).tryGroupBy(
+                keySelector = { element ->
+                    if (element == 2) {
+                        Err("bad key")
+                    } else {
+                        Ok(element % 2 == 0)
+                    }
+                },
+                valueTransform = { Ok(it * 10) },
+            )
+
+            assertEquals(
+                expected = Err("bad key"),
+                actual = result,
+            )
+        }
+
+        @Test
+        fun returnsFirstErrIfValueTransformFails() {
+            val result: Result<Map<Boolean, List<Int>>, String> = listOf(1, 2, 3).tryGroupBy(
+                keySelector = { Ok(it % 2 == 0) },
+                valueTransform = { element ->
+                    if (element == 2) {
+                        Err("bad value")
+                    } else {
+                        Ok(element * 10)
+                    }
+                },
+            )
+
+            assertEquals(
+                expected = Err("bad value"),
+                actual = result,
+            )
+        }
+    }
+
+    class TryGroupByToKeyOnly {
+
+        @Test
+        fun appendsToDestinationIfAllOk() {
+            val destination = LinkedHashMap<Boolean, MutableList<Int>>()
+
+            val result = listOf(1, 2, 3, 4, 5).tryGroupByTo(destination) { element ->
+                Ok(element % 2 == 0)
+            }
+
+            assertEquals(
+                expected = Ok(mapOf(false to listOf(1, 3, 5), true to listOf(2, 4))),
+                actual = result,
+            )
+        }
+
+        @Test
+        fun returnsFirstErrIfKeySelectorFails() {
+            val destination = LinkedHashMap<Boolean, MutableList<Int>>()
+
+            val result: Result<LinkedHashMap<Boolean, MutableList<Int>>, String> = listOf(1, 2, 3).tryGroupByTo(destination) { element ->
+                if (element == 2) {
+                    Err("bad")
+                } else {
+                    Ok(element % 2 == 0)
+                }
+            }
+
+            assertEquals(
+                expected = Err("bad"),
+                actual = result,
+            )
+        }
+    }
+
+    class TryGroupByToKeyAndValue {
+
+        @Test
+        fun appendsToDestinationIfAllOk() {
+            val destination = LinkedHashMap<Boolean, MutableList<Int>>()
+
+            val result = listOf(1, 2, 3, 4, 5).tryGroupByTo(
+                destination = destination,
+                keySelector = { Ok(it % 2 == 0) },
+                valueTransform = { Ok(it * 10) },
+            )
+
+            assertEquals(
+                expected = Ok(mapOf(false to listOf(10, 30, 50), true to listOf(20, 40))),
+                actual = result,
+            )
+        }
+
+        @Test
+        fun returnsFirstErrIfKeySelectorFails() {
+            val destination = LinkedHashMap<Boolean, MutableList<Int>>()
+
+            val result: Result<LinkedHashMap<Boolean, MutableList<Int>>, String> = listOf(1, 2, 3).tryGroupByTo(
+                destination = destination,
+                keySelector = { element ->
+                    if (element == 2) {
+                        Err("bad")
+                    } else {
+                        Ok(element % 2 == 0)
+                    }
+                },
+                valueTransform = { Ok(it * 10) },
+            )
+
+            assertEquals(
+                expected = Err("bad"),
+                actual = result,
+            )
+        }
+    }
+
     class TryMap {
 
         @Test
@@ -620,6 +1404,49 @@ class TryTest {
 
             assertEquals(
                 expected = null,
+                actual = result,
+            )
+        }
+    }
+
+    class TryPartition {
+
+        @Test
+        fun returnsPartitionedPairIfAllOk() {
+            val result = listOf(1, 2, 3, 4, 5).tryPartition { element ->
+                Ok(element % 2 == 0)
+            }
+
+            assertEquals(
+                expected = Ok(Pair(listOf(2, 4), listOf(1, 3, 5))),
+                actual = result,
+            )
+        }
+
+        @Test
+        fun returnsFirstErrIfPredicateFails() {
+            val result: Result<Pair<List<Int>, List<Int>>, String> = listOf(1, 2, 3, 4).tryPartition { element ->
+                if (element == 3) {
+                    Err("bad")
+                } else {
+                    Ok(element % 2 == 0)
+                }
+            }
+
+            assertEquals(
+                expected = Err("bad"),
+                actual = result,
+            )
+        }
+
+        @Test
+        fun returnsEmptyPairIfEmpty() {
+            val result = emptyList<Int>().tryPartition { element ->
+                Ok(element % 2 == 0)
+            }
+
+            assertEquals(
+                expected = Ok(Pair(emptyList(), emptyList())),
                 actual = result,
             )
         }

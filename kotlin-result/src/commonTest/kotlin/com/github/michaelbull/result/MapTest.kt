@@ -357,11 +357,11 @@ class MapTest {
         }
     }
 
-    class MapAll {
+    class TryMap {
 
         @Test
         fun returnsTransformedValuesIfAllOk() {
-            val result = Ok(listOf(1, 2, 3)).mapAll { Ok(it * 10) }
+            val result = Ok(listOf(1, 2, 3)).tryMap { Ok(it * 10) }
 
             assertEquals(
                 expected = Ok(listOf(10, 20, 30)),
@@ -371,7 +371,7 @@ class MapTest {
 
         @Test
         fun returnsFirstErrorIfTransformFails() {
-            val result: Result<List<Int>, String> = Ok(listOf(1, 2, 3)).mapAll { element ->
+            val result: Result<List<Int>, String> = Ok(listOf(1, 2, 3)).tryMap { element ->
                 if (element == 2) {
                     Err("bad")
                 } else {
@@ -387,7 +387,7 @@ class MapTest {
 
         @Test
         fun returnsErrorIfErr() {
-            val result = Err("error").mapAll { element: Int -> Ok(element) }
+            val result = Err("error").tryMap { element: Int -> Ok(element) }
 
             assertEquals(
                 expected = Err("error"),

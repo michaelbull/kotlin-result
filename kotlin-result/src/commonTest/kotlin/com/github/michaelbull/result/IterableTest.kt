@@ -268,11 +268,11 @@ class IterableTest {
         }
     }
 
-    class Fold {
+    class TryFold {
 
         @Test
         fun returnAccumulatedValueIfOk() {
-            val result = listOf(20, 30, 40, 50).fold(
+            val result = listOf(20, 30, 40, 50).tryFold(
                 initial = 10,
                 operation = { a, b -> Ok(a + b) },
             )
@@ -285,7 +285,7 @@ class IterableTest {
 
         @Test
         fun returnsFirstErrorIfErr() {
-            val result: Result<Int, IterableError> = listOf(5, 10, 15, 20, 25).fold(
+            val result: Result<Int, IterableError> = listOf(5, 10, 15, 20, 25).tryFold(
                 initial = 1,
                 operation = { a, b ->
                     when (b) {
@@ -303,11 +303,11 @@ class IterableTest {
         }
     }
 
-    class FoldRight {
+    class TryFoldRight {
 
         @Test
         fun returnsAccumulatedValueIfOk() {
-            val result = listOf(2, 5, 10, 20).foldRight(
+            val result = listOf(2, 5, 10, 20).tryFoldRight(
                 initial = 100,
                 operation = { a, b -> Ok(b - a) },
             )
@@ -320,7 +320,7 @@ class IterableTest {
 
         @Test
         fun returnsLastErrorIfErr() {
-            val result = listOf(2, 5, 10, 20, 40).foldRight(
+            val result = listOf(2, 5, 10, 20, 40).tryFoldRight(
                 initial = 38500,
                 operation = { a, b ->
                     when (b) {
@@ -333,6 +333,278 @@ class IterableTest {
 
             assertEquals(
                 expected = Err(IterableError.IterableError2),
+                actual = result,
+            )
+        }
+    }
+
+    class TryMap {
+
+        @Test
+        fun returnsTransformedValuesIfAllOk() {
+            val result = listOf(1, 2, 3).tryMap { Ok(it * 10) }
+
+            assertEquals(
+                expected = Ok(listOf(10, 20, 30)),
+                actual = result,
+            )
+        }
+
+        @Test
+        fun returnsFirstErrIfTransformFails() {
+            val result: Result<List<Int>, String> = listOf(1, 2, 3).tryMap { element ->
+                if (element == 2) {
+                    Err("bad")
+                } else {
+                    Ok(element * 10)
+                }
+            }
+
+            assertEquals(
+                expected = Err("bad"),
+                actual = result,
+            )
+        }
+    }
+
+    class TryMapTo {
+
+        @Test
+        fun appendsTransformedValuesIfAllOk() {
+            val destination = mutableListOf(0)
+
+            val result = listOf(1, 2, 3).tryMapTo(destination) { Ok(it * 10) }
+
+            assertEquals(
+                expected = Ok(listOf(0, 10, 20, 30)),
+                actual = result,
+            )
+        }
+
+        @Test
+        fun returnsFirstErrIfTransformFails() {
+            val destination = mutableListOf(0)
+
+            val result: Result<MutableList<Int>, String> = listOf(1, 2, 3).tryMapTo(destination) { element ->
+                if (element == 2) {
+                    Err("bad")
+                } else {
+                    Ok(element * 10)
+                }
+            }
+
+            assertEquals(
+                expected = Err("bad"),
+                actual = result,
+            )
+        }
+    }
+
+    class TryMapNotNull {
+
+        @Test
+        fun returnsNonNullTransformedValuesIfAllOk() {
+            val result = listOf(1, 2, 3).tryMapNotNull { element ->
+                if (element == 2) {
+                    null
+                } else {
+                    Ok(element * 10)
+                }
+            }
+
+            assertEquals(
+                expected = Ok(listOf(10, 30)),
+                actual = result,
+            )
+        }
+
+        @Test
+        fun returnsFirstErrIfTransformFails() {
+            val result: Result<List<Int>, String> = listOf(1, 2, 3).tryMapNotNull { element ->
+                if (element == 2) {
+                    Err("bad")
+                } else {
+                    Ok(element * 10)
+                }
+            }
+
+            assertEquals(
+                expected = Err("bad"),
+                actual = result,
+            )
+        }
+    }
+
+    class TryMapNotNullTo {
+
+        @Test
+        fun appendsNonNullTransformedValuesIfAllOk() {
+            val destination = mutableListOf(0)
+
+            val result = listOf(1, 2, 3).tryMapNotNullTo(destination) { element ->
+                if (element == 2) {
+                    null
+                } else {
+                    Ok(element * 10)
+                }
+            }
+
+            assertEquals(
+                expected = Ok(listOf(0, 10, 30)),
+                actual = result,
+            )
+        }
+
+        @Test
+        fun returnsFirstErrIfTransformFails() {
+            val destination = mutableListOf(0)
+
+            val result: Result<MutableList<Int>, String> = listOf(1, 2, 3).tryMapNotNullTo(destination) { element ->
+                if (element == 2) {
+                    Err("bad")
+                } else {
+                    Ok(element * 10)
+                }
+            }
+
+            assertEquals(
+                expected = Err("bad"),
+                actual = result,
+            )
+        }
+    }
+
+    class TryMapIndexed {
+
+        @Test
+        fun returnsTransformedValuesIfAllOk() {
+            val result = listOf(10, 20, 30).tryMapIndexed { index, value -> Ok(index to value) }
+
+            assertEquals(
+                expected = Ok(listOf(0 to 10, 1 to 20, 2 to 30)),
+                actual = result,
+            )
+        }
+
+        @Test
+        fun returnsFirstErrIfTransformFails() {
+            val result: Result<List<Pair<Int, Int>>, String> = listOf(10, 20, 30).tryMapIndexed { index, _ ->
+                if (index == 1) {
+                    Err("bad")
+                } else {
+                    Ok(index to index)
+                }
+            }
+
+            assertEquals(
+                expected = Err("bad"),
+                actual = result,
+            )
+        }
+    }
+
+    class TryMapIndexedTo {
+
+        @Test
+        fun appendsTransformedValuesIfAllOk() {
+            val destination = mutableListOf(-1 to -1)
+
+            val result = listOf(10, 20, 30).tryMapIndexedTo(destination) { index, value -> Ok(index to value) }
+
+            assertEquals(
+                expected = Ok(listOf(-1 to -1, 0 to 10, 1 to 20, 2 to 30)),
+                actual = result,
+            )
+        }
+
+        @Test
+        fun returnsFirstErrIfTransformFails() {
+            val destination = mutableListOf(-1 to -1)
+
+            val result: Result<MutableList<Pair<Int, Int>>, String> = listOf(10, 20, 30).tryMapIndexedTo(destination) { index, _ ->
+                if (index == 1) {
+                    Err("bad")
+                } else {
+                    Ok(index to index)
+                }
+            }
+
+            assertEquals(
+                expected = Err("bad"),
+                actual = result,
+            )
+        }
+    }
+
+    class TryMapIndexedNotNull {
+
+        @Test
+        fun returnsNonNullTransformedValuesIfAllOk() {
+            val result = listOf(10, 20, 30).tryMapIndexedNotNull { index, value ->
+                if (index == 1) {
+                    null
+                } else {
+                    Ok(index to value)
+                }
+            }
+
+            assertEquals(
+                expected = Ok(listOf(0 to 10, 2 to 30)),
+                actual = result,
+            )
+        }
+
+        @Test
+        fun returnsFirstErrIfTransformFails() {
+            val result: Result<List<Pair<Int, Int>>, String> = listOf(10, 20, 30).tryMapIndexedNotNull { index, _ ->
+                if (index == 1) {
+                    Err("bad")
+                } else {
+                    Ok(index to index)
+                }
+            }
+
+            assertEquals(
+                expected = Err("bad"),
+                actual = result,
+            )
+        }
+    }
+
+    class TryMapIndexedNotNullTo {
+
+        @Test
+        fun appendsNonNullTransformedValuesIfAllOk() {
+            val destination = mutableListOf(-1 to -1)
+
+            val result = listOf(10, 20, 30).tryMapIndexedNotNullTo(destination) { index, value ->
+                if (index == 1) {
+                    null
+                } else {
+                    Ok(index to value)
+                }
+            }
+
+            assertEquals(
+                expected = Ok(listOf(-1 to -1, 0 to 10, 2 to 30)),
+                actual = result,
+            )
+        }
+
+        @Test
+        fun returnsFirstErrIfTransformFails() {
+            val destination = mutableListOf(-1 to -1)
+
+            val result: Result<MutableList<Pair<Int, Int>>, String> = listOf(10, 20, 30).tryMapIndexedNotNullTo(destination) { index, _ ->
+                if (index == 1) {
+                    Err("bad")
+                } else {
+                    Ok(index to index)
+                }
+            }
+
+            assertEquals(
+                expected = Err("bad"),
                 actual = result,
             )
         }

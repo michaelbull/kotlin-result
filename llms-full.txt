@@ -1,0 +1,826 @@
+# kotlin-result — Comprehensive API Reference
+
+> A Kotlin Multiplatform library providing a `Result<V, E>` monad for modelling success or failure operations.
+
+## Overview
+
+`Result<V, E>` is a `@JvmInline value class` that represents either success (`Ok`) or failure (`Err`).
+
+Key properties:
+- **Zero allocation on the Ok path** — Ok values are stored directly in the inlined wrapper
+- **Unconstrained error type** — `E` can be any type (sealed interface, enum, String, etc.)
+- **Kotlin Multiplatform** — supports JVM, JS, Native, and WasmJs
+- **No external dependencies** — the core module depends only on Kotlin stdlib
+- **Kotlin contracts** — enables smart casts after `isOk`/`isErr` checks
+
+Inspired by Rust's `Result`, Elm's `Result`, and Haskell's `Either`.
+
+## Installation
+
+```kotlin
+// gradle/libs.versions.toml
+[versions]
+kotlin-result = "2.0.1"
+
+[libraries]
+kotlin-result = { module = "com.michael-bull.kotlin-result:kotlin-result", version.ref = "kotlin-result" }
+kotlin-result-coroutines = { module = "com.michael-bull.kotlin-result:kotlin-result-coroutines", version.ref = "kotlin-result" }
+```
+
+```kotlin
+// build.gradle.kts
+dependencies {
+    implementation(libs.kotlin.result)
+
+    // Optional: only if you need coroutineBinding, runSuspendCatching, parZip, or Flow extensions
+    implementation(libs.kotlin.result.coroutines)
+}
+```
+
+## Modules
+
+- **`kotlin-result`** — Core library. Contains the `Result<V, E>` value class and all extension functions. Zero external dependencies.
+- **`kotlin-result-coroutines`** — Coroutine extensions. Depends on `kotlin-result` and `kotlinx-coroutines`. Provides `coroutineBinding`, `runSuspendCatching`, `parZip`, and Flow extensions.
+
+## Creating Results
+
+```kotlin
+// Constructing directly
+val ok: Result<Int, String> = Ok(42)
+val err: Result<Int, String> = Err("something went wrong")
+
+// From nullable values
+val result: Result<String, MyError> = nullableValue.toResultOr { MyError.NotFound }
+
+// From exception-throwing code
+val result: Result<String, Throwable> = runCatching { riskyOperation() }
+
+// In coroutines (rethrows CancellationException)
+val result: Result<String, Throwable> = runSuspendCatching { suspendingOperation() }
+```
+
+### Factory Functions
+
+`fun <V> Ok(value: V): Result<V, Nothing>`
+Returns a Result that is Ok and contains the given value.
+
+`fun <E> Err(error: E): Result<Nothing, E>`
+Returns a Result that is Err and contains the given error.
+
+`inline fun <V> runCatching(block: () -> V): Result<V, Throwable>`
+Calls the block and returns its result, catching any Throwable as an Err.
+
+`inline infix fun <T, V> T.runCatching(block: T.() -> V): Result<V, Throwable>`
+Calls the block with `this` as its receiver, catching any Throwable as an Err.
+
+`inline infix fun <V, E> V?.toResultOr(error: () -> E): Result<V, E>`
+Converts a nullable value to a Result. Returns Ok if non-null, otherwise Err with the supplied error.
+
+## Result Properties
+
+```kotlin
+val result: Result<Int, String> = Ok(42)
+
+result.value   // 42 (unsafe — only valid when isOk is true)
+result.error   // (unsafe — only valid when isErr is true)
+result.isOk    // true
+result.isErr   // false
+
+// Destructuring
+val (value, error) = result  // value: Int? = 42, error: String? = null
+```
+
+Properties:
+- `val value: V` — the Ok value (annotated `@UnsafeResultValueAccess`, only access after confirming `isOk`)
+- `val error: E` — the Err error (annotated `@UnsafeResultErrorAccess`, only access after confirming `isErr`)
+- `val isOk: Boolean` — true if this Result is Ok
+- `val isErr: Boolean` — true if this Result is Err
+- `operator fun component1(): V?` — the value if Ok, otherwise null
+- `operator fun component2(): E?` — the error if Err, otherwise null
+
+## Extracting Values
+
+### get / getError
+
+`fun <V, E> Result<V, E>.get(): V?`
+Returns the value if Ok, otherwise null.
+
+`fun <V, E> Result<V, E>.getError(): E?`
+Returns the error if Err, otherwise null.
+
+### getOr / getErrorOr
+
+`infix fun <V, E> Result<V, E>.getOr(default: V): V`
+Returns the value if Ok, otherwise the default.
+
+`infix fun <V, E> Result<V, E>.getErrorOr(default: E): E`
+Returns the error if Err, otherwise the default.
+
+### getOrElse / getErrorOrElse
+
+`inline infix fun <V, E> Result<V, E>.getOrElse(transform: (E) -> V): V`
+Returns the value if Ok, otherwise the transformation of the error.
+
+`inline infix fun <V, E> Result<V, E>.getErrorOrElse(transform: (V) -> E): E`
+Returns the error if Err, otherwise the transformation of the value.
+
+### getOrThrow
+
+`fun <V, E : Throwable> Result<V, E>.getOrThrow(): V`
+Returns the value if Ok, otherwise throws the error (when E is Throwable).
+
+`inline infix fun <V, E> Result<V, E>.getOrThrow(transform: (E) -> Throwable): V`
+Returns the value if Ok, otherwise throws the transformation of the error.
+
+### merge
+
+`fun <V : U, E : U, U> Result<V, E>.merge(): U`
+Returns the value if Ok, otherwise the error (when both V and E share a common supertype U).
+
+## Transforming Values
+
+### map
+
+`inline infix fun <V, E, U> Result<V, E>.map(transform: (V) -> U): Result<U, E>`
+Transforms the Ok value, leaving Err unchanged.
+
+```kotlin
+Ok(10).map { it * 2 }  // Ok(20)
+Err("fail").map { it * 2 }  // Err("fail")
+```
+
+### mapCatching
+
+`inline infix fun <V, U> Result<V, Throwable>.mapCatching(transform: (V) -> U): Result<U, Throwable>`
+Like `map`, but catches exceptions thrown by the transform and wraps them as Err.
+
+### mapError
+
+`inline infix fun <V, E, F> Result<V, E>.mapError(transform: (E) -> F): Result<V, F>`
+Transforms the Err error, leaving Ok unchanged.
+
+```kotlin
+Err("fail").mapError { MyError(it) }  // Err(MyError("fail"))
+```
+
+### flatMap
+
+`inline infix fun <V, E, U> Result<V, E>.flatMap(transform: (V) -> Result<U, E>): Result<U, E>`
+Transforms the Ok value with a function that returns a Result. Functionally equivalent to `andThen`.
+
+### mapBoth / fold
+
+`inline fun <V, E, U> Result<V, E>.mapBoth(success: (V) -> U, failure: (E) -> U): U`
+Maps to U by applying either the success or failure function.
+
+`inline fun <V, E, U> Result<V, E>.fold(success: (V) -> U, failure: (E) -> U): U`
+Alias for `mapBoth`.
+
+### flatMapBoth
+
+`inline fun <V, E, U> Result<V, E>.flatMapBoth(success: (V) -> Result<U, E>, failure: (E) -> Result<U, E>): Result<U, E>`
+Maps to Result<U, E> by applying either the success or failure function.
+
+### mapEither
+
+`inline fun <V, E, U, F> Result<V, E>.mapEither(success: (V) -> U, failure: (E) -> F): Result<U, F>`
+Transforms both Ok and Err types simultaneously.
+
+### flatMapEither
+
+`inline fun <V, E, U, F> Result<V, E>.flatMapEither(success: (V) -> Result<U, F>, failure: (E) -> Result<U, F>): Result<U, F>`
+Maps to Result<U, F> by applying either the success or failure function.
+
+### mapOr
+
+`inline fun <V, E, U> Result<V, E>.mapOr(default: U, transform: (V) -> U): U`
+Transforms the Ok value, or returns the default if Err.
+
+### mapOrElse
+
+`inline fun <V, E, U> Result<V, E>.mapOrElse(default: (E) -> U, transform: (V) -> U): U`
+Transforms the Ok value, or applies the default function to the error.
+
+### transpose
+
+`inline fun <V, E> Result<V?, E>.transpose(): Result<V, E>?`
+Transposes `Result<V?, E>` to `Result<V, E>?`. Returns null if Ok with a null value.
+
+### flatten
+
+`fun <V, E> Result<Result<V, E>, E>.flatten(): Result<V, E>`
+Flattens a nested `Result<Result<V, E>, E>` to `Result<V, E>`.
+
+### tryMap (on Result)
+
+`inline infix fun <V, E, U> Result<Iterable<V>, E>.tryMap(transform: (V) -> Result<U, E>): Result<List<U>, E>`
+Applies a fallible transform to each element of an Ok Iterable, returning early with the first Err.
+
+### toErrorIf / toErrorUnless
+
+`inline fun <V, E> Result<V, E>.toErrorIf(predicate: (V) -> Boolean, transform: (V) -> E): Result<V, E>`
+Converts Ok to Err if the predicate is satisfied.
+
+`inline fun <V, E> Result<V, E>.toErrorUnless(predicate: (V) -> Boolean, transform: (V) -> E): Result<V, E>`
+Converts Ok to Err unless the predicate is satisfied.
+
+### toErrorIfNull / toErrorUnlessNull
+
+`inline fun <V, E> Result<V?, E>.toErrorIfNull(error: () -> E): Result<V, E>`
+Returns Err if Ok with a null value.
+
+`inline fun <V, E> Result<V, E>.toErrorUnlessNull(error: () -> E): Result<V, E>`
+Returns Err unless Ok with a null value.
+
+## Chaining
+
+### and
+
+`infix fun <V, E, U> Result<V, E>.and(result: Result<U, E>): Result<U, E>`
+Returns the given result if Ok, otherwise returns this Err.
+
+### andThen
+
+`inline infix fun <V, E, U> Result<V, E>.andThen(transform: (V) -> Result<U, E>): Result<U, E>`
+Applies the transform if Ok, otherwise returns this Err. Equivalent to `flatMap`.
+
+```kotlin
+Ok(5)
+    .andThen { Ok(it * 2) }
+    .andThen { Ok(it + 1) }  // Ok(11)
+```
+
+### or
+
+`infix fun <V, E, F> Result<V, E>.or(result: Result<V, F>): Result<V, F>`
+Returns this if Ok, otherwise returns the given result.
+
+### orElse
+
+`inline infix fun <V, E, F> Result<V, E>.orElse(transform: (E) -> Result<V, F>): Result<V, F>`
+Returns this if Ok, otherwise applies the transform to the error.
+
+### orElseThrow
+
+`fun <V, E : Throwable> Result<V, E>.orElseThrow(): Result<V, Nothing>`
+Throws the error if Err (when E is Throwable), otherwise returns this.
+
+### throwIf
+
+`inline fun <V, E : Throwable> Result<V, E>.throwIf(predicate: (E) -> Boolean): Result<V, E>`
+Throws the error if Err and the predicate is satisfied.
+
+### throwUnless
+
+`inline fun <V, E : Throwable> Result<V, E>.throwUnless(predicate: (E) -> Boolean): Result<V, E>`
+Throws the error if Err and the predicate is not satisfied.
+
+## Recovery
+
+### recover
+
+`inline infix fun <V, E> Result<V, E>.recover(transform: (E) -> V): Result<V, Nothing>`
+Transforms the error to a value, recovering from failure.
+
+### recoverCatching
+
+`inline infix fun <V, E> Result<V, E>.recoverCatching(transform: (E) -> V): Result<V, Throwable>`
+Like `recover`, but catches exceptions thrown by the transform and wraps them as Err.
+
+### recoverIf
+
+`inline fun <V, E> Result<V, E>.recoverIf(predicate: (E) -> Boolean, transform: (E) -> V): Result<V, E>`
+Recovers only if the error satisfies the predicate.
+
+### recoverUnless
+
+`inline fun <V, E> Result<V, E>.recoverUnless(predicate: (E) -> Boolean, transform: (E) -> V): Result<V, E>`
+Recovers unless the error satisfies the predicate.
+
+### andThenRecover
+
+`inline fun <V, E> Result<V, E>.andThenRecover(transform: (E) -> Result<V, E>): Result<V, E>`
+Applies a fallible recovery transform to the error.
+
+### andThenRecoverIf
+
+`inline fun <V, E> Result<V, E>.andThenRecoverIf(predicate: (E) -> Boolean, transform: (E) -> Result<V, E>): Result<V, E>`
+Applies a fallible recovery transform only if the error satisfies the predicate.
+
+### andThenRecoverUnless
+
+`inline fun <V, E> Result<V, E>.andThenRecoverUnless(predicate: (E) -> Boolean, transform: (E) -> Result<V, E>): Result<V, E>`
+Applies a fallible recovery transform unless the error satisfies the predicate.
+
+## Side Effects
+
+### onOk
+
+`inline infix fun <V, E> Result<V, E>.onOk(action: (V) -> Unit): Result<V, E>`
+Invokes the action if Ok, then returns this Result unchanged.
+
+### onErr
+
+`inline infix fun <V, E> Result<V, E>.onErr(action: (E) -> Unit): Result<V, E>`
+Invokes the action if Err, then returns this Result unchanged.
+
+```kotlin
+fetchUser(id)
+    .onOk { logger.info("Fetched user: ${it.name}") }
+    .onErr { logger.warn("Failed to fetch user: $it") }
+```
+
+## Unwrapping
+
+### unwrap / expect
+
+`fun <V, E> Result<V, E>.unwrap(): V`
+Returns the value if Ok, otherwise throws `UnwrapException`.
+
+`inline infix fun <V, E> Result<V, E>.expect(message: () -> Any): V`
+Returns the value if Ok, otherwise throws `UnwrapException` with the given message.
+
+### unwrapError / expectError
+
+`fun <V, E> Result<V, E>.unwrapError(): E`
+Returns the error if Err, otherwise throws `UnwrapException`.
+
+`inline infix fun <V, E> Result<V, E>.expectError(message: () -> Any): E`
+Returns the error if Err, otherwise throws `UnwrapException` with the given message.
+
+## Binding
+
+The `binding` DSL provides sequential short-circuit composition. Each `bind()` call unwraps the Ok value or short-circuits with the first Err.
+
+```kotlin
+sealed interface FormError {
+    data object NameRequired : FormError
+    data object EmailInvalid : FormError
+}
+
+fun validateName(name: String): Result<String, FormError> { ... }
+fun validateEmail(email: String): Result<String, FormError> { ... }
+
+val result: Result<User, FormError> = binding {
+    val name = validateName(input.name).bind()
+    val email = validateEmail(input.email).bind()
+    User(name, email)
+}
+```
+
+`inline fun <V, E> binding(crossinline block: BindingScope<E>.() -> V): Result<V, E>`
+Calls the block with BindingScope as its receiver. Inside the block, call `.bind()` on any `Result<V, E>` to unwrap the Ok value or short-circuit with the Err.
+
+`interface BindingScope<E>` — provides the `fun <V> Result<V, E>.bind(): V` extension.
+
+## Zip
+
+### zip (fail-fast)
+
+Applies a transform to multiple Results, returning early with the first Err if any fails. Available in 2–5 arity.
+
+```kotlin
+val result: Result<String, MyError> = zip(
+    { getName() },
+    { getAge() },
+) { name, age ->
+    "$name is $age years old"
+}
+```
+
+`inline fun <T1, T2, E, V> zip(producer1: () -> Result<T1, E>, producer2: () -> Result<T2, E>, transform: (T1, T2) -> V): Result<V, E>`
+`inline fun <T1, T2, T3, E, V> zip(producer1, producer2, producer3, transform): Result<V, E>`
+`inline fun <T1, T2, T3, T4, E, V> zip(producer1, producer2, producer3, producer4, transform): Result<V, E>`
+`inline fun <T1, T2, T3, T4, T5, E, V> zip(producer1, producer2, producer3, producer4, producer5, transform): Result<V, E>`
+
+### zipOrAccumulate (error accumulation)
+
+Evaluates all producers regardless of failure and collects all errors into a List. Available in 2–5 arity.
+
+```kotlin
+val result: Result<User, List<ValidationError>> = zipOrAccumulate(
+    { validateName(input.name) },
+    { validateEmail(input.email) },
+    { validateAge(input.age) },
+) { name, email, age ->
+    User(name, email, age)
+}
+```
+
+`inline fun <T1, T2, E, V> zipOrAccumulate(producer1: () -> Result<T1, E>, producer2: () -> Result<T2, E>, transform: (T1, T2) -> V): Result<V, List<E>>`
+`inline fun <T1, T2, T3, E, V> zipOrAccumulate(producer1, producer2, producer3, transform): Result<V, List<E>>`
+`inline fun <T1, T2, T3, T4, E, V> zipOrAccumulate(producer1, producer2, producer3, producer4, transform): Result<V, List<E>>`
+`inline fun <T1, T2, T3, T4, T5, E, V> zipOrAccumulate(producer1, producer2, producer3, producer4, producer5, transform): Result<V, List<E>>`
+
+## Iterable Extensions
+
+Extensions on `Iterable<Result<V, E>>` for working with collections of Results.
+
+### Querying
+
+`fun <V, E> Iterable<Result<V, E>>.allOk(): Boolean` — true if every element is Ok.
+`fun <V, E> Iterable<Result<V, E>>.allErr(): Boolean` — true if every element is Err.
+`fun <V, E> Iterable<Result<V, E>>.anyOk(): Boolean` — true if at least one element is Ok.
+`fun <V, E> Iterable<Result<V, E>>.anyErr(): Boolean` — true if at least one element is Err.
+`fun <V, E> Iterable<Result<V, E>>.countOk(): Int` — number of Ok elements.
+`fun <V, E> Iterable<Result<V, E>>.countErr(): Int` — number of Err elements.
+
+### Filtering
+
+`fun <V, E> Iterable<Result<V, E>>.filterOk(): List<V>` — extracts all Ok values.
+`fun <V, E> Iterable<Result<V, E>>.filterErr(): List<E>` — extracts all Err errors.
+`fun <V, E, C : MutableCollection<in V>> Iterable<Result<V, E>>.filterOkTo(destination: C): C` — appends Ok values to destination.
+`fun <V, E, C : MutableCollection<in E>> Iterable<Result<V, E>>.filterErrTo(destination: C): C` — appends Err errors to destination.
+
+### Side Effects
+
+`inline fun <V, E> Iterable<Result<V, E>>.onEachOk(action: (V) -> Unit): Iterable<Result<V, E>>` — performs action on each Ok value.
+`inline fun <V, E> Iterable<Result<V, E>>.onEachOkIndexed(action: (index: Int, V) -> Unit): Iterable<Result<V, E>>` — performs action on each Ok value with index.
+`inline fun <V, E> Iterable<Result<V, E>>.onEachErr(action: (E) -> Unit): Iterable<Result<V, E>>` — performs action on each Err error.
+`inline fun <V, E> Iterable<Result<V, E>>.onEachErrIndexed(action: (index: Int, E) -> Unit): Iterable<Result<V, E>>` — performs action on each Err error with index.
+
+### Combining
+
+`fun <V, E> Iterable<Result<V, E>>.combine(): Result<List<V>, E>` — combines into a single Result; returns first Err if any.
+`fun <V, E, C : MutableCollection<in V>> Iterable<Result<V, E>>.combineTo(destination: C): Result<C, E>` — combines into destination collection.
+`fun <V, E> Iterable<Result<V, E>>.combineErr(): Result<V, List<E>>` — combines errors into a single Result; returns first Ok if any.
+`fun <V, E, C : MutableCollection<in E>> Iterable<Result<V, E>>.combineErrTo(destination: C): Result<V, C>` — combines errors into destination collection.
+
+Vararg convenience functions:
+`fun <V, E, R : Result<V, E>> combine(vararg results: R): Result<List<V>, E>`
+`fun <V, E, R : Result<V, E>> combineErr(vararg results: R): Result<V, List<E>>`
+
+### Partitioning
+
+`fun <V, E> Iterable<Result<V, E>>.partition(): Pair<List<V>, List<E>>` — splits into Ok values and Err errors.
+`fun <V, E, R : Result<V, E>> partition(vararg results: R): Pair<List<V>, List<E>>` — vararg convenience.
+
+### Extracting
+
+`fun <V, E, R : Result<V, E>> valuesOf(vararg results: R): List<V>` — extracts Ok values from vararg results.
+`fun <V, E, R : Result<V, E>> errorsOf(vararg results: R): List<E>` — extracts Err errors from vararg results.
+
+## Fallible Collection Operations
+
+Extensions on `Iterable<T>` (not `Iterable<Result>`) where each operation's callback returns a `Result`, enabling early return with the first `Err`.
+
+### tryMap
+
+`inline fun <V, E, U> Iterable<V>.tryMap(transform: (V) -> Result<U, E>): Result<List<U>, E>`
+Applies a fallible transform to each element. Returns early with the first Err.
+
+```kotlin
+val ids = listOf(1, 2, 3)
+val users: Result<List<User>, DbError> = ids.tryMap { findUser(it) }
+```
+
+`inline fun <V, E, U, C : MutableCollection<in U>> Iterable<V>.tryMapTo(destination: C, transform: (V) -> Result<U, E>): Result<C, E>`
+`inline fun <V, E, U : Any> Iterable<V>.tryMapNotNull(transform: (V) -> Result<U, E>?): Result<List<U>, E>`
+`inline fun <V, E, U : Any, C : MutableCollection<in U>> Iterable<V>.tryMapNotNullTo(destination: C, transform: (V) -> Result<U, E>?): Result<C, E>`
+`inline fun <V, E, U> Iterable<V>.tryMapIndexed(transform: (index: Int, V) -> Result<U, E>): Result<List<U>, E>`
+`inline fun <V, E, U, C : MutableCollection<in U>> Iterable<V>.tryMapIndexedTo(destination: C, transform: (index: Int, V) -> Result<U, E>): Result<C, E>`
+`inline fun <V, E, U : Any> Iterable<V>.tryMapIndexedNotNull(transform: (index: Int, V) -> Result<U, E>?): Result<List<U>, E>`
+`inline fun <V, E, U : Any, C : MutableCollection<in U>> Iterable<V>.tryMapIndexedNotNullTo(destination: C, transform: (index: Int, V) -> Result<U, E>?): Result<C, E>`
+
+### tryFilter
+
+`inline fun <T, E> Iterable<T>.tryFilter(predicate: (T) -> Result<Boolean, E>): Result<List<T>, E>`
+Keeps elements where the fallible predicate returns Ok(true).
+
+`inline fun <T, E, C : MutableCollection<in T>> Iterable<T>.tryFilterTo(destination: C, predicate: (T) -> Result<Boolean, E>): Result<C, E>`
+`inline fun <T, E> Iterable<T>.tryFilterNot(predicate: (T) -> Result<Boolean, E>): Result<List<T>, E>`
+`inline fun <T, E, C : MutableCollection<in T>> Iterable<T>.tryFilterNotTo(destination: C, predicate: (T) -> Result<Boolean, E>): Result<C, E>`
+`inline fun <T, E> Iterable<T>.tryFilterIndexed(predicate: (index: Int, T) -> Result<Boolean, E>): Result<List<T>, E>`
+`inline fun <T, E, C : MutableCollection<in T>> Iterable<T>.tryFilterIndexedTo(destination: C, predicate: (index: Int, T) -> Result<Boolean, E>): Result<C, E>`
+
+### tryFlatMap
+
+`inline fun <T, U, E> Iterable<T>.tryFlatMap(transform: (T) -> Result<Iterable<U>, E>): Result<List<U>, E>`
+Applies a fallible transform that returns an Iterable, flattening the results.
+
+`inline fun <T, U, E, C : MutableCollection<in U>> Iterable<T>.tryFlatMapTo(destination: C, transform: (T) -> Result<Iterable<U>, E>): Result<C, E>`
+`inline fun <T, U, E> Iterable<T>.tryFlatMapIndexed(transform: (index: Int, T) -> Result<Iterable<U>, E>): Result<List<U>, E>`
+`inline fun <T, U, E, C : MutableCollection<in U>> Iterable<T>.tryFlatMapIndexedTo(destination: C, transform: (index: Int, T) -> Result<Iterable<U>, E>): Result<C, E>`
+
+### tryAssociate
+
+`inline fun <T, K, V, E> Iterable<T>.tryAssociate(transform: (T) -> Result<Pair<K, V>, E>): Result<Map<K, V>, E>`
+Creates a Map from a fallible transform that returns key-value pairs.
+
+`inline fun <T, K, V, E, M : MutableMap<in K, in V>> Iterable<T>.tryAssociateTo(destination: M, transform: (T) -> Result<Pair<K, V>, E>): Result<M, E>`
+`inline fun <T, K, E> Iterable<T>.tryAssociateBy(keySelector: (T) -> Result<K, E>): Result<Map<K, T>, E>`
+`inline fun <T, K, V, E> Iterable<T>.tryAssociateBy(keySelector: (T) -> Result<K, E>, valueTransform: (T) -> Result<V, E>): Result<Map<K, V>, E>`
+`inline fun <T, K, E, M : MutableMap<in K, in T>> Iterable<T>.tryAssociateByTo(destination: M, keySelector: (T) -> Result<K, E>): Result<M, E>`
+`inline fun <T, K, V, E, M : MutableMap<in K, in V>> Iterable<T>.tryAssociateByTo(destination: M, keySelector: (T) -> Result<K, E>, valueTransform: (T) -> Result<V, E>): Result<M, E>`
+`inline fun <K, V, E> Iterable<K>.tryAssociateWith(valueSelector: (K) -> Result<V, E>): Result<Map<K, V>, E>`
+`inline fun <K, V, E, M : MutableMap<in K, in V>> Iterable<K>.tryAssociateWithTo(destination: M, valueSelector: (K) -> Result<V, E>): Result<M, E>`
+
+### tryGroupBy
+
+`inline fun <T, K, E> Iterable<T>.tryGroupBy(keySelector: (T) -> Result<K, E>): Result<Map<K, List<T>>, E>`
+Groups elements by a fallible key selector.
+
+`inline fun <T, K, V, E> Iterable<T>.tryGroupBy(keySelector: (T) -> Result<K, E>, valueTransform: (T) -> Result<V, E>): Result<Map<K, List<V>>, E>`
+`inline fun <T, K, E, M : MutableMap<in K, MutableList<T>>> Iterable<T>.tryGroupByTo(destination: M, keySelector: (T) -> Result<K, E>): Result<M, E>`
+`inline fun <T, K, V, E, M : MutableMap<in K, MutableList<V>>> Iterable<T>.tryGroupByTo(destination: M, keySelector: (T) -> Result<K, E>, valueTransform: (T) -> Result<V, E>): Result<M, E>`
+
+### tryPartition
+
+`inline fun <T, E> Iterable<T>.tryPartition(predicate: (T) -> Result<Boolean, E>): Result<Pair<List<T>, List<T>>, E>`
+Partitions elements by a fallible predicate.
+
+### tryFold / tryFoldRight
+
+`inline fun <T, R, E> Iterable<T>.tryFold(initial: R, operation: (acc: R, T) -> Result<R, E>): Result<R, E>`
+Accumulates from left to right with a fallible operation.
+
+`inline fun <T, R, E> List<T>.tryFoldRight(initial: R, operation: (T, acc: R) -> Result<R, E>): Result<R, E>`
+Accumulates from right to left with a fallible operation.
+
+### tryReduce
+
+`inline fun <T, E> Iterable<T>.tryReduce(operation: (acc: T, T) -> Result<T, E>): Result<T, E>?`
+Reduces from left to right with a fallible operation. Returns null if empty.
+
+`inline fun <T, E> Iterable<T>.tryReduceIndexed(operation: (index: Int, acc: T, T) -> Result<T, E>): Result<T, E>?`
+Reduces with index. The index starts at 1 (element at index 0 is the initial accumulator).
+
+### tryFind
+
+`inline fun <T, E> Iterable<T>.tryFind(predicate: (T) -> Result<Boolean, E>): Result<T, E>?`
+Returns the first element matching the fallible predicate, or null if not found.
+
+`inline fun <T, E> Iterable<T>.tryFindLast(predicate: (T) -> Result<Boolean, E>): Result<T, E>?`
+Returns the last element matching the fallible predicate, or null if not found.
+
+### tryForEach
+
+`inline fun <V, E> Iterable<V>.tryForEach(action: (V) -> Result<*, E>): Result<Unit, E>`
+Performs a fallible action on each element.
+
+`inline fun <V, E> Iterable<V>.tryForEachIndexed(action: (index: Int, V) -> Result<*, E>): Result<Unit, E>`
+Performs a fallible action on each element with its index.
+
+## Iterator
+
+`fun <V, E> Result<V, E>.iterator(): Iterator<V>`
+Returns an Iterator that yields the value if Ok, otherwise is empty.
+
+`fun <V, E> Result<V, E>.mutableIterator(): MutableIterator<V>`
+Returns a MutableIterator that yields the value if Ok, otherwise is empty.
+
+## Coroutine Extensions
+
+These are in the `kotlin-result-coroutines` module.
+
+### coroutineBinding
+
+`suspend inline fun <V, E> coroutineBinding(crossinline block: suspend CoroutineBindingScope<E>.() -> V): Result<V, E>`
+Like `binding`, but designed for concurrent decomposition. When any `bind()` returns an error, the CoroutineScope is cancelled, cancelling all other children.
+
+```kotlin
+val result: Result<Int, MyError> = coroutineBinding {
+    val x = async { fetchX().bind() }
+    val y = async { fetchY().bind() }
+    x.await() + y.await()
+}
+```
+
+`interface CoroutineBindingScope<E> : CoroutineScope` — provides `suspend fun <V> Result<V, E>.bind(): V`.
+
+### runSuspendCatching
+
+`inline fun <V> runSuspendCatching(block: () -> V): Result<V, Throwable>`
+Like `runCatching`, but rethrows `CancellationException` to preserve structured concurrency.
+
+`inline infix fun <T, V> T.runSuspendCatching(block: T.() -> V): Result<V, Throwable>`
+Receiver form of `runSuspendCatching`.
+
+### parZip
+
+Applies a transform to multiple Results in parallel, returning early with the first Err. Uses `coroutineBinding` internally. Available in 2–5 arity.
+
+```kotlin
+val result = parZip(
+    { fetchUser(userId) },
+    { fetchOrders(userId) },
+) { user, orders ->
+    UserProfile(user, orders)
+}
+```
+
+`suspend fun <T1, T2, E, V> parZip(producer1: suspend CoroutineScope.() -> Result<T1, E>, producer2: suspend CoroutineScope.() -> Result<T2, E>, transform: suspend CoroutineScope.(T1, T2) -> V): Result<V, E>`
+(Also available with 3, 4, and 5 producers.)
+
+### Flow Extensions
+
+#### Filtering
+
+`fun <V, E> Flow<Result<V, E>>.filterOk(): Flow<V>` — emits only Ok values.
+`fun <V, E> Flow<Result<V, E>>.filterErr(): Flow<E>` — emits only Err errors.
+
+#### Side Effects
+
+`inline fun <V, E> Flow<Result<V, E>>.onEachOk(crossinline action: suspend (V) -> Unit): Flow<Result<V, E>>` — invokes action on each Ok value.
+`inline fun <V, E> Flow<Result<V, E>>.onEachErr(crossinline action: suspend (E) -> Unit): Flow<Result<V, E>>` — invokes action on each Err error.
+
+#### Querying
+
+`suspend fun <V, E> Flow<Result<V, E>>.allOk(): Boolean` — true if all elements are Ok.
+`suspend fun <V, E> Flow<Result<V, E>>.allErr(): Boolean` — true if all elements are Err.
+`suspend fun <V, E> Flow<Result<V, E>>.anyOk(): Boolean` — true if any element is Ok.
+`suspend fun <V, E> Flow<Result<V, E>>.anyErr(): Boolean` — true if any element is Err.
+`suspend fun <V, E> Flow<Result<V, E>>.countOk(): Int` — number of Ok elements.
+`suspend fun <V, E> Flow<Result<V, E>>.countErr(): Int` — number of Err elements.
+
+#### Combining
+
+`suspend fun <V, E> Flow<Result<V, E>>.combine(): Result<List<V>, E>` — combines into a single Result.
+`suspend fun <V, E> Flow<Result<V, E>>.combineErr(): Result<V, List<E>>` — combines errors into a single Result.
+
+#### Partitioning
+
+`suspend fun <V, E> Flow<Result<V, E>>.partition(): Pair<List<V>, List<E>>` — splits into Ok values and Err errors.
+
+#### toFlow
+
+`fun <V, E> Result<Flow<V>, E>.toFlow(): Flow<Result<V, E>>`
+Bridges a Result containing a Flow into a Flow of Results. If Ok, each emission is wrapped in Ok. If Err, a single Err is emitted.
+
+```kotlin
+val orders: Flow<Result<Order, FindUserError>> = findUser(1L)
+    .map(::observeOrders)
+    .toFlow()
+```
+
+#### Flow try* Operations
+
+These are `suspend` functions on `Flow<T>` where each operation's callback is `suspend` and returns a Result.
+
+`suspend inline fun <V, E, U> Flow<V>.tryMap(crossinline transform: suspend (V) -> Result<U, E>): Result<List<U>, E>`
+`suspend inline fun <V, E, U : Any> Flow<V>.tryMapNotNull(crossinline transform: suspend (V) -> Result<U, E>?): Result<List<U>, E>`
+`suspend inline fun <T, E> Flow<T>.tryFilter(crossinline predicate: suspend (T) -> Result<Boolean, E>): Result<List<T>, E>`
+`suspend inline fun <T, E> Flow<T>.tryFilterNot(crossinline predicate: suspend (T) -> Result<Boolean, E>): Result<List<T>, E>`
+`suspend inline fun <T, U, E> Flow<T>.tryFlatMap(crossinline transform: suspend (T) -> Result<Iterable<U>, E>): Result<List<U>, E>`
+`suspend inline fun <V, E> Flow<V>.tryForEach(crossinline action: suspend (V) -> Result<*, E>): Result<Unit, E>`
+`suspend inline fun <T, R, E> Flow<T>.tryFold(initial: R, crossinline operation: suspend (acc: R, T) -> Result<R, E>): Result<R, E>`
+`suspend inline fun <T, E> Flow<T>.tryReduce(crossinline operation: suspend (acc: T, T) -> Result<T, E>): Result<T, E>?`
+`suspend inline fun <T, E> Flow<T>.tryFind(crossinline predicate: suspend (T) -> Result<Boolean, E>): Result<T, E>?`
+`suspend inline fun <T, E> Flow<T>.tryFindLast(crossinline predicate: suspend (T) -> Result<Boolean, E>): Result<T, E>?`
+`suspend inline fun <T, K, V, E> Flow<T>.tryAssociate(crossinline transform: suspend (T) -> Result<Pair<K, V>, E>): Result<Map<K, V>, E>`
+`suspend inline fun <T, K, E> Flow<T>.tryAssociateBy(crossinline keySelector: suspend (T) -> Result<K, E>): Result<Map<K, T>, E>`
+`suspend inline fun <T, K, V, E> Flow<T>.tryAssociateBy(crossinline keySelector: suspend (T) -> Result<K, E>, crossinline valueTransform: suspend (T) -> Result<V, E>): Result<Map<K, V>, E>`
+`suspend inline fun <K, V, E> Flow<K>.tryAssociateWith(crossinline valueSelector: suspend (K) -> Result<V, E>): Result<Map<K, V>, E>`
+`suspend inline fun <T, K, E> Flow<T>.tryGroupBy(crossinline keySelector: suspend (T) -> Result<K, E>): Result<Map<K, List<T>>, E>`
+`suspend inline fun <T, K, V, E> Flow<T>.tryGroupBy(crossinline keySelector: suspend (T) -> Result<K, E>, crossinline valueTransform: suspend (T) -> Result<V, E>): Result<Map<K, List<V>>, E>`
+`suspend inline fun <T, E> Flow<T>.tryPartition(crossinline predicate: suspend (T) -> Result<Boolean, E>): Result<Pair<List<T>, List<T>>, E>`
+
+## Usage Patterns
+
+### 1. Domain Error Modelling
+
+Use sealed interfaces to model domain errors. The error type is unconstrained, so you can model errors with as much detail as you need.
+
+```kotlin
+sealed interface CreateUserError {
+    data object NameRequired : CreateUserError
+    data class NameTooLong(val maxLength: Int) : CreateUserError
+    data object EmailInvalid : CreateUserError
+    data class EmailAlreadyTaken(val email: String) : CreateUserError
+}
+
+fun createUser(name: String, email: String): Result<User, CreateUserError> {
+    // ...
+}
+```
+
+### 2. Validation with Error Accumulation
+
+Use `zipOrAccumulate` to collect all validation errors rather than failing fast on the first.
+
+```kotlin
+fun validateForm(input: FormInput): Result<ValidForm, List<FormError>> {
+    return zipOrAccumulate(
+        { validateName(input.name) },
+        { validateEmail(input.email) },
+        { validateAge(input.age) },
+    ) { name, email, age ->
+        ValidForm(name, email, age)
+    }
+}
+```
+
+### 3. Sequential Binding
+
+Use `binding` when each step depends on previous results.
+
+```kotlin
+fun placeOrder(userId: Long, itemId: Long): Result<Order, OrderError> = binding {
+    val user = findUser(userId).bind()
+    val item = findItem(itemId).bind()
+    val stock = checkStock(item).bind()
+    val order = createOrder(user, item, stock).bind()
+    order
+}
+```
+
+### 4. andThen Chaining
+
+Use `andThen` for a pipeline of transformations where each step might fail.
+
+```kotlin
+fun processPayment(orderId: Long): Result<Receipt, PaymentError> {
+    return findOrder(orderId)
+        .andThen(::validateOrder)
+        .andThen(::chargePayment)
+        .andThen(::generateReceipt)
+}
+```
+
+### 5. Error Type Conversion
+
+Use `mapError` to convert between error types when composing across modules.
+
+```kotlin
+fun getUser(id: Long): Result<User, AppError> {
+    return userRepository.findById(id)
+        .mapError { dbError -> AppError.Database(dbError) }
+}
+```
+
+### 6. Exception Interop
+
+Use `runCatching` to bridge exception-throwing code. Use `runSuspendCatching` in coroutines.
+
+```kotlin
+fun parseJson(json: String): Result<Config, Throwable> {
+    return runCatching { objectMapper.readValue<Config>(json) }
+}
+
+// In coroutines, use runSuspendCatching to preserve cancellation:
+suspend fun fetchData(url: String): Result<Data, Throwable> {
+    return runSuspendCatching { httpClient.get(url).body<Data>() }
+}
+```
+
+### 7. Fallible Collections
+
+Use `tryMap`, `tryFilter`, etc. when processing collections with operations that can fail.
+
+```kotlin
+fun enrichUsers(ids: List<Long>): Result<List<EnrichedUser>, DbError> {
+    return ids.tryMap { id ->
+        findUser(id).map { user -> enrich(user) }
+    }
+}
+```
+
+### 8. Concurrent Operations
+
+Use `coroutineBinding` with `async` for concurrent operations, or `parZip` for a concise parallel zip.
+
+```kotlin
+suspend fun loadDashboard(userId: Long): Result<Dashboard, AppError> = coroutineBinding {
+    val user = async { fetchUser(userId).bind() }
+    val notifications = async { fetchNotifications(userId).bind() }
+    val orders = async { fetchRecentOrders(userId).bind() }
+    Dashboard(user.await(), notifications.await(), orders.await())
+}
+```
+
+## Best Practices
+
+1. **Model errors as sealed interfaces** — gives exhaustive `when` checks and makes error handling explicit.
+2. **Prefer `binding` over nested `andThen`** — `binding` reads more naturally for multi-step operations.
+3. **Use `runSuspendCatching` in coroutines** — never use `runCatching` in suspend functions, as it silently catches `CancellationException`.
+4. **Use `zipOrAccumulate` for validation** — collects all errors rather than stopping at the first.
+5. **Convert exceptions at the boundary** — use `runCatching`/`mapError` at the edge and propagate typed errors internally.
+6. **Use `coroutineBinding` for concurrent operations** — it cancels sibling coroutines on first failure.
+7. **Use `tryMap`/`tryFilter` for fallible collection processing** — cleaner than manual loop-and-accumulate patterns.
+8. **Prefer `getOrElse` over `unwrap`** — `unwrap` throws on Err; `getOrElse` provides a safe fallback.
+9. **Use `toResultOr` to convert nullables** — `nullableValue.toResultOr { MyError.NotFound }` is idiomatic.
+10. **Keep error types narrow** — each function should return the most specific error type it can produce.
+
+## Anti-patterns
+
+1. **Don't use `runCatching` in suspend functions** — use `runSuspendCatching` to avoid swallowing `CancellationException`.
+2. **Don't use `unwrap()` in production code** — prefer `getOrElse`, `getOrThrow`, or `binding`/`bind()` for safe unwrapping.
+3. **Don't nest Results** (`Result<Result<V, E>, E>`) — use `flatMap`/`andThen` or `flatten()` instead.
+4. **Don't ignore the error type** — avoid `Result<V, Unit>` or `Result<V, Nothing>`; use `Boolean` or nullable return types if there's no meaningful error.
+5. **Don't pass `Result::isOk` as a property reference to Flow suspend predicates** — Flow's `firstOrNull` predicate is `suspend (T) -> Boolean`, which is incompatible with property references. Use a lambda instead: `{ it.isOk }`.
+
+## Differences from kotlin.Result
+
+| Feature | kotlin-result `Result<V, E>` | kotlin.Result `Result<T>` |
+|---|---|---|
+| Error type | Any type `E` (unconstrained) | `Throwable` only |
+| Implementation | `@JvmInline value class` | `@JvmInline value class` |
+| Ok allocation | Zero (value stored directly) | Zero (value stored directly) |
+| Err allocation | One `Failure` wrapper object | One `Failure` wrapper object |
+| Error modelling | Sealed interfaces, enums, any type | Exception class hierarchy only |
+| Binding DSL | `binding { }` with `.bind()` | Not available |
+| Coroutine binding | `coroutineBinding { }` | Not available |
+| Error accumulation | `zipOrAccumulate` | Not available |
+| Collection ops | `tryMap`, `tryFilter`, `combine`, etc. | Not available |
+| Multiplatform | Full (JVM, JS, Native, WasmJs) | Full |
+| Return type restriction | None | Cannot be used as a direct return type of Kotlin functions |

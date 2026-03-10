@@ -1,0 +1,41 @@
+# kotlin-result
+
+> A Kotlin Multiplatform library providing a `Result<V, E>` monad for modelling success or failure operations.
+
+kotlin-result models success (`Ok`) and failure (`Err`) as a `@JvmInline value class`, giving zero-allocation overhead on the Ok path. The error type `E` is unconstrained — use sealed interfaces, enums, or any type. Inspired by Rust's `Result`, Elm's `Result`, and Haskell's `Either`.
+
+Published to Maven Central as `com.michael-bull.kotlin-result`.
+
+## Full Documentation
+
+- [llms-full.txt](https://github.com/michaelbull/kotlin-result/blob/master/llms-full.txt): Comprehensive API reference, usage patterns, and best practices — self-contained, no web fetches required
+
+## Core
+
+- [Result.kt](https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/Result.kt): Core `Result<V, E>` value class, `Ok()`, `Err()`, `asOk()`, `asErr()`
+- [Binding.kt](https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/Binding.kt): `binding { }` DSL for sequential short-circuit composition
+- [Map.kt](https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/Map.kt): `map`, `mapError`, `flatMap`, `mapBoth`, `fold`, `mapEither`, `toErrorIf`, `toErrorUnless`
+- [Get.kt](https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/Get.kt): `get`, `getError`, `getOr`, `getOrElse`, `getOrThrow`, `merge`
+- [And.kt](https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/And.kt): `and`, `andThen`
+- [Or.kt](https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/Or.kt): `or`, `orElse`, `orElseThrow`, `throwIf`, `throwUnless`
+- [Recover.kt](https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/Recover.kt): `recover`, `recoverCatching`, `recoverIf`, `recoverUnless`, `andThenRecover`
+- [Unwrap.kt](https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/Unwrap.kt): `unwrap`, `expect`, `unwrapError`, `expectError`
+- [On.kt](https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/On.kt): `onOk`, `onErr`
+- [Zip.kt](https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/Zip.kt): `zip` (fail-fast) and `zipOrAccumulate` (error accumulation), 2–5 arity
+- [Factory.kt](https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/Factory.kt): `runCatching`, `toResultOr`
+
+## Collections
+
+- [Iterable.kt](https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/Iterable.kt): `allOk`, `anyOk`, `filterOk`, `filterErr`, `combine`, `partition`, `valuesOf`, `errorsOf`
+- [Try.kt](https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/Try.kt): `tryMap`, `tryFilter`, `tryFlatMap`, `tryAssociate`, `tryGroupBy`, `tryPartition`, `tryFold`, `tryReduce`, `tryFind`, `tryForEach`
+- [ResultIterator.kt](https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/ResultIterator.kt): `iterator()`, `mutableIterator()`
+
+## Coroutines
+
+- [CoroutineBinding.kt](https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result-coroutines/src/commonMain/kotlin/com/github/michaelbull/result/coroutines/CoroutineBinding.kt): `coroutineBinding { }` — concurrent `binding` with cancellation
+- [RunSuspendCatching.kt](https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result-coroutines/src/commonMain/kotlin/com/github/michaelbull/result/coroutines/RunSuspendCatching.kt): `runSuspendCatching` — coroutine-safe `runCatching` that rethrows `CancellationException`
+- [ParZip.kt](https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result-coroutines/src/commonMain/kotlin/com/github/michaelbull/result/coroutines/ParZip.kt): `parZip` — parallel zip with cancellation, 2–5 arity
+- [flow/Flow.kt](https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result-coroutines/src/commonMain/kotlin/com/github/michaelbull/result/coroutines/flow/Flow.kt): Flow extensions — `filterOk`, `filterErr`, `allOk`, `anyOk`, `combine`, `partition`
+- [flow/Factory.kt](https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result-coroutines/src/commonMain/kotlin/com/github/michaelbull/result/coroutines/flow/Factory.kt): `Result<Flow<V>, E>.toFlow()` — bridge Result into Flow pipeline
+- [flow/Try.kt](https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result-coroutines/src/commonMain/kotlin/com/github/michaelbull/result/coroutines/flow/Try.kt): Flow `try*` operations — `tryMap`, `tryFilter`, `tryFlatMap`, `tryAssociate`, `tryGroupBy`, `tryPartition`, `tryFold`, `tryReduce`, `tryFind`, `tryForEach`
+

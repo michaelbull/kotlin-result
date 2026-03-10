@@ -44,6 +44,8 @@ public fun <V, E> Iterable<Result<V, E>>.countErr(): Int {
 
 /**
  * Returns a list containing only elements that [are ok][Result.isOk].
+ *
+ * - Gleam: [result.values](https://hexdocs.pm/gleam_stdlib/gleam/result.html#values)
  */
 public fun <V, E> Iterable<Result<V, E>>.filterOk(): List<V> {
     return filterOkTo(ArrayList())
@@ -133,6 +135,7 @@ public inline fun <V, E> Iterable<Result<V, E>>.onEachErrIndexed(action: (index:
  * [is ok][Result.isOk] will appear in the [first][Pair.first] list, whereas an element that
  * [is an error][Result.isErr] will appear in the [second][Pair.second] list.
  *
+ * - Gleam: [result.partition](https://hexdocs.pm/gleam_stdlib/gleam/result.html#partition)
  * - Haskell: [Data.Either.partitionEithers](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Either.html#v:partitionEithers)
  */
 public fun <V, E, R : Result<V, E>> partition(vararg results: R): Pair<List<V>, List<E>> {
@@ -144,6 +147,7 @@ public fun <V, E, R : Result<V, E>> partition(vararg results: R): Pair<List<V>, 
  * in the [first][Pair.first] list, whereas an element that [is an error][Result.isErr] will appear
  * in the [second][Pair.second] list.
  *
+ * - Gleam: [result.partition](https://hexdocs.pm/gleam_stdlib/gleam/result.html#partition)
  * - Haskell: [Data.Either.partitionEithers](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Either.html#v:partitionEithers)
  */
 public fun <V, E> Iterable<Result<V, E>>.partition(): Pair<List<V>, List<E>> {
@@ -166,6 +170,7 @@ public fun <V, E> Iterable<Result<V, E>>.partition(): Pair<List<V>, List<E>> {
  * returned list are in the same order as the specified [results].
  *
  * - Elm: [Result.Extra.combine](http://package.elm-lang.org/packages/elm-community/result-extra/2.2.0/Result-Extra#combine)
+ * - Gleam: [result.all](https://hexdocs.pm/gleam_stdlib/gleam/result.html#all)
  * - Haskell: [Data.Traversable.sequenceA](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Traversable.html#v:sequenceA)
  */
 public fun <V, E, R : Result<V, E>> combine(vararg results: R): Result<List<V>, E> {
@@ -181,6 +186,7 @@ public fun <V, E, R : Result<V, E>> combine(vararg results: R): Result<List<V>, 
  * - If the iterable is empty, returns [Ok] with an empty list.
  *
  * - Elm: [Result.Extra.combine](http://package.elm-lang.org/packages/elm-community/result-extra/2.2.0/Result-Extra#combine)
+ * - Gleam: [result.all](https://hexdocs.pm/gleam_stdlib/gleam/result.html#all)
  * - Haskell: [Data.Traversable.sequenceA](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Traversable.html#v:sequenceA)
  */
 public fun <V, E> Iterable<Result<V, E>>.combine(): Result<List<V>, E> {

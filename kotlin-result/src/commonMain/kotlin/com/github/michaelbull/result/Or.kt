@@ -6,6 +6,7 @@ import kotlin.contracts.contract
 /**
  * Returns [result] if this result [is an error][Result.isErr], otherwise [this].
  *
+ * - Gleam: [result.or](https://hexdocs.pm/gleam_stdlib/gleam/result.html#or)
  * - Rust: [Result.or](https://doc.rust-lang.org/std/result/enum.Result.html#method.or)
  */
 public infix fun <V, E, F> Result<V, E>.or(result: Result<V, F>): Result<V, F> {
@@ -19,6 +20,7 @@ public infix fun <V, E, F> Result<V, E>.or(result: Result<V, F>): Result<V, F> {
  * Returns the [transformation][transform] of the [error][Result.error] if this result
  * [is an error][Result.isErr], otherwise [this].
  *
+ * - Gleam: [result.try_recover](https://hexdocs.pm/gleam_stdlib/gleam/result.html#try_recover)
  * - Rust: [Result.or_else](https://doc.rust-lang.org/std/result/enum.Result.html#method.or_else)
  */
 public inline infix fun <V, E, F> Result<V, E>.orElse(transform: (E) -> Result<V, F>): Result<V, F> {

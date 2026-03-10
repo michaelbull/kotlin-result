@@ -20,6 +20,7 @@ public infix fun <V, E, U> Result<V, E>.and(result: Result<U, E>): Result<U, E> 
  * function if this result [is ok][Result.isOk], or returning [this].
  *
  * - Elm: [Result.andThen](http://package.elm-lang.org/packages/elm-lang/core/latest/Result#andThen)
+ * - Gleam: [result.try](https://hexdocs.pm/gleam_stdlib/gleam/result.html#try)
  * - Rust: [Result.and_then](https://doc.rust-lang.org/std/result/enum.Result.html#method.and_then)
  */
 public inline infix fun <V, E, U> Result<V, E>.andThen(transform: (V) -> Result<U, E>): Result<U, E> {

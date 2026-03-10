@@ -40,6 +40,8 @@ public inline infix fun <T, V> T.runCatching(block: T.() -> V): Result<V, Throwa
 /**
  * Converts a nullable of type [V] to a [Result]. Returns [Ok] if the value is
  * non-null, otherwise the supplied [error].
+ *
+ * - Rust: [Option.ok_or_else](https://doc.rust-lang.org/std/option/enum.Option.html#method.ok_or_else)
  */
 public inline infix fun <V, E> V?.toResultOr(error: () -> E): Result<V, E> {
     contract {

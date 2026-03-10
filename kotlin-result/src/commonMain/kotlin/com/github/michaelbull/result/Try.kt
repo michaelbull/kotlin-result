@@ -704,6 +704,7 @@ public inline fun <T, R, E> List<T>.tryFoldRight(
  * an [action] fails.
  *
  * - Gleam: [list.try_each](https://hexdocs.pm/gleam_stdlib/gleam/list.html#try_each)
+ * - Rust: [Iterator::try_for_each](https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.try_for_each)
  */
 public inline fun <V, E> Iterable<V>.tryForEach(
     action: (V) -> Result<*, E>,
@@ -724,6 +725,7 @@ public inline fun <V, E> Iterable<V>.tryForEach(
  * first [Err] if an [action] fails.
  *
  * - Gleam: [list.try_each](https://hexdocs.pm/gleam_stdlib/gleam/list.html#try_each)
+ * - Rust: [Iterator::try_for_each](https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.try_for_each)
  */
 public inline fun <V, E> Iterable<V>.tryForEachIndexed(
     action: (index: Int, V) -> Result<*, E>,

@@ -32,6 +32,7 @@ public fun <V, E> Result<V, E>.getError(): E? {
  * Returns the [value][Result.value] if this result [is ok][Result.isOk], otherwise [default].
  *
  * - Elm: [Result.withDefault](http://package.elm-lang.org/packages/elm-lang/core/latest/Result#withDefault)
+ * - Gleam: [result.unwrap](https://hexdocs.pm/gleam_stdlib/gleam/result.html#unwrap)
  * - Haskell: [Result.fromLeft](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Either.html#v:fromLeft)
  * - Rust: [Result.unwrap_or](https://doc.rust-lang.org/std/result/enum.Result.html#method.unwrap_or)
  *
@@ -49,6 +50,7 @@ public infix fun <V, E> Result<V, E>.getOr(default: V): V {
  * Returns the [error][Result.error] if this result [is an error][Result.isErr], otherwise
  * [default].
  *
+ * - Gleam: [result.unwrap_error](https://hexdocs.pm/gleam_stdlib/gleam/result.html#unwrap_error)
  * - Haskell: [Result.fromRight](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Either.html#v:fromRight)
  *
  * @param default The error to return if [Ok].

@@ -8,6 +8,7 @@ import kotlin.contracts.contract
  * function to the [value][Result.value] if this result [is ok][Result.isOk], or returning [this].
  *
  * - Elm: [Result.map](http://package.elm-lang.org/packages/elm-lang/core/latest/Result#map)
+ * - Gleam: [result.map](https://hexdocs.pm/gleam_stdlib/gleam/result.html#map)
  * - Haskell: [Data.Bifunctor.first](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Bifunctor.html#v:first)
  * - Rust: [Result.map](https://doc.rust-lang.org/std/result/enum.Result.html#method.map)
  */
@@ -63,6 +64,8 @@ public inline fun <V, E> Result<V?, E>.transpose(): Result<V, E>? {
 /**
  * Maps this [Result<Result<V, E>, E>][Result] to [Result<V, E>][Result].
  *
+ * - Gleam: [result.flatten](https://hexdocs.pm/gleam_stdlib/gleam/result.html#flatten)
+ * - Haskell: [Control.Monad.join](https://hackage.haskell.org/package/base-4.10.0.0/docs/Control-Monad.html#v:join)
  * - Rust: [Result.flatten](https://doc.rust-lang.org/std/result/enum.Result.html#method.flatten)
  */
 public fun <V, E> Result<Result<V, E>, E>.flatten(): Result<V, E> {
@@ -78,6 +81,9 @@ public fun <V, E> Result<Result<V, E>, E>.flatten(): Result<V, E> {
  *
  * This is functionally equivalent to [andThen].
  *
+ * - Elm: [Result.andThen](http://package.elm-lang.org/packages/elm-lang/core/latest/Result#andThen)
+ * - Gleam: [result.try](https://hexdocs.pm/gleam_stdlib/gleam/result.html#try)
+ * - Rust: [Result.and_then](https://doc.rust-lang.org/std/result/enum.Result.html#method.and_then)
  * - Scala: [Either.flatMap](http://www.scala-lang.org/api/2.12.0/scala/util/Either.html#flatMap[AA>:A,Y](f:B=>scala.util.Either[AA,Y]):scala.util.Either[AA,Y])
  */
 public inline infix fun <V, E, U> Result<V, E>.flatMap(transform: (V) -> Result<U, E>): Result<U, E> {
@@ -216,6 +222,7 @@ public inline fun <V, E, U, F> Result<V, E>.flatMapEither(
  * [this].
  *
  * - Elm: [Result.mapError](http://package.elm-lang.org/packages/elm-lang/core/latest/Result#mapError)
+ * - Gleam: [result.map_error](https://hexdocs.pm/gleam_stdlib/gleam/result.html#map_error)
  * - Haskell: [Data.Bifunctor.right](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Bifunctor.html#v:second)
  * - Rust: [Result.map_err](https://doc.rust-lang.org/std/result/enum.Result.html#method.map_err)
  */

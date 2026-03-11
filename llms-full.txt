@@ -20,7 +20,7 @@ Inspired by Rust's `Result`, Elm's `Result`, and Haskell's `Either`.
 ```kotlin
 // gradle/libs.versions.toml
 [versions]
-kotlin-result = "2.0.1"
+kotlin-result = "2.2.0"
 
 [libraries]
 kotlin-result = { module = "com.michael-bull.kotlin-result:kotlin-result", version.ref = "kotlin-result" }

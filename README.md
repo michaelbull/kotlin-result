@@ -30,7 +30,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.michael-bull.kotlin-result:kotlin-result:2.1.0")
+    implementation("com.michael-bull.kotlin-result:kotlin-result:2.2.0")
 }
 ```
 
@@ -144,8 +144,8 @@ Use of suspending functions within a `coroutineBinding` block requires an additi
 
 ```kotlin
 dependencies {
-    implementation("com.michael-bull.kotlin-result:kotlin-result:2.1.0")
-    implementation("com.michael-bull.kotlin-result:kotlin-result-coroutines:2.1.0")
+    implementation("com.michael-bull.kotlin-result:kotlin-result:2.2.0")
+    implementation("com.michael-bull.kotlin-result:kotlin-result-coroutines:2.2.0")
 }
 ```
 

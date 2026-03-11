@@ -28,17 +28,13 @@ class CoroutineBindingBenchmark {
     }
 
     @Benchmark
-    fun suspendableBinding(blackhole: Blackhole) {
-        runBlocking {
-            blackhole.consume(withSuspend().get())
-        }
+    fun suspendableBinding(blackhole: Blackhole) = runBlocking {
+        blackhole.consume(withSuspend().get())
     }
 
     @Benchmark
-    fun asyncSuspendableBinding(blackhole: Blackhole) {
-        runBlocking {
-            blackhole.consume(withAsyncSuspend().get())
-        }
+    fun asyncSuspendableBinding(blackhole: Blackhole) = runBlocking {
+        blackhole.consume(withAsyncSuspend().get())
     }
 
     @Benchmark
@@ -47,17 +43,13 @@ class CoroutineBindingBenchmark {
     }
 
     @Benchmark
-    fun arrowSuspendableBinding(blackhole: Blackhole) {
-        runBlocking {
-            blackhole.consume(withSuspend().get())
-        }
+    fun arrowSuspendableBinding(blackhole: Blackhole) = runBlocking {
+        blackhole.consume(withSuspend().get())
     }
 
     @Benchmark
-    fun arrowAsyncSuspendableBinding(blackhole: Blackhole) {
-        runBlocking {
-            blackhole.consume(withAsyncSuspend().get())
-        }
+    fun arrowAsyncSuspendableBinding(blackhole: Blackhole) = runBlocking {
+        blackhole.consume(withAsyncSuspend().get())
     }
 
     private object Error

@@ -13,6 +13,7 @@ Published to Maven Central as `com.michael-bull.kotlin-result`.
 ## Core
 
 - [Result.kt](https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/Result.kt): Core `Result<V, E>` value class, `Ok()`, `Err()`, `asOk()`, `asErr()`
+- [BindingDsl.kt](https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/BindingDsl.kt): `@BindingDsl` marker annotation preventing implicit outer-scope `bind()` in nested blocks
 - [Binding.kt](https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/Binding.kt): `binding { }` DSL for sequential short-circuit composition
 - [Map.kt](https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/Map.kt): `map`, `mapError`, `flatMap`, `mapBoth`, `fold`, `mapEither`, `toErrorIf`, `toErrorUnless`
 - [Get.kt](https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/Get.kt): `get`, `getError`, `getOr`, `getOrElse`, `getOrThrow`, `merge`

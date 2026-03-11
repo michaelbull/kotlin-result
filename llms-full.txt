@@ -371,7 +371,7 @@ val result: Result<User, FormError> = binding {
 `inline fun <V, E> binding(crossinline block: BindingScope<E>.() -> V): Result<V, E>`
 Calls the block with BindingScope as its receiver. Inside the block, call `.bind()` on any `Result<V, E>` to unwrap the Ok value or short-circuit with the Err.
 
-`interface BindingScope<E>` — provides the `fun <V> Result<V, E>.bind(): V` extension.
+`@BindingDsl interface BindingScope<E>` — provides the `fun <V> Result<V, E>.bind(): V` extension. Annotated with `@BindingDsl` (a `@DslMarker`) to prevent nested `binding`/`coroutineBinding` blocks from implicitly resolving `bind()` to an outer scope — the compiler will require explicit qualification (e.g. `this@binding`) if the error types differ.
 
 ## Zip
 
@@ -586,7 +586,7 @@ val result: Result<Int, MyError> = coroutineBinding {
 }
 ```
 
-`interface CoroutineBindingScope<E> : CoroutineScope` — provides `suspend fun <V> Result<V, E>.bind(): V`.
+`@BindingDsl interface CoroutineBindingScope<E> : CoroutineScope` — provides `suspend fun <V> Result<V, E>.bind(): V`. Shares the `@BindingDsl` marker with `BindingScope` to prevent implicit outer-scope `bind()` in nested blocks.
 
 ### runSuspendCatching
 

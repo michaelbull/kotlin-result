@@ -3,6 +3,9 @@ package com.github.michaelbull.result
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
+@DslMarker
+public annotation class BindingDsl
+
 /**
  * Calls the specified function [block] with [BindingScope] as its receiver and returns its
  * [Result].
@@ -41,6 +44,7 @@ public inline fun <V, E> binding(crossinline block: BindingScope<E>.() -> V): Re
 
 public expect class BindingException() : Exception
 
+@BindingDsl
 public interface BindingScope<E> {
     public fun <V> Result<V, E>.bind(): V
 }

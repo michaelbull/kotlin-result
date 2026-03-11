@@ -1,5 +1,6 @@
 package com.github.michaelbull.result.coroutines
 
+import com.github.michaelbull.result.BindingDsl
 import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.asErr
@@ -59,8 +60,9 @@ public suspend inline fun <V, E> coroutineBinding(crossinline block: suspend Cor
     }
 }
 
-public class BindingCancellationException() : CancellationException(null as String?)
+public class BindingCancellationException : CancellationException(null as String?)
 
+@BindingDsl
 public interface CoroutineBindingScope<E> : CoroutineScope {
     public suspend fun <V> Result<V, E>.bind(): V
 }

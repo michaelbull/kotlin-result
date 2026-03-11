@@ -238,7 +238,7 @@ it as a return type for generic business logic.
 
 - Consistent naming with existing Result libraries from other languages (e.g. `map`, `mapError`, `mapBoth`, `mapEither`,
   `and`, `andThen`, `or`, `orElse`, `unwrap`)
-- Feature parity with Result types from other languages including Elm, Haskell, & Rust
+- Feature parity with Result types from other languages including Elm, Gleam, Haskell, & Rust
 - Extension functions on `Iterable` & `List` for folding, combining, partitioning
 - Monadic comprehension support via the `binding` and `coroutineBinding` functions for imperative use
 - Coroutine-aware primitives e.g. `coroutineBinding` and `runSuspendCatching`
@@ -287,6 +287,7 @@ runCatching(block).throwIf { error ->
 Mappings are available on the [wiki][wiki] to assist those with experience using the `Result` type in other languages:
 
 - [Elm](https://github.com/michaelbull/kotlin-result/wiki/Elm)
+- [Gleam](https://github.com/michaelbull/kotlin-result/wiki/Gleam)
 - [Haskell](https://github.com/michaelbull/kotlin-result/wiki/Haskell)
 - [Rust](https://github.com/michaelbull/kotlin-result/wiki/Rust)
 - [Scala](https://github.com/michaelbull/kotlin-result/wiki/Scala)
@@ -296,14 +297,15 @@ Mappings are available on the [wiki][wiki] to assist those with experience using
 Inspiration for this library has been drawn from other languages in which the Result monad is present, including:
 
 - [Elm](http://package.elm-lang.org/packages/elm-lang/core/latest/Result)
-- [Haskell](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Either.html)
+- [Gleam](https://hexdocs.pm/gleam_stdlib/gleam/result.html)
+- [Haskell](https://hackage.haskell.org/package/base/docs/Data-Either.html)
 - [Rust](https://doc.rust-lang.org/std/result/)
-- [Scala](http://www.scala-lang.org/api/2.12.4/scala/util/Either.html)
+- [Scala](https://www.scala-lang.org/api/current/scala/util/Either.html)
 
 Improvements on existing solutions such the stdlib include:
 
 - Reduced runtime overhead with zero object allocations on the happy path
-- Feature parity with Result types from other languages including Elm, Haskell, & Rust
+- Feature parity with Result types from other languages including Elm, Gleam, Haskell, & Rust
 - Lax constraints on `value`/`error` nullability
 - Lax constraints on the `error` type's inheritance (does not inherit from `Exception`)
 - Top-level `Ok` and `Err` functions avoids qualifying usages with `Result.Ok`/`Result.Err` respectively

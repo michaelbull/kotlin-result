@@ -73,7 +73,7 @@ public suspend inline fun <T, E> Flow<T>.tryFilterNot(
  * This is the [Flow] equivalent of [Iterable.tryMap][com.github.michaelbull.result.tryMap].
  *
  * - Gleam: [list.try_map](https://hexdocs.pm/gleam_stdlib/gleam/list.html#try_map)
- * - Haskell: [Data.Traversable.traverse](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Traversable.html#v:traverse)
+ * - Haskell: [Data.Traversable.traverse](https://hackage.haskell.org/package/base/docs/Data-Traversable.html#v:traverse)
  */
 public suspend inline fun <V, E, U> Flow<V>.tryMap(
     crossinline transform: suspend (V) -> Result<U, E>,
@@ -105,7 +105,7 @@ public suspend inline fun <V, E, U> Flow<V>.tryMap(
  * [Iterable.tryMapNotNull][com.github.michaelbull.result.tryMapNotNull].
  *
  * - Gleam: [list.try_map](https://hexdocs.pm/gleam_stdlib/gleam/list.html#try_map)
- * - Haskell: [Data.Traversable.traverse](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Traversable.html#v:traverse)
+ * - Haskell: [Data.Traversable.traverse](https://hackage.haskell.org/package/base/docs/Data-Traversable.html#v:traverse)
  */
 public suspend inline fun <V, E, U : Any> Flow<V>.tryMapNotNull(
     crossinline transform: suspend (V) -> Result<U, E>?,
@@ -233,7 +233,7 @@ public suspend inline fun <T, E> Flow<T>.tryReduce(
  * This is the [Flow] equivalent of [Iterable.tryFold][com.github.michaelbull.result.tryFold].
  *
  * - Gleam: [list.try_fold](https://hexdocs.pm/gleam_stdlib/gleam/list.html#try_fold)
- * - Haskell: [Control.Monad.foldM](https://hackage.haskell.org/package/base-4.10.0.0/docs/Control-Monad.html#v:foldM)
+ * - Haskell: [Control.Monad.foldM](https://hackage.haskell.org/package/base/docs/Control-Monad.html#v:foldM)
  * - Rust: [Iterator::try_fold](https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.try_fold)
  */
 public suspend inline fun <T, R, E> Flow<T>.tryFold(

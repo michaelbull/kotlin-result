@@ -33,7 +33,7 @@ public fun <V, E> Result<V, E>.getError(): E? {
  *
  * - Elm: [Result.withDefault](http://package.elm-lang.org/packages/elm-lang/core/latest/Result#withDefault)
  * - Gleam: [result.unwrap](https://hexdocs.pm/gleam_stdlib/gleam/result.html#unwrap)
- * - Haskell: [Result.fromLeft](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Either.html#v:fromLeft)
+ * - Haskell: [Result.fromLeft](https://hackage.haskell.org/package/base/docs/Data-Either.html#v:fromLeft)
  * - Rust: [Result.unwrap_or](https://doc.rust-lang.org/std/result/enum.Result.html#method.unwrap_or)
  *
  * @param default The value to return if [Err].
@@ -51,7 +51,7 @@ public infix fun <V, E> Result<V, E>.getOr(default: V): V {
  * [default].
  *
  * - Gleam: [result.unwrap_error](https://hexdocs.pm/gleam_stdlib/gleam/result.html#unwrap_error)
- * - Haskell: [Result.fromRight](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Either.html#v:fromRight)
+ * - Haskell: [Result.fromRight](https://hackage.haskell.org/package/base/docs/Data-Either.html#v:fromRight)
  *
  * @param default The error to return if [Ok].
  * @return The [error][Result.error] if [Err], otherwise [default].
@@ -128,7 +128,7 @@ public inline infix fun <V, E> Result<V, E>.getOrThrow(transform: (E) -> Throwab
  * Merges this [Result<V, E>][Result] to [U], returning the [value][Result.value] if this result
  * [is ok][Result.isOk], otherwise the [error][Result.error].
  *
- * - Scala: [MergeableEither.merge](https://www.scala-lang.org/api/2.12.0/scala/util/Either$$MergeableEither.html#merge:A)
+ * - Scala: [Either.merge](https://www.scala-lang.org/api/scala/util/Either.html#merge-0)
  */
 public fun <V : U, E : U, U> Result<V, E>.merge(): U {
     return when {

@@ -300,7 +300,7 @@ Inspiration for this library has been drawn from other languages in which the Re
 - [Gleam](https://hexdocs.pm/gleam_stdlib/gleam/result.html)
 - [Haskell](https://hackage.haskell.org/package/base/docs/Data-Either.html)
 - [Rust](https://doc.rust-lang.org/std/result/)
-- [Scala](https://www.scala-lang.org/api/current/scala/util/Either.html)
+- [Scala](https://www.scala-lang.org/api/scala/util/Either.html)
 
 Improvements on existing solutions such the stdlib include:
 

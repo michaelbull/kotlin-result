@@ -454,7 +454,7 @@ public inline fun <T, K, V, E, M : MutableMap<in K, MutableList<V>>> Iterable<T>
  * transformation fails. Elements in the returned list are in the same order as [this].
  *
  * - Gleam: [list.try_map](https://hexdocs.pm/gleam_stdlib/gleam/list.html#try_map)
- * - Haskell: [Data.Traversable.traverse](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Traversable.html#v:traverse)
+ * - Haskell: [Data.Traversable.traverse](https://hackage.haskell.org/package/base/docs/Data-Traversable.html#v:traverse)
  */
 public inline fun <V, E, U> Iterable<V>.tryMap(
     transform: (V) -> Result<U, E>,
@@ -477,7 +477,7 @@ public inline fun <V, E, U> Iterable<V>.tryMap(
  * transformation fails. Elements in the returned list are in the same order as [this].
  *
  * - Gleam: [list.try_map](https://hexdocs.pm/gleam_stdlib/gleam/list.html#try_map)
- * - Haskell: [Data.Traversable.traverse](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Traversable.html#v:traverse)
+ * - Haskell: [Data.Traversable.traverse](https://hackage.haskell.org/package/base/docs/Data-Traversable.html#v:traverse)
  */
 public inline fun <V, E, U, C : MutableCollection<in U>> Iterable<V>.tryMapTo(
     destination: C,
@@ -502,7 +502,7 @@ public inline fun <V, E, U, C : MutableCollection<in U>> Iterable<V>.tryMapTo(
  * [this].
  *
  * - Gleam: [list.try_map](https://hexdocs.pm/gleam_stdlib/gleam/list.html#try_map)
- * - Haskell: [Data.Traversable.traverse](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Traversable.html#v:traverse)
+ * - Haskell: [Data.Traversable.traverse](https://hackage.haskell.org/package/base/docs/Data-Traversable.html#v:traverse)
  */
 public inline fun <V, E, U : Any> Iterable<V>.tryMapNotNull(
     transform: (V) -> Result<U, E>?,
@@ -526,7 +526,7 @@ public inline fun <V, E, U : Any> Iterable<V>.tryMapNotNull(
  * transformation fails.
  *
  * - Gleam: [list.try_map](https://hexdocs.pm/gleam_stdlib/gleam/list.html#try_map)
- * - Haskell: [Data.Traversable.traverse](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Traversable.html#v:traverse)
+ * - Haskell: [Data.Traversable.traverse](https://hackage.haskell.org/package/base/docs/Data-Traversable.html#v:traverse)
  */
 public inline fun <V, E, U : Any, C : MutableCollection<in U>> Iterable<V>.tryMapNotNullTo(
     destination: C,
@@ -552,7 +552,7 @@ public inline fun <V, E, U : Any, C : MutableCollection<in U>> Iterable<V>.tryMa
  * [this].
  *
  * - Gleam: [list.try_map](https://hexdocs.pm/gleam_stdlib/gleam/list.html#try_map)
- * - Haskell: [Data.Traversable.traverse](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Traversable.html#v:traverse)
+ * - Haskell: [Data.Traversable.traverse](https://hackage.haskell.org/package/base/docs/Data-Traversable.html#v:traverse)
  */
 public inline fun <V, E, U> Iterable<V>.tryMapIndexed(
     transform: (index: Int, V) -> Result<U, E>,
@@ -575,7 +575,7 @@ public inline fun <V, E, U> Iterable<V>.tryMapIndexed(
  * transformation fails.
  *
  * - Gleam: [list.try_map](https://hexdocs.pm/gleam_stdlib/gleam/list.html#try_map)
- * - Haskell: [Data.Traversable.traverse](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Traversable.html#v:traverse)
+ * - Haskell: [Data.Traversable.traverse](https://hackage.haskell.org/package/base/docs/Data-Traversable.html#v:traverse)
  */
 public inline fun <V, E, U, C : MutableCollection<in U>> Iterable<V>.tryMapIndexedTo(
     destination: C,
@@ -600,7 +600,7 @@ public inline fun <V, E, U, C : MutableCollection<in U>> Iterable<V>.tryMapIndex
  * the same order as [this].
  *
  * - Gleam: [list.try_map](https://hexdocs.pm/gleam_stdlib/gleam/list.html#try_map)
- * - Haskell: [Data.Traversable.traverse](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Traversable.html#v:traverse)
+ * - Haskell: [Data.Traversable.traverse](https://hackage.haskell.org/package/base/docs/Data-Traversable.html#v:traverse)
  */
 public inline fun <V, E, U : Any> Iterable<V>.tryMapIndexedNotNull(
     transform: (index: Int, V) -> Result<U, E>?,
@@ -624,7 +624,7 @@ public inline fun <V, E, U : Any> Iterable<V>.tryMapIndexedNotNull(
  * [Err] if a transformation fails.
  *
  * - Gleam: [list.try_map](https://hexdocs.pm/gleam_stdlib/gleam/list.html#try_map)
- * - Haskell: [Data.Traversable.traverse](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Traversable.html#v:traverse)
+ * - Haskell: [Data.Traversable.traverse](https://hackage.haskell.org/package/base/docs/Data-Traversable.html#v:traverse)
  */
 public inline fun <V, E, U : Any, C : MutableCollection<in U>> Iterable<V>.tryMapIndexedNotNullTo(
     destination: C,
@@ -648,7 +648,7 @@ public inline fun <V, E, U : Any, C : MutableCollection<in U>> Iterable<V>.tryMa
  * current accumulator value and each element.
  *
  * - Gleam: [list.try_fold](https://hexdocs.pm/gleam_stdlib/gleam/list.html#try_fold)
- * - Haskell: [Control.Monad.foldM](https://hackage.haskell.org/package/base-4.10.0.0/docs/Control-Monad.html#v:foldM)
+ * - Haskell: [Control.Monad.foldM](https://hackage.haskell.org/package/base/docs/Control-Monad.html#v:foldM)
  * - Rust: [Iterator::try_fold](https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.try_fold)
  */
 public inline fun <T, R, E> Iterable<T>.tryFold(
@@ -674,7 +674,7 @@ public inline fun <T, R, E> Iterable<T>.tryFold(
  * each element and current accumulator value.
  *
  * - Gleam: [list.try_fold](https://hexdocs.pm/gleam_stdlib/gleam/list.html#try_fold)
- * - Haskell: [Control.Monad.foldM](https://hackage.haskell.org/package/base-4.10.0.0/docs/Control-Monad.html#v:foldM)
+ * - Haskell: [Control.Monad.foldM](https://hackage.haskell.org/package/base/docs/Control-Monad.html#v:foldM)
  * - Rust: [Iterator::try_fold](https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.try_fold)
  */
 public inline fun <T, R, E> List<T>.tryFoldRight(

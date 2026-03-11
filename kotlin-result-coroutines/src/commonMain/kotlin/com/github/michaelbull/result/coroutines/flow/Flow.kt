@@ -135,7 +135,7 @@ public suspend fun <V, E> Flow<Result<V, E>>.countErr(): Int {
  * This is the [Flow] equivalent of [Iterable.partition][com.github.michaelbull.result.partition].
  *
  * - Gleam: [result.partition](https://hexdocs.pm/gleam_stdlib/gleam/result.html#partition)
- * - Haskell: [Data.Either.partitionEithers](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Either.html#v:partitionEithers)
+ * - Haskell: [Data.Either.partitionEithers](https://hackage.haskell.org/package/base/docs/Data-Either.html#v:partitionEithers)
  */
 public suspend fun <V, E> Flow<Result<V, E>>.partition(): Pair<List<V>, List<E>> {
     val values = mutableListOf<V>()
@@ -164,7 +164,7 @@ public suspend fun <V, E> Flow<Result<V, E>>.partition(): Pair<List<V>, List<E>>
  *
  * - Elm: [Result.Extra.combine](http://package.elm-lang.org/packages/elm-community/result-extra/2.2.0/Result-Extra#combine)
  * - Gleam: [result.all](https://hexdocs.pm/gleam_stdlib/gleam/result.html#all)
- * - Haskell: [Data.Traversable.sequenceA](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Traversable.html#v:sequenceA)
+ * - Haskell: [Data.Traversable.sequenceA](https://hackage.haskell.org/package/base/docs/Data-Traversable.html#v:sequenceA)
  */
 public suspend fun <V, E> Flow<Result<V, E>>.combine(): Result<List<V>, E> {
     val values = mutableListOf<V>()

@@ -136,7 +136,7 @@ public inline fun <V, E> Iterable<Result<V, E>>.onEachErrIndexed(action: (index:
  * [is an error][Result.isErr] will appear in the [second][Pair.second] list.
  *
  * - Gleam: [result.partition](https://hexdocs.pm/gleam_stdlib/gleam/result.html#partition)
- * - Haskell: [Data.Either.partitionEithers](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Either.html#v:partitionEithers)
+ * - Haskell: [Data.Either.partitionEithers](https://hackage.haskell.org/package/base/docs/Data-Either.html#v:partitionEithers)
  */
 public fun <V, E, R : Result<V, E>> partition(vararg results: R): Pair<List<V>, List<E>> {
     return results.asIterable().partition()
@@ -148,7 +148,7 @@ public fun <V, E, R : Result<V, E>> partition(vararg results: R): Pair<List<V>, 
  * in the [second][Pair.second] list.
  *
  * - Gleam: [result.partition](https://hexdocs.pm/gleam_stdlib/gleam/result.html#partition)
- * - Haskell: [Data.Either.partitionEithers](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Either.html#v:partitionEithers)
+ * - Haskell: [Data.Either.partitionEithers](https://hackage.haskell.org/package/base/docs/Data-Either.html#v:partitionEithers)
  */
 public fun <V, E> Iterable<Result<V, E>>.partition(): Pair<List<V>, List<E>> {
     val values = mutableListOf<V>()
@@ -171,7 +171,7 @@ public fun <V, E> Iterable<Result<V, E>>.partition(): Pair<List<V>, List<E>> {
  *
  * - Elm: [Result.Extra.combine](http://package.elm-lang.org/packages/elm-community/result-extra/2.2.0/Result-Extra#combine)
  * - Gleam: [result.all](https://hexdocs.pm/gleam_stdlib/gleam/result.html#all)
- * - Haskell: [Data.Traversable.sequenceA](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Traversable.html#v:sequenceA)
+ * - Haskell: [Data.Traversable.sequenceA](https://hackage.haskell.org/package/base/docs/Data-Traversable.html#v:sequenceA)
  */
 public fun <V, E, R : Result<V, E>> combine(vararg results: R): Result<List<V>, E> {
     return results.asIterable().combine()
@@ -187,7 +187,7 @@ public fun <V, E, R : Result<V, E>> combine(vararg results: R): Result<List<V>, 
  *
  * - Elm: [Result.Extra.combine](http://package.elm-lang.org/packages/elm-community/result-extra/2.2.0/Result-Extra#combine)
  * - Gleam: [result.all](https://hexdocs.pm/gleam_stdlib/gleam/result.html#all)
- * - Haskell: [Data.Traversable.sequenceA](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Traversable.html#v:sequenceA)
+ * - Haskell: [Data.Traversable.sequenceA](https://hackage.haskell.org/package/base/docs/Data-Traversable.html#v:sequenceA)
  */
 public fun <V, E> Iterable<Result<V, E>>.combine(): Result<List<V>, E> {
     val values = map { result ->
@@ -274,7 +274,7 @@ public fun <V, E, C : MutableCollection<in E>> Iterable<Result<V, E>>.combineErr
  * that [is an error][Result.isErr]. Elements in the returned list are in the same order as the
  * specified [results].
  *
- * - Haskell: [Data.Either.rights](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Either.html#v:rights)
+ * - Haskell: [Data.Either.rights](https://hackage.haskell.org/package/base/docs/Data-Either.html#v:rights)
  */
 public fun <V, E, R : Result<V, E>> errorsOf(vararg results: R): List<E> {
     return results.asIterable().filterErr()
@@ -285,7 +285,7 @@ public fun <V, E, R : Result<V, E>> errorsOf(vararg results: R): List<E> {
  * that [is ok][Result.isOk]. Elements in the returned list are in the same order as the specified
  * [results].
  *
- * - Haskell: [Data.Either.lefts](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Either.html#v:lefts)
+ * - Haskell: [Data.Either.lefts](https://hackage.haskell.org/package/base/docs/Data-Either.html#v:lefts)
  */
 public fun <V, E, R : Result<V, E>> valuesOf(vararg results: R): List<V> {
     return results.asIterable().filterOk()

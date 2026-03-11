@@ -9,7 +9,7 @@ import kotlin.contracts.contract
  *
  * - Elm: [Result.map](http://package.elm-lang.org/packages/elm-lang/core/latest/Result#map)
  * - Gleam: [result.map](https://hexdocs.pm/gleam_stdlib/gleam/result.html#map)
- * - Haskell: [Data.Bifunctor.first](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Bifunctor.html#v:first)
+ * - Haskell: [Data.Bifunctor.first](https://hackage.haskell.org/package/base/docs/Data-Bifunctor.html#v:first)
  * - Rust: [Result.map](https://doc.rust-lang.org/std/result/enum.Result.html#method.map)
  */
 public inline infix fun <V, E, U> Result<V, E>.map(transform: (V) -> U): Result<U, E> {
@@ -32,7 +32,7 @@ public inline infix fun <V, E, U> Result<V, E>.map(transform: (V) -> U): Result<
  * it as an [Err].
  *
  * - Elm: [Result.map](http://package.elm-lang.org/packages/elm-lang/core/latest/Result#map)
- * - Haskell: [Data.Bifunctor.first](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Bifunctor.html#v:first)
+ * - Haskell: [Data.Bifunctor.first](https://hackage.haskell.org/package/base/docs/Data-Bifunctor.html#v:first)
  * - Rust: [Result.map](https://doc.rust-lang.org/std/result/enum.Result.html#method.map)
  */
 public inline infix fun <V, U> Result<V, Throwable>.mapCatching(transform: (V) -> U): Result<U, Throwable> {
@@ -65,7 +65,7 @@ public inline fun <V, E> Result<V?, E>.transpose(): Result<V, E>? {
  * Maps this [Result<Result<V, E>, E>][Result] to [Result<V, E>][Result].
  *
  * - Gleam: [result.flatten](https://hexdocs.pm/gleam_stdlib/gleam/result.html#flatten)
- * - Haskell: [Control.Monad.join](https://hackage.haskell.org/package/base-4.10.0.0/docs/Control-Monad.html#v:join)
+ * - Haskell: [Control.Monad.join](https://hackage.haskell.org/package/base/docs/Control-Monad.html#v:join)
  * - Rust: [Result.flatten](https://doc.rust-lang.org/std/result/enum.Result.html#method.flatten)
  */
 public fun <V, E> Result<Result<V, E>, E>.flatten(): Result<V, E> {
@@ -84,7 +84,7 @@ public fun <V, E> Result<Result<V, E>, E>.flatten(): Result<V, E> {
  * - Elm: [Result.andThen](http://package.elm-lang.org/packages/elm-lang/core/latest/Result#andThen)
  * - Gleam: [result.try](https://hexdocs.pm/gleam_stdlib/gleam/result.html#try)
  * - Rust: [Result.and_then](https://doc.rust-lang.org/std/result/enum.Result.html#method.and_then)
- * - Scala: [Either.flatMap](http://www.scala-lang.org/api/2.12.0/scala/util/Either.html#flatMap[AA>:A,Y](f:B=>scala.util.Either[AA,Y]):scala.util.Either[AA,Y])
+ * - Scala: [Either.flatMap](https://www.scala-lang.org/api/scala/util/Either.html#flatMap-36a)
  */
 public inline infix fun <V, E, U> Result<V, E>.flatMap(transform: (V) -> Result<U, E>): Result<U, E> {
     contract {
@@ -102,7 +102,7 @@ public inline infix fun <V, E, U> Result<V, E>.flatMap(transform: (V) -> Result<
  * Unlike [mapEither], [success] and [failure] must both return [U].
  *
  * - Elm: [Result.Extra.mapBoth](http://package.elm-lang.org/packages/elm-community/result-extra/2.2.0/Result-Extra#mapBoth)
- * - Haskell: [Data.Either.either](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Either.html#v:either)
+ * - Haskell: [Data.Either.either](https://hackage.haskell.org/package/base/docs/Data-Either.html#v:either)
  */
 public inline fun <V, E, U> Result<V, E>.mapBoth(
     success: (V) -> U,
@@ -129,7 +129,7 @@ public inline fun <V, E, U> Result<V, E>.mapBoth(
  * This is functionally equivalent to [mapBoth].
  *
  * - Elm: [Result.Extra.mapBoth](http://package.elm-lang.org/packages/elm-community/result-extra/2.2.0/Result-Extra#mapBoth)
- * - Haskell: [Data.Either.either](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Either.html#v:either)
+ * - Haskell: [Data.Either.either](https://hackage.haskell.org/package/base/docs/Data-Either.html#v:either)
  */
 public inline fun <V, E, U> Result<V, E>.fold(
     success: (V) -> U,
@@ -151,7 +151,7 @@ public inline fun <V, E, U> Result<V, E>.fold(
  * Unlike [mapEither], [success] and [failure] must both return [U].
  *
  * - Elm: [Result.Extra.mapBoth](http://package.elm-lang.org/packages/elm-community/result-extra/2.2.0/Result-Extra#mapBoth)
- * - Haskell: [Data.Either.either](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Either.html#v:either)
+ * - Haskell: [Data.Either.either](https://hackage.haskell.org/package/base/docs/Data-Either.html#v:either)
  */
 public inline fun <V, E, U> Result<V, E>.flatMapBoth(
     success: (V) -> Result<U, E>,
@@ -175,7 +175,7 @@ public inline fun <V, E, U> Result<V, E>.flatMapBoth(
  *
  * Unlike [mapBoth], [success] and [failure] may either return [U] or [F] respectively.
  *
- * - Haskell: [Data.Bifunctor.Bimap](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Bifunctor.html#v:bimap)
+ * - Haskell: [Data.Bifunctor.Bimap](https://hackage.haskell.org/package/base/docs/Data-Bifunctor.html#v:bimap)
  */
 public inline fun <V, E, U, F> Result<V, E>.mapEither(
     success: (V) -> U,
@@ -199,7 +199,7 @@ public inline fun <V, E, U, F> Result<V, E>.mapEither(
  *
  * Unlike [mapBoth], [success] and [failure] may either return [U] or [F] respectively.
  *
- * - Haskell: [Data.Bifunctor.Bimap](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Bifunctor.html#v:bimap)
+ * - Haskell: [Data.Bifunctor.Bimap](https://hackage.haskell.org/package/base/docs/Data-Bifunctor.html#v:bimap)
  */
 public inline fun <V, E, U, F> Result<V, E>.flatMapEither(
     success: (V) -> Result<U, F>,
@@ -223,7 +223,7 @@ public inline fun <V, E, U, F> Result<V, E>.flatMapEither(
  *
  * - Elm: [Result.mapError](http://package.elm-lang.org/packages/elm-lang/core/latest/Result#mapError)
  * - Gleam: [result.map_error](https://hexdocs.pm/gleam_stdlib/gleam/result.html#map_error)
- * - Haskell: [Data.Bifunctor.right](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Bifunctor.html#v:second)
+ * - Haskell: [Data.Bifunctor.right](https://hackage.haskell.org/package/base/docs/Data-Bifunctor.html#v:second)
  * - Rust: [Result.map_err](https://doc.rust-lang.org/std/result/enum.Result.html#method.map_err)
  */
 public inline infix fun <V, E, F> Result<V, E>.mapError(transform: (E) -> F): Result<V, F> {
@@ -286,7 +286,7 @@ public inline fun <V, E, U> Result<V, E>.mapOrElse(
  * transformation fails.
  *
  * - Gleam: [list.try_map](https://hexdocs.pm/gleam_stdlib/gleam/list.html#try_map)
- * - Haskell: [Data.Traversable.traverse](https://hackage.haskell.org/package/base-4.10.0.0/docs/Data-Traversable.html#v:traverse)
+ * - Haskell: [Data.Traversable.traverse](https://hackage.haskell.org/package/base/docs/Data-Traversable.html#v:traverse)
  */
 public inline infix fun <V, E, U> Result<Iterable<V>, E>.tryMap(transform: (V) -> Result<U, E>): Result<List<U>, E> {
     return andThen { iterable ->

@@ -34,143 +34,250 @@ dependencies {
 }
 ```
 
+A separate `kotlin-result-coroutines` artifact is available for coroutine support, shown in the
+[Coroutines](#coroutines) section.
+
 ## Introduction
 
-In functional programming, the result [`Result`][result] type is a monadic type holding a returned [value][result-value]
-or an [error][result-error].
+In functional programming, the [`Result`][result] type is a monadic type holding a returned
+[value][result-value] or an [error][result-error].
 
-To indicate an operation that succeeded, return an [`Ok(value)`][result-Ok] with the successful `value`. If it failed,
-return an [`Err(error)`][result-Err] with the `error` that caused the failure.
+To indicate an operation that succeeded, return an [`Ok(value)`][result-Ok] with the successful
+`value`. If it failed, return an [`Err(error)`][result-Err] with the `error` that caused the
+failure.
 
-This helps to define a clear happy/unhappy path of execution that is commonly referred to
-as [Railway Oriented Programming][rop], whereby the happy and unhappy paths are represented as separate railways.
+This defines a clear happy/unhappy path of execution commonly referred to as
+[Railway Oriented Programming][rop], whereby the happy and unhappy paths are represented as
+separate railways.
 
-## Getting Started
+## Usage
 
-Below is a simple example of how you may use the `Result` type to model a function that may fail.
+The examples below use a customer service domain. A working application demonstrating these
+patterns is available in the [`example`][example] directory.
+
+### Creating Results
+
+Return `Ok` or `Err` to indicate success or failure. A function that validates and parses an email
+address might look like:
 
 ```kotlin
-fun checkPrivileges(user: User, command: Command): Result<Command, CommandError> {
-    return if (user.rank >= command.minimumRank) {
-        Ok(command)
-    } else {
-        Err(CommandError.InsufficientRank(command.name))
+object EmailAddressParser {
+
+    fun parse(address: String?): Result<EmailAddress, DomainMessage> {
+        return when {
+            address.isNullOrBlank() -> Err(EmailRequired)
+            address.length > MAX_LENGTH -> Err(EmailTooLong)
+            !address.matches(PATTERN) -> Err(EmailInvalid)
+            else -> Ok(EmailAddress(address))
+        }
     }
 }
 ```
 
-When interacting with code outside of your control that may throw exceptions, wrap the call
-with [`runCatching`][result-runCatching] to capture its execution as a `Result<T, Throwable>`:
+When interacting with code that may throw exceptions, wrap the call with
+[`runCatching`][result-runCatching] to capture its execution as a `Result<T, Throwable>`:
 
 ```kotlin
-val result: Result<Customer, Throwable> = runCatching {
-    customerDb.findById(id = 50) // could throw SQLException or similar
+val result: Result<Unit, Throwable> = runCatching {
+    repository.save(customer)
 }
 ```
 
-Nullable types, such as the `find` method in the example below, can be converted to a `Result` using the `toResultOr`
-extension function.
+Nullable types can be converted to a `Result` with [`toResultOr`][result-toResultOr]:
 
 ```kotlin
-val result: Result<Customer, String> = customers
-    .find { it.id == id } // returns Customer?
-    .toResultOr { "No customer found" }
+fun findById(id: CustomerId): Result<CustomerEntity, CustomerNotFound> {
+    return repository.findById(id)
+        .toResultOr { CustomerNotFound }
+}
 ```
 
 ### Transforming Results
 
-Both success and failure results can be transformed within a stage of the railway track. The example below demonstrates
-how to transform an internal program error `UnlockError` into the exposed client error `IncorrectPassword`.
+Use [`map`][result-map] to transform a success value:
 
 ```kotlin
-val result: Result<Treasure, UnlockResponse> =
-    unlockVault("my-password") // returns Result<Treasure, UnlockError>
-        .mapError { IncorrectPassword } // transform UnlockError into IncorrectPassword
+fun getById(id: Long): Result<CustomerDto, DomainMessage> {
+    return parseCustomerId(id)
+        .andThen(::findById)
+        .map(::entityToDto)
+}
+```
+
+Use [`mapError`][result-mapError] to transform an error into a different type:
+
+```kotlin
+runCatching { repository.save(entity) }
+    .mapError(::exceptionToDomainMessage)
+```
+
+Use [`mapBoth`][result-mapBoth] (also available as [`fold`][result-fold]) to handle both cases and
+produce a single value. This is useful for mapping a `Result` to an HTTP response:
+
+```kotlin
+val (status, body) = customerService.getById(id)
+    .mapBoth(
+        { customer -> HttpStatusCode.OK to customer },
+        { error -> HttpStatusCode.BadRequest to error.message }
+    )
 ```
 
 ### Chaining
 
-Results can be chained to produce a "happy path" of execution. For example, the happy path for a user entering commands
-into an administrative console would consist of: the command being tokenized, the command being registered, the user
-having sufficient privileges, and the command executing the associated action. The example below uses the
-`checkPrivileges` function we defined earlier.
+Use [`andThen`][result-andThen] to chain operations where each step may fail, passing the success
+value from one step to the next:
 
 ```kotlin
-tokenize(command.toLowerCase())
-    .andThen(::findCommand)
-    .andThen { cmd -> checkPrivileges(loggedInUser, cmd) }
-    .andThen { execute(user = loggedInUser, command = cmd, timestamp = LocalDateTime.now()) }
-    .mapBoth(
-        { output -> printToConsole("returned: $output") },
-        { error -> printToConsole("failed to execute, reason: ${error.reason}") }
-    )
+val (status, body) = call.parameters
+    .readId()
+    .andThen(::parseCustomerId)
+    .andThen(::findById)
+    .map(::entityToDto)
+    .mapBoth(::customerToResponse, ::messageToResponse)
 ```
 
-## Advanced Usage - Binding (Monad Comprehension)
+This works well for linear pipelines where each step's output feeds directly into the next.
 
-The [`binding`][result-binding] function allows multiple calls that each return a `Result` to be chained imperatively.
+### Binding
 
-When inside a `binding` block, the `bind()` function is accessible on any `Result`. Each call to `bind` will attempt to
-unwrap the `Result` and store its value, returning early if any `Result` is an error.
-
-In the example below, should `functionX()` return an error, then execution will skip both `functionY()` and
-`functionZ()`, instead storing the error from `functionX` in the variable named `sum`.
+When a chain is not linear, later steps may need values from earlier steps that aren't the
+immediately preceding one. With `andThen`, this forces nesting to keep intermediate values in scope,
+producing the [arrow anti-pattern][arrow-anti-pattern]:
 
 ```kotlin
-fun functionX(): Result<Int, SumError> = TODO()
-fun functionY(): Result<Int, SumError> = TODO()
-fun functionZ(): Result<Int, SumError> = TODO()
-
-val sum: Result<Int, SumError> = binding {
-    val x = functionX().bind()
-    val y = functionY().bind()
-    val z = functionZ().bind()
-    x + y + z
+fun save(id: Long, dto: CustomerDto): Result<Event?, DomainMessage> {
+    return parseCustomerId(id).andThen { customerId ->
+        findById(customerId).andThen { existing ->
+            validate(dto).andThen { validated ->
+                updateEntity(customerId, existing, validated)
+            }
+        }
+    }
 }
-
-println("The sum is $sum") // prints "The sum is Ok(100)"
 ```
 
-The `binding` function primarily draws inspiration from [Bow's `binding` function][bow-bindings], however below is a
-list of other resources on the topic of monad comprehensions.
-
-- [Monad comprehensions - Arrow (Kotlin)](https://old.arrow-kt.io/docs/patterns/monad_comprehensions/)
-- [Monad comprehensions - Bow (Swift)](https://bow-swift.io/docs/patterns/monad-comprehensions)
-- [For comprehensions - Scala](https://docs.scala-lang.org/tour/for-comprehensions.html)
-
-#### Coroutine Binding Support
-
-Use of suspending functions within a `coroutineBinding` block requires an additional dependency:
+The [`binding`][result-binding] function solves this by providing an imperative-style block where
+each `.bind()` call unwraps a `Result` into a named variable. All intermediate values stay in scope
+naturally, and any failure short-circuits the entire block:
 
 ```kotlin
+fun save(id: Long, dto: CustomerDto): Result<Event?, DomainMessage> = binding {
+    val customerId = parseCustomerId(id).bind()
+    val existing = findById(customerId).bind()
+    val validated = validate(dto).bind()
+    updateEntity(customerId, existing, validated)
+}
+```
+
+### Combining Results
+
+Use [`zip`][result-zip] to combine multiple independent results, returning early with the first
+error:
+
+```kotlin
+fun validate(dto: CustomerDto): Result<Customer, DomainMessage> {
+    return zip(
+        { PersonalNameParser.parse(dto.firstName, dto.lastName) },
+        { EmailAddressParser.parse(dto.email) },
+        ::Customer
+    )
+}
+```
+
+Use [`zipOrAccumulate`][result-zipOrAccumulate] to combine results while collecting all errors
+instead of stopping at the first:
+
+```kotlin
+fun validate(dto: CustomerDto): Result<Customer, List<DomainMessage>> {
+    return zipOrAccumulate(
+        { PersonalNameParser.parse(dto.firstName, dto.lastName) },
+        { EmailAddressParser.parse(dto.email) },
+        ::Customer
+    )
+}
+```
+
+Both `zip` and `zipOrAccumulate` support 2-5 arity.
+
+### Working with Collections
+
+Extension functions on `Iterable<Result<V, E>>` make it straightforward to work with collections
+of results.
+
+Use [`combine`][result-combine] to turn a `List<Result<V, E>>` into a `Result<List<V>, E>`,
+returning early with the first error:
+
+```kotlin
+val results: List<Result<EmailAddress, DomainMessage>> =
+    addresses.map(EmailAddressParser::parse)
+
+val combined: Result<List<EmailAddress>, DomainMessage> = results.combine()
+```
+
+Use [`partition`][result-partition] to split results into a `Pair<List<V>, List<E>>`:
+
+```kotlin
+val (validAddresses, errors) = addresses
+    .map(EmailAddressParser::parse)
+    .partition()
+```
+
+Use [`filterOk`][result-filterOk] and [`filterErr`][result-filterErr] to extract values or errors:
+
+```kotlin
+val validAddresses: List<EmailAddress> = results.filterOk()
+val errors: List<DomainMessage> = results.filterErr()
+```
+
+Additional collection functions include `allOk`, `anyOk`, `countOk`, `countErr`, `onEachOk`, and
+`onEachErr`. See the full list in [`Iterable.kt`][result-iterable].
+
+### Coroutines
+
+The `kotlin-result-coroutines` module provides coroutine-aware extensions:
+
+```groovy
 dependencies {
     implementation("com.michael-bull.kotlin-result:kotlin-result:2.2.0")
     implementation("com.michael-bull.kotlin-result:kotlin-result-coroutines:2.2.0")
 }
 ```
 
-The [`coroutineBinding`][result-coroutineBinding] function runs inside a [`coroutineScope`][kotlin-coroutineScope],
-facilitating _concurrent decomposition of work_.
+#### coroutineBinding
 
-When any call to `bind()` inside the block fails, the scope fails, cancelling all other children.
-
-The example below demonstrates a computationally expensive function that takes five milliseconds to compute being
-eagerly cancelled as soon as a smaller function fails in just one millisecond:
+[`coroutineBinding`][result-coroutineBinding] is the concurrent equivalent of `binding`. It runs
+inside a [`coroutineScope`][kotlin-coroutineScope], enabling concurrent decomposition of work. When
+any call to `bind()` fails, the scope is cancelled, cancelling all other children:
 
 ```kotlin
-suspend fun failsIn5ms(): Result<Int, DomainErrorA> = TODO()
-suspend fun failsIn1ms(): Result<Int, DomainErrorB> = TODO()
-
-runBlocking {
-    val result: Result<Int, BindingError> = coroutineBinding { // this creates a new CoroutineScope
-        val x = async { failsIn5ms().bind() }
-        val y = async { failsIn1ms().bind() }
-        x.await() + y.await()
+suspend fun fetchCustomerProfile(id: CustomerId): Result<CustomerProfile, DomainMessage> {
+    return coroutineBinding {
+        val customer = async { findById(id).bind() }
+        val orders = async { findOrderHistory(id).bind() }
+        CustomerProfile(customer.await(), orders.await())
     }
-
-    // result will be Err(DomainErrorB)
 }
 ```
+
+#### runSuspendCatching
+
+[`runSuspendCatching`][result-runSuspendCatching] is a coroutine-safe variant of `runCatching`.
+The standard library's `runCatching` catches `CancellationException`, which breaks cooperative
+coroutine cancellation. `runSuspendCatching` rethrows it:
+
+```kotlin
+suspend fun findCustomer(id: CustomerId): Result<CustomerEntity, Throwable> {
+    return runSuspendCatching {
+        repository.findById(id)
+    }
+}
+```
+
+#### Flow Extensions
+
+Extension functions on `Flow<Result<V, E>>` mirror the collection extensions: `filterOk`,
+`filterErr`, `onEachOk`, `onEachErr`, `combine`, and `partition`. See the full list in
+[`Flow.kt`][result-flow].
 
 ## FAQs
 
@@ -339,50 +446,65 @@ This project is available under the terms of the ISC license. See the [`LICENSE`
 information and licensing terms.
 
 [//]: # (@formatter:off)
-[result]: https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/Result.kt#L10
-[result-value]: https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/Result.kt#L55
-[result-error]: https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/Result.kt#L59
-[result-Ok]: https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/Result.kt#L9
-[result-Err]: https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/Result.kt#L17
-[kotlin-inline-classes]: https://kotlinlang.org/docs/inline-classes.html
-[wiki-Overhead]: https://github.com/michaelbull/kotlin-result/wiki/Overhead
-[rop]: https://fsharpforfunandprofit.com/rop/
 [kotlin-native-target-support]: https://kotlinlang.org/docs/native-target-support.html
-[github]: https://github.com/michaelbull/kotlin-result
-[wiki]: https://github.com/michaelbull/kotlin-result/wiki
+[result]: https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/Result.kt#L52
+[result-value]: https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/Result.kt#L58
+[result-error]: https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/Result.kt#L63
+[result-Ok]: https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/Result.kt#L11
+[result-Err]: https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/Result.kt#L19
+[rop]: https://fsharpforfunandprofit.com/rop/
+[example]: https://github.com/michaelbull/kotlin-result/tree/master/example
 [result-runCatching]: https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/Factory.kt#L11
-[result-runSuspendCatching]: https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result-coroutines/src/commonMain/kotlin/com/github/michaelbull/result/coroutines/RunSuspendCatching.kt#L17
-[result-throwIf]: https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/Or.kt#L52
+[result-toResultOr]: https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/Factory.kt#L46
+[result-map]: https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/Map.kt#L15
+[result-mapError]: https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/Map.kt#L229
+[result-mapBoth]: https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/Map.kt#L107
+[result-fold]: https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/Map.kt#L134
+[result-andThen]: https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/And.kt#L26
+[arrow-anti-pattern]: https://blog.codinghorror.com/flattening-arrow-code/
 [result-binding]: https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/Binding.kt#L28
-[bow-bindings]: https://bow-swift.io/docs/patterns/monad-comprehensions/#bindings
+[result-zip]: https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/Zip.kt#L14
+[result-zipOrAccumulate]: https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/Zip.kt#L132
+[result-combine]: https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/Iterable.kt
+[result-partition]: https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/Iterable.kt
+[result-filterOk]: https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/Iterable.kt
+[result-filterErr]: https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/Iterable.kt
+[result-iterable]: https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/Iterable.kt
 [result-coroutineBinding]: https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result-coroutines/src/commonMain/kotlin/com/github/michaelbull/result/coroutines/CoroutineBinding.kt#L42
 [kotlin-coroutineScope]: https://kotlinlang.org/api/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines/coroutine-scope.html
-[unit-tests]: https://github.com/michaelbull/kotlin-result/tree/master/kotlin-result/src/commonTest/kotlin/com/github/michaelbull/result
+[result-runSuspendCatching]: https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result-coroutines/src/commonMain/kotlin/com/github/michaelbull/result/coroutines/RunSuspendCatching.kt#L16
+[result-flow]: https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result-coroutines/src/commonMain/kotlin/com/github/michaelbull/result/coroutines/Flow.kt
+[kotlin-inline-classes]: https://kotlinlang.org/docs/inline-classes.html
+[wiki-Overhead]: https://github.com/michaelbull/kotlin-result/wiki/Overhead
 [stdlib-result-half-baked]: https://discuss.kotlinlang.org/t/state-of-kotlin-result-vs-kotlin-result/21103/4
 [stdlib-result-return-type-lifted]: https://discuss.kotlinlang.org/t/state-of-kotlin-result-vs-kotlin-result/21103/5
 [stdlib-result-keep]: https://github.com/Kotlin/KEEP/blob/master/proposals/stdlib/result.md#error-handling-style-and-exceptions
-[stdlib-result-runCatching]: https://github.com/JetBrains/kotlin/blob/v2.2.20/libraries/stdlib/src/kotlin/util/Result.kt#L144
 [MetadataDeclarationsComparator]: https://github.com/JetBrains/kotlin/blob/c811992b611b8a725b6b55dafa574a0b145b5da3/native/commonizer/src/org/jetbrains/kotlin/commonizer/metadata/utils/MetadataDeclarationsComparator.kt#L43
 [parametersMap]: https://github.com/JetBrains/kotlin/blob/c811992b611b8a725b6b55dafa574a0b145b5da3/compiler/cli/cli-common/src/org/jetbrains/kotlin/utils/parametersMap.kt#L60
 [ChannelResult]: https://kotlinlang.org/api/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines.channels/-channel-result/
 [LineStatusTrackerManager]: https://github.com/JetBrains/intellij-community/blob/d73a081b09fcb0f53308352a57ad54c0721f0443/platform/vcs-impl/src/com/intellij/openapi/vcs/impl/LineStatusTrackerManager.kt#L1406
 [LazyLoadingAccountsDetailsProvider]: https://github.com/JetBrains/intellij-community/blob/d73a081b09fcb0f53308352a57ad54c0721f0443/platform/collaboration-tools/src/com/intellij/collaboration/auth/ui/LazyLoadingAccountsDetailsProvider.kt#L92
 [VcsCodeVisionProvider]: https://github.com/JetBrains/intellij-community/blob/d73a081b09fcb0f53308352a57ad54c0721f0443/platform/vcs-impl/lang/src/com/intellij/codeInsight/hints/VcsCodeVisionProvider.kt#L287
+[stdlib-result-runCatching]: https://github.com/JetBrains/kotlin/blob/v2.2.20/libraries/stdlib/src/kotlin/util/Result.kt#L144
 [CancellationException]: https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.coroutines.cancellation/-cancellation-exception/
 [rich-hickey-maybe-not]: https://www.youtube.com/watch?v=YR5WdGrpoug&t=657s
+[result-throwIf]: https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/Or.kt#L54
+[wiki]: https://github.com/michaelbull/kotlin-result/wiki
+[unit-tests]: https://github.com/michaelbull/kotlin-result/tree/master/kotlin-result/src/commonTest/kotlin/com/github/michaelbull/result
+[github]: https://github.com/michaelbull/kotlin-result
 
 [badge-android]: http://img.shields.io/badge/-android-6EDB8D.svg?style=flat
-[badge-android-native]: http://img.shields.io/badge/support-[AndroidNative]-6EDB8D.svg?style=flat
 [badge-jvm]: http://img.shields.io/badge/-jvm-DB413D.svg?style=flat
 [badge-js]: http://img.shields.io/badge/-js-F8DB5D.svg?style=flat
-[badge-js-ir]: https://img.shields.io/badge/support-[IR]-AAC4E0.svg?style=flat
 [badge-nodejs]: https://img.shields.io/badge/-nodejs-68a063.svg?style=flat
 [badge-linux]: http://img.shields.io/badge/-linux-2D3F6C.svg?style=flat
 [badge-windows]: http://img.shields.io/badge/-windows-4D76CD.svg?style=flat
 [badge-wasm]: https://img.shields.io/badge/-wasm-624FE8.svg?style=flat
-[badge-apple-silicon]: http://img.shields.io/badge/support-[AppleSilicon]-43BBFF.svg?style=flat
 [badge-ios]: http://img.shields.io/badge/-ios-CDCDCD.svg?style=flat
 [badge-mac]: http://img.shields.io/badge/-macos-111111.svg?style=flat
-[badge-watchos]: http://img.shields.io/badge/-watchos-C0C0C0.svg?style=flat
 [badge-tvos]: http://img.shields.io/badge/-tvos-808080.svg?style=flat
+[badge-watchos]: http://img.shields.io/badge/-watchos-C0C0C0.svg?style=flat
+[badge-js-ir]: https://img.shields.io/badge/support-[IR]-AAC4E0.svg?style=flat
+[badge-android-native]: http://img.shields.io/badge/support-[AndroidNative]-6EDB8D.svg?style=flat
+[badge-apple-silicon]: http://img.shields.io/badge/support-[AppleSilicon]-43BBFF.svg?style=flat
 [//]: # (@formatter:on)

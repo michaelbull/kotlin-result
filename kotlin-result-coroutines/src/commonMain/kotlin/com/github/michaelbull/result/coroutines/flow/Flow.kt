@@ -164,7 +164,7 @@ public suspend fun <V, E> Flow<Result<V, E>>.partition(): Pair<List<V>, List<E>>
  *
  * This is the [Flow] equivalent of [Iterable.combine][com.github.michaelbull.result.combine].
  *
- * - Elm: [Result.Extra.combine](http://package.elm-lang.org/packages/elm-community/result-extra/2.2.0/Result-Extra#combine)
+ * - Elm: [Result.Extra.combine](http://package.elm-lang.org/packages/elm-community/result-extra/latest/Result-Extra#combine)
  * - Gleam: [result.all](https://hexdocs.pm/gleam_stdlib/gleam/result.html#all)
  * - Haskell: [Data.Traversable.sequenceA](https://hackage.haskell.org/package/base/docs/Data-Traversable.html#v:sequenceA)
  */

@@ -173,7 +173,7 @@ public fun <V, E> Iterable<Result<V, E>>.partition(): Pair<List<V>, List<E>> {
  * Combines the specified [results] into a single [Result] (holding a [List]). Elements in the
  * returned list are in the same order as the specified [results].
  *
- * - Elm: [Result.Extra.combine](http://package.elm-lang.org/packages/elm-community/result-extra/2.2.0/Result-Extra#combine)
+ * - Elm: [Result.Extra.combine](http://package.elm-lang.org/packages/elm-community/result-extra/latest/Result-Extra#combine)
  * - Gleam: [result.all](https://hexdocs.pm/gleam_stdlib/gleam/result.html#all)
  * - Haskell: [Data.Traversable.sequenceA](https://hackage.haskell.org/package/base/docs/Data-Traversable.html#v:sequenceA)
  */
@@ -189,7 +189,7 @@ public fun <V, E, R : Result<V, E>> combine(vararg results: R): Result<List<V>, 
  * - If any result [is an error][Result.isErr], returns the first [Err] encountered.
  * - If the iterable is empty, returns [Ok] with an empty list.
  *
- * - Elm: [Result.Extra.combine](http://package.elm-lang.org/packages/elm-community/result-extra/2.2.0/Result-Extra#combine)
+ * - Elm: [Result.Extra.combine](http://package.elm-lang.org/packages/elm-community/result-extra/latest/Result-Extra#combine)
  * - Gleam: [result.all](https://hexdocs.pm/gleam_stdlib/gleam/result.html#all)
  * - Haskell: [Data.Traversable.sequenceA](https://hackage.haskell.org/package/base/docs/Data-Traversable.html#v:sequenceA)
  */

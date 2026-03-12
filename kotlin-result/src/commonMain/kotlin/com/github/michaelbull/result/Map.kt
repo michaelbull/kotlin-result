@@ -101,7 +101,7 @@ public inline infix fun <V, E, U> Result<V, E>.flatMap(transform: (V) -> Result<
  *
  * Unlike [mapEither], [success] and [failure] must both return [U].
  *
- * - Elm: [Result.Extra.mapBoth](http://package.elm-lang.org/packages/elm-community/result-extra/2.2.0/Result-Extra#mapBoth)
+ * - Elm: [Result.Extra.mapBoth](http://package.elm-lang.org/packages/elm-community/result-extra/latest/Result-Extra#mapBoth)
  * - Haskell: [Data.Either.either](https://hackage.haskell.org/package/base/docs/Data-Either.html#v:either)
  */
 public inline fun <V, E, U> Result<V, E>.mapBoth(
@@ -128,7 +128,7 @@ public inline fun <V, E, U> Result<V, E>.mapBoth(
  *
  * This is functionally equivalent to [mapBoth].
  *
- * - Elm: [Result.Extra.mapBoth](http://package.elm-lang.org/packages/elm-community/result-extra/2.2.0/Result-Extra#mapBoth)
+ * - Elm: [Result.Extra.mapBoth](http://package.elm-lang.org/packages/elm-community/result-extra/latest/Result-Extra#mapBoth)
  * - Haskell: [Data.Either.either](https://hackage.haskell.org/package/base/docs/Data-Either.html#v:either)
  */
 public inline fun <V, E, U> Result<V, E>.fold(
@@ -150,7 +150,7 @@ public inline fun <V, E, U> Result<V, E>.fold(
  *
  * Unlike [mapEither], [success] and [failure] must both return [U].
  *
- * - Elm: [Result.Extra.mapBoth](http://package.elm-lang.org/packages/elm-community/result-extra/2.2.0/Result-Extra#mapBoth)
+ * - Elm: [Result.Extra.mapBoth](http://package.elm-lang.org/packages/elm-community/result-extra/latest/Result-Extra#mapBoth)
  * - Haskell: [Data.Either.either](https://hackage.haskell.org/package/base/docs/Data-Either.html#v:either)
  */
 public inline fun <V, E, U> Result<V, E>.flatMapBoth(

@@ -73,12 +73,12 @@ mavenPublishing {
             }
 
             contributor {
-                name.set("avently")
+                name.set("Stanislav Dmitrenko")
                 url.set("https://github.com/avently")
             }
 
             contributor {
-                name.set("gsteckman")
+                name.set("Greg Steckman")
                 url.set("https://github.com/gsteckman")
             }
 
@@ -149,7 +149,7 @@ mavenPublishing {
 
             contributor {
                 name.set("Eichisanden")
-                url.set("https://blog.a-1.dev/")
+                url.set("https://github.com/eichisanden")
             }
 
             contributor {
@@ -190,6 +190,11 @@ mavenPublishing {
             contributor {
                 name.set("Daniele Bottillo")
                 url.set("https://github.com/dbottillo")
+            }
+
+            contributor {
+                name.set("Riley McGee")
+                url.set("https://rileymichael.com/")
             }
         }
 

@@ -46,6 +46,25 @@ public expect class BindingException() : Exception
 
 @BindingDsl
 public interface BindingScope<E> {
+
+    /**
+     * Unwraps this [Result], returning the [value][Result.value] if [Ok], or short-circuiting
+     * the enclosing [binding] block with the [error][Result.error] if [Err].
+     *
+     * This is functionally equivalent to Rust's
+     * [`?` operator](https://doc.rust-lang.org/std/result/index.html#the-question-mark-operator-).
+     *
+     * ```
+     * fun provideX(): Result<Int, ExampleErr> { ... }
+     * fun provideY(): Result<Int, ExampleErr> { ... }
+     *
+     * val result: Result<Int, ExampleErr> = binding {
+     *   val x = provideX().bind()
+     *   val y = provideY().bind()
+     *   x + y
+     * }
+     * ```
+     */
     public fun <V> Result<V, E>.bind(): V
 }
 

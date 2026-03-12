@@ -64,6 +64,29 @@ public class BindingCancellationException : CancellationException(null as String
 
 @BindingDsl
 public interface CoroutineBindingScope<E> : CoroutineScope {
+
+    /**
+     * Unwraps this [Result], returning the [value][Result.value] if [Ok], or short-circuiting
+     * the enclosing [coroutineBinding] block with the [error][Result.error] if [Err].
+     *
+     * Unlike [BindingScope.bind][com.github.michaelbull.result.BindingScope.bind], this
+     * function also [cancels][CoroutineScope.cancel] the enclosing [CoroutineScope], cancelling
+     * all other child coroutines.
+     *
+     * This is functionally equivalent to Rust's
+     * [`?` operator](https://doc.rust-lang.org/std/result/index.html#the-question-mark-operator-).
+     *
+     * ```
+     * suspend fun provideX(): Result<Int, ExampleErr> { ... }
+     * suspend fun provideY(): Result<Int, ExampleErr> { ... }
+     *
+     * val result: Result<Int, ExampleErr> = coroutineBinding {
+     *   val x = provideX().bind()
+     *   val y = provideY().bind()
+     *   x + y
+     * }
+     * ```
+     */
     public suspend fun <V> Result<V, E>.bind(): V
 }
 

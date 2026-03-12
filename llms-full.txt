@@ -580,13 +580,13 @@ Like `binding`, but designed for concurrent decomposition. When any `bind()` ret
 
 ```kotlin
 val result: Result<Int, MyError> = coroutineBinding {
-    val x = async { fetchX().bind() }
-    val y = async { fetchY().bind() }
+    val x = async { fetchX() }
+    val y = async { fetchY() }
     x.await() + y.await()
 }
 ```
 
-`@BindingDsl interface CoroutineBindingScope<E> : CoroutineScope` — provides `suspend fun <V> Result<V, E>.bind(): V`. Shares the `@BindingDsl` marker with `BindingScope` to prevent implicit outer-scope `bind()` in nested blocks.
+`@BindingDsl interface CoroutineBindingScope<E> : CoroutineScope` — provides `suspend fun <V> Result<V, E>.bind(): V` and `fun <V> async(context, start, block: suspend CoroutineScope.() -> Result<V, E>): Deferred<V>`. The `async` member shadows `CoroutineScope.async` when the block returns a `Result`, automatically calling `bind()` inside the coroutine. This provides early cancellation on error and prevents the sequential-execution trap of `async { ... }.await().bind()`. Shares the `@BindingDsl` marker with `BindingScope` to prevent implicit outer-scope `bind()` in nested blocks.
 
 ### runSuspendCatching
 
@@ -781,9 +781,9 @@ Use `coroutineBinding` with `async` for concurrent operations, or `parZip` for a
 
 ```kotlin
 suspend fun loadDashboard(userId: Long): Result<Dashboard, AppError> = coroutineBinding {
-    val user = async { fetchUser(userId).bind() }
-    val notifications = async { fetchNotifications(userId).bind() }
-    val orders = async { fetchRecentOrders(userId).bind() }
+    val user = async { fetchUser(userId) }
+    val notifications = async { fetchNotifications(userId) }
+    val orders = async { fetchRecentOrders(userId) }
     Dashboard(user.await(), notifications.await(), orders.await())
 }
 ```

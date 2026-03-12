@@ -3,7 +3,6 @@ package com.github.michaelbull.result.coroutines
 import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Result
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
@@ -21,7 +20,7 @@ private suspend inline fun <T, E, V> parZipInternal(
     return coroutineBinding {
         val values = producers.map { producer ->
             async {
-                producer().bind()
+                producer()
             }
         }
 

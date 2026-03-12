@@ -3,7 +3,6 @@ package com.github.michaelbull.result.coroutines
 import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
-import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -33,8 +32,8 @@ class AsyncCoroutineBindingTest {
         }
 
         val result: Result<Int, BindingError> = coroutineBinding {
-            val x = async { provideX().bind() }
-            val y = async { provideY().bind() }
+            val x = async { provideX() }
+            val y = async { provideY() }
             x.await() + y.await()
         }
 
@@ -62,9 +61,9 @@ class AsyncCoroutineBindingTest {
         }
 
         val result: Result<Int, BindingError> = coroutineBinding {
-            val x = async { provideX().bind() }
-            val y = async { provideY().bind() }
-            val z = async { provideZ().bind() }
+            val x = async { provideX() }
+            val y = async { provideY() }
+            val z = async { provideZ() }
             x.await() + y.await() + z.await()
         }
 
@@ -95,8 +94,8 @@ class AsyncCoroutineBindingTest {
         val dispatcherB = StandardTestDispatcher(testScheduler)
 
         val result: Result<Int, BindingError> = coroutineBinding {
-            val x = async(dispatcherA) { provideX().bind() }
-            val y = async(dispatcherB) { provideY().bind() }
+            val x = async(dispatcherA) { provideX() }
+            val y = async(dispatcherB) { provideY() }
 
             testScheduler.advanceTimeBy(2)
             testScheduler.runCurrent()
@@ -206,13 +205,13 @@ class AsyncCoroutineBindingTest {
         val dispatcherC = StandardTestDispatcher(testScheduler)
 
         val result: Result<Int, BindingError> = coroutineBinding {
-            val x = async(dispatcherA) { provideXWrapped().bind() }
-            val y = async(dispatcherB) { provideYWrapped().bind() }
+            val x = async(dispatcherA) { provideXWrapped() }
+            val y = async(dispatcherB) { provideYWrapped() }
 
             testScheduler.advanceTimeBy(2)
             testScheduler.runCurrent()
 
-            val z = async(dispatcherC) { provideZWrapped().bind() }
+            val z = async(dispatcherC) { provideZWrapped() }
 
             x.await() + y.await() + z.await()
         }
@@ -268,13 +267,13 @@ class AsyncCoroutineBindingTest {
         val dispatcherC = StandardTestDispatcher(testScheduler)
 
         val result: Result<Int, BindingError> = coroutineBinding {
-            val x = async(dispatcherA) { provideXWrapped().bind() }
-            val y = async(dispatcherB) { provideYWrapped().bind() }
+            val x = async(dispatcherA) { provideXWrapped() }
+            val y = async(dispatcherB) { provideYWrapped() }
 
             testScheduler.advanceTimeBy(2)
             testScheduler.runCurrent()
 
-            val z = async(dispatcherC) { provideZWrapped().bind() }
+            val z = async(dispatcherC) { provideZWrapped() }
 
             x.await() + y.await() + z.await()
         }

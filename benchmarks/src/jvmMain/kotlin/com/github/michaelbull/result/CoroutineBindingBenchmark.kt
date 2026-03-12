@@ -69,8 +69,8 @@ class CoroutineBindingBenchmark {
     }
 
     private suspend fun withAsyncSuspend(): Result<Int, Error> = coroutineBinding {
-        val x = async { provideX().bind() }
-        val y = async { provideY().bind() }
+        val x = async { provideX() }
+        val y = async { provideY() }
         x.await() + y.await()
     }
 

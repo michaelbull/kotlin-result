@@ -252,8 +252,8 @@ any call to `bind()` fails, the scope is cancelled, cancelling all other childre
 ```kotlin
 suspend fun fetchCustomerProfile(id: CustomerId): Result<CustomerProfile, DomainMessage> {
     return coroutineBinding {
-        val customer = async { findById(id).bind() }
-        val orders = async { findOrderHistory(id).bind() }
+        val customer = async { findById(id) }
+        val orders = async { findOrderHistory(id) }
         CustomerProfile(customer.await(), orders.await())
     }
 }

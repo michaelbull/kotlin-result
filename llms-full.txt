@@ -453,6 +453,7 @@ Vararg convenience functions:
 ### Partitioning
 
 `fun <V, E> Iterable<Result<V, E>>.partition(): Pair<List<V>, List<E>>` — splits into Ok values and Err errors.
+`fun <V, E, CV : MutableCollection<in V>, CE : MutableCollection<in E>> Iterable<Result<V, E>>.partitionTo(first: CV, second: CE): Pair<CV, CE>` — partitions into destination collections.
 `fun <V, E, R : Result<V, E>> partition(vararg results: R): Pair<List<V>, List<E>>` — vararg convenience.
 
 ### Extracting
@@ -527,6 +528,7 @@ Groups elements by a fallible key selector.
 ### tryPartition
 
 `inline fun <T, E> Iterable<T>.tryPartition(predicate: (T) -> Result<Boolean, E>): Result<Pair<List<T>, List<T>>, E>`
+`inline fun <T, E, C1 : MutableCollection<in T>, C2 : MutableCollection<in T>> Iterable<T>.tryPartitionTo(first: C1, second: C2, predicate: (T) -> Result<Boolean, E>): Result<Pair<C1, C2>, E>`
 Partitions elements by a fallible predicate.
 
 ### tryFold / tryFoldRight

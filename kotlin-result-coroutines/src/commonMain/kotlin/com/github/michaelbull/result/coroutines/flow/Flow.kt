@@ -130,7 +130,7 @@ public suspend fun <V, E> Flow<Result<V, E>>.countErr(): Int {
 }
 
 /**
- * Partitions this flow into a [Pair] of [Lists][List]. An element that [is ok][Result.isOk] will
+ * Partitions [this] flow into a [Pair] of [Lists][List]. An element that [is ok][Result.isOk] will
  * appear in the [first][Pair.first] list, whereas an element that [is an error][Result.isErr] will
  * appear in the [second][Pair.second] list.
  *

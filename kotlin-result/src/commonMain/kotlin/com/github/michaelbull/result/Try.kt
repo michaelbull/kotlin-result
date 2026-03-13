@@ -816,9 +816,19 @@ public inline fun <T, E> Iterable<T>.tryReduceIndexed(
 public inline fun <T, E> Iterable<T>.tryPartition(
     predicate: (T) -> Result<Boolean, E>,
 ): Result<Pair<List<T>, List<T>>, E> {
-    val first = ArrayList<T>()
-    val second = ArrayList<T>()
+    return tryPartitionTo(ArrayList(), ArrayList(), predicate)
+}
 
+/**
+ * Appends elements for which the fallible [predicate] returns [Ok]`(true)` to the [first]
+ * destination, and elements for which it returns [Ok]`(false)` to the [second] destination,
+ * returning early with the first [Err] if the [predicate] fails.
+ */
+public inline fun <T, E, C1 : MutableCollection<in T>, C2 : MutableCollection<in T>> Iterable<T>.tryPartitionTo(
+    first: C1,
+    second: C2,
+    predicate: (T) -> Result<Boolean, E>,
+): Result<Pair<C1, C2>, E> {
     for (element in this) {
         val result = predicate(element)
 

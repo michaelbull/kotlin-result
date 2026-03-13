@@ -303,27 +303,6 @@ class IterableTest {
         }
     }
 
-    class OnEachOkIndexed {
-
-        @Test
-        fun invokesActionWithIndexForOkResults() {
-            val collected = mutableListOf<Pair<Int, Int>>()
-
-            listOf(
-                Ok(10),
-                Err("error"),
-                Ok(20),
-                Err("error"),
-                Ok(30),
-            ).onEachOkIndexed { index, value -> collected.add(index to value) }
-
-            assertEquals(
-                expected = listOf(0 to 10, 2 to 20, 4 to 30),
-                actual = collected,
-            )
-        }
-    }
-
     class OnEachErr {
 
         @Test
@@ -356,6 +335,27 @@ class IterableTest {
             assertEquals(
                 expected = items,
                 actual = result,
+            )
+        }
+    }
+
+    class OnEachOkIndexed {
+
+        @Test
+        fun invokesActionWithIndexForOkResults() {
+            val collected = mutableListOf<Pair<Int, Int>>()
+
+            listOf(
+                Ok(10),
+                Err("error"),
+                Ok(20),
+                Err("error"),
+                Ok(30),
+            ).onEachOkIndexed { index, value -> collected.add(index to value) }
+
+            assertEquals(
+                expected = listOf(0 to 10, 2 to 20, 4 to 30),
+                actual = collected,
             )
         }
     }
@@ -415,6 +415,49 @@ class IterableTest {
             assertEquals(
                 expected = Pair(strings, errors),
                 actual = result,
+            )
+        }
+    }
+
+    class PartitionTo {
+
+        @Test
+        fun appendsValuesToFirstDestination() {
+            val first = mutableListOf("existing")
+            val second = mutableListOf<IterableError>()
+
+            listOf(
+                Ok("hello"),
+                Err(IterableError.IterableError1),
+                Ok("world"),
+                Err(IterableError.IterableError2),
+            ).partitionTo(first, second)
+
+            assertEquals(
+                expected = listOf("existing", "hello", "world"),
+                actual = first,
+            )
+        }
+
+        @Test
+        fun appendsErrorsToSecondDestination() {
+            val first = mutableListOf<String>()
+            val second: MutableList<IterableError> = mutableListOf(IterableError.IterableError2)
+
+            listOf(
+                Ok("hello"),
+                Err(IterableError.IterableError1),
+                Ok("world"),
+                Err(IterableError.IterableError2),
+            ).partitionTo(first, second)
+
+            assertEquals(
+                expected = listOf(
+                    IterableError.IterableError2,
+                    IterableError.IterableError1,
+                    IterableError.IterableError2
+                ),
+                actual = second,
             )
         }
     }
@@ -593,6 +636,26 @@ class IterableTest {
         }
     }
 
+    class ValuesOf {
+
+        @Test
+        fun returnsAllValues() {
+            val result = valuesOf(
+                Ok("hello"),
+                Ok("big"),
+                Err(IterableError.IterableError2),
+                Ok("wide"),
+                Err(IterableError.IterableError1),
+                Ok("world"),
+            )
+
+            assertEquals(
+                expected = listOf("hello", "big", "wide", "world"),
+                actual = result
+            )
+        }
+    }
+
     class ErrorsOf {
 
         @Test
@@ -617,26 +680,6 @@ class IterableTest {
                     IterableError.IterableError1,
                     IterableError.IterableError2,
                 ),
-                actual = result
-            )
-        }
-    }
-
-    class ValuesOf {
-
-        @Test
-        fun returnsAllValues() {
-            val result = valuesOf(
-                Ok("hello"),
-                Ok("big"),
-                Err(IterableError.IterableError2),
-                Ok("wide"),
-                Err(IterableError.IterableError1),
-                Ok("world"),
-            )
-
-            assertEquals(
-                expected = listOf("hello", "big", "wide", "world"),
                 actual = result
             )
         }

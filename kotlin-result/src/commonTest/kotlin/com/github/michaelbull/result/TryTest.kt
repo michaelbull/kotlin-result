@@ -1451,4 +1451,54 @@ class TryTest {
             )
         }
     }
+
+    class TryPartitionTo {
+
+        @Test
+        fun appendsMatchingElementsToFirstDestination() {
+            val first = mutableListOf(0)
+            val second = mutableListOf<Int>()
+
+            listOf(1, 2, 3, 4, 5).tryPartitionTo(first, second) { element ->
+                Ok(element % 2 == 0)
+            }
+
+            assertEquals(
+                expected = listOf(0, 2, 4),
+                actual = first,
+            )
+        }
+
+        @Test
+        fun appendsNonMatchingElementsToSecondDestination() {
+            val first = mutableListOf<Int>()
+            val second = mutableListOf(0)
+
+            listOf(1, 2, 3, 4, 5).tryPartitionTo(first, second) { element ->
+                Ok(element % 2 == 0)
+            }
+
+            assertEquals(
+                expected = listOf(0, 1, 3, 5),
+                actual = second,
+            )
+        }
+
+        @Test
+        fun returnsFirstErrIfPredicateFails() {
+            val result: Result<Pair<Collection<Int>, Collection<Int>>, String> =
+                listOf(1, 2, 3, 4).tryPartitionTo(mutableListOf(), mutableListOf()) { element ->
+                    if (element == 3) {
+                        Err("bad")
+                    } else {
+                        Ok(element % 2 == 0)
+                    }
+                }
+
+            assertEquals(
+                expected = Err("bad"),
+                actual = result,
+            )
+        }
+    }
 }

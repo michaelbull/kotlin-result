@@ -143,6 +143,105 @@ class TryTest {
         }
     }
 
+    class TryRunningFold {
+
+        @Test
+        fun returnsAccumulatedListIfAllOk() = runTest {
+            val result = flowOf(1, 2, 3)
+                .tryRunningFold(0) { acc, element -> Ok(acc + element) }
+
+            assertEquals(
+                expected = Ok(listOf(0, 1, 3, 6)),
+                actual = result,
+            )
+        }
+
+        @Test
+        fun returnsFirstErrIfOperationFails() = runTest {
+            val result: Result<List<Int>, TryError> = flowOf(1, 2, 3)
+                .tryRunningFold(0) { acc, element ->
+                    if (element == 2) {
+                        Err(TryError.TryError1)
+                    } else {
+                        Ok(acc + element)
+                    }
+                }
+
+            assertEquals(
+                expected = Err(TryError.TryError1),
+                actual = result,
+            )
+        }
+
+        @Test
+        fun returnsInitialIfEmpty() = runTest {
+            val result = flowOf<Int>()
+                .tryRunningFold(0) { acc, element -> Ok(acc + element) }
+
+            assertEquals(
+                expected = Ok(listOf(0)),
+                actual = result,
+            )
+        }
+    }
+
+    class TryScan {
+
+        @Test
+        fun returnsSameResultAsTryRunningFold() = runTest {
+            val result = flowOf(1, 2, 3)
+                .tryScan(0) { acc, element -> Ok(acc + element) }
+
+            assertEquals(
+                expected = Ok(listOf(0, 1, 3, 6)),
+                actual = result,
+            )
+        }
+    }
+
+    class TryRunningReduce {
+
+        @Test
+        fun returnsAccumulatedListIfAllOk() = runTest {
+            val result = flowOf(1, 2, 3, 4).tryRunningReduce { acc, element ->
+                Ok(acc + element)
+            }
+
+            assertEquals(
+                expected = Ok(listOf(1, 3, 6, 10)),
+                actual = result,
+            )
+        }
+
+        @Test
+        fun returnsFirstErrIfOperationFails() = runTest {
+            val result = flowOf(1, 2, 3, 4).tryRunningReduce { acc, element ->
+                if (element == 3) {
+                    Err("bad")
+                } else {
+                    Ok(acc + element)
+                }
+            }
+
+            assertEquals(
+                expected = Err("bad"),
+                actual = result,
+            )
+        }
+
+        @Test
+        fun returnsEmptyListIfEmpty() = runTest {
+            val result = flowOf<Int>().tryRunningReduce { acc, element ->
+                Ok(acc + element)
+            }
+
+            assertEquals(
+                expected = Ok(emptyList()),
+                actual = result,
+            )
+        }
+    }
+
     class TryFlatMap {
 
         @Test

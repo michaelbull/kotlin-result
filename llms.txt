@@ -28,7 +28,7 @@ Published to Maven Central as `com.michael-bull.kotlin-result`.
 ## Collections
 
 - [Iterable.kt](https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/Iterable.kt): `allOk`, `anyOk`, `filterOk`, `filterErr`, `combine`, `partition`, `valuesOf`, `errorsOf`
-- [Try.kt](https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/Try.kt): `tryMap`, `tryFilter`, `tryFlatMap`, `tryAssociate`, `tryGroupBy`, `tryPartition`, `tryFold`, `tryReduce`, `tryFind`, `tryForEach`
+- [Try.kt](https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/Try.kt): `tryMap`, `tryFilter`, `tryFlatMap`, `tryAssociate`, `tryGroupBy`, `tryPartition`, `tryFold`, `tryReduce`, `tryRunningFold`, `tryRunningReduce`, `tryScan`, `tryFind`, `tryForEach`
 - [ResultIterator.kt](https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result/src/commonMain/kotlin/com/github/michaelbull/result/ResultIterator.kt): `iterator()`, `mutableIterator()`
 
 ## Coroutines

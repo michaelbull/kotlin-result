@@ -1409,6 +1409,260 @@ class TryTest {
         }
     }
 
+    class TryRunningFold {
+
+        @Test
+        fun returnsIntermediateAccumulationsIfAllOk() {
+            val result = listOf(1, 2, 3, 4).tryRunningFold(0) { acc, element ->
+                Ok(acc + element)
+            }
+
+            assertEquals(
+                expected = Ok(listOf(0, 1, 3, 6, 10)),
+                actual = result,
+            )
+        }
+
+        @Test
+        fun returnsFirstErrIfOperationFails() {
+            val result = listOf(1, 2, 3, 4).tryRunningFold(0) { acc, element ->
+                if (acc + element > 4) {
+                    Err("overflow")
+                } else {
+                    Ok(acc + element)
+                }
+            }
+
+            assertEquals(
+                expected = Err("overflow"),
+                actual = result,
+            )
+        }
+
+        @Test
+        fun returnsInitialValueIfEmpty() {
+            val result = emptyList<Int>().tryRunningFold(10) { acc, element ->
+                Ok(acc + element)
+            }
+
+            assertEquals(
+                expected = Ok(listOf(10)),
+                actual = result,
+            )
+        }
+    }
+
+    class TryRunningFoldIndexed {
+
+        @Test
+        fun returnsIntermediateAccumulationsIfAllOk() {
+            val result = listOf(1, 2, 3).tryRunningFoldIndexed(0) { index, acc, element ->
+                Ok(acc + (element * index))
+            }
+
+            assertEquals(
+                expected = Ok(listOf(0, 0, 2, 8)),
+                actual = result,
+            )
+        }
+
+        @Test
+        fun returnsFirstErrIfOperationFails() {
+            val result = listOf(1, 2, 3).tryRunningFoldIndexed(0) { index, acc, element ->
+                if (index == 2) {
+                    Err("bad")
+                } else {
+                    Ok(acc + element)
+                }
+            }
+
+            assertEquals(
+                expected = Err("bad"),
+                actual = result,
+            )
+        }
+
+        @Test
+        fun returnsInitialValueIfEmpty() {
+            val result = emptyList<Int>().tryRunningFoldIndexed(10) { _, acc, element ->
+                Ok(acc + element)
+            }
+
+            assertEquals(
+                expected = Ok(listOf(10)),
+                actual = result,
+            )
+        }
+    }
+
+    class TryRunningReduce {
+
+        @Test
+        fun returnsIntermediateAccumulationsIfAllOk() {
+            val result = listOf(1, 2, 3, 4).tryRunningReduce { acc, element ->
+                Ok(acc + element)
+            }
+
+            assertEquals(
+                expected = Ok(listOf(1, 3, 6, 10)),
+                actual = result,
+            )
+        }
+
+        @Test
+        fun returnsFirstErrIfOperationFails() {
+            val result = listOf(1, 2, 3, 4).tryRunningReduce { acc, element ->
+                if (element == 3) {
+                    Err("bad")
+                } else {
+                    Ok(acc + element)
+                }
+            }
+
+            assertEquals(
+                expected = Err("bad"),
+                actual = result,
+            )
+        }
+
+        @Test
+        fun returnsEmptyListIfEmpty() {
+            val result = emptyList<Int>().tryRunningReduce { acc, element ->
+                Ok(acc + element)
+            }
+
+            assertEquals(
+                expected = Ok(emptyList()),
+                actual = result,
+            )
+        }
+
+        @Test
+        fun returnsSingleElementIfOneElement() {
+            val result = listOf(42).tryRunningReduce { acc, element ->
+                Ok(acc + element)
+            }
+
+            assertEquals(
+                expected = Ok(listOf(42)),
+                actual = result,
+            )
+        }
+    }
+
+    class TryRunningReduceIndexed {
+
+        @Test
+        fun returnsIntermediateAccumulationsIfAllOk() {
+            val collectedIndices = mutableListOf<Int>()
+
+            val result = listOf(10, 20, 30).tryRunningReduceIndexed { index, acc, element ->
+                collectedIndices.add(index)
+                Ok(acc + element)
+            }
+
+            assertEquals(
+                expected = Ok(listOf(10, 30, 60)),
+                actual = result,
+            )
+
+            assertEquals(
+                expected = listOf(1, 2),
+                actual = collectedIndices,
+            )
+        }
+
+        @Test
+        fun returnsFirstErrIfOperationFails() {
+            val result = listOf(10, 20, 30).tryRunningReduceIndexed { index, acc, element ->
+                if (index == 2) {
+                    Err("bad")
+                } else {
+                    Ok(acc + element)
+                }
+            }
+
+            assertEquals(
+                expected = Err("bad"),
+                actual = result,
+            )
+        }
+
+        @Test
+        fun returnsEmptyListIfEmpty() {
+            val result = emptyList<Int>().tryRunningReduceIndexed { _, acc, element ->
+                Ok(acc + element)
+            }
+
+            assertEquals(
+                expected = Ok(emptyList()),
+                actual = result,
+            )
+        }
+    }
+
+    class TryScan {
+
+        @Test
+        fun returnsIntermediateAccumulationsIfAllOk() {
+            val result = listOf(1, 2, 3, 4).tryScan(0) { acc, element ->
+                Ok(acc + element)
+            }
+
+            assertEquals(
+                expected = Ok(listOf(0, 1, 3, 6, 10)),
+                actual = result,
+            )
+        }
+
+        @Test
+        fun returnsFirstErrIfOperationFails() {
+            val result = listOf(1, 2, 3, 4).tryScan(0) { acc, element ->
+                if (acc + element > 4) {
+                    Err("overflow")
+                } else {
+                    Ok(acc + element)
+                }
+            }
+
+            assertEquals(
+                expected = Err("overflow"),
+                actual = result,
+            )
+        }
+    }
+
+    class TryScanIndexed {
+
+        @Test
+        fun returnsIntermediateAccumulationsIfAllOk() {
+            val result = listOf(1, 2, 3).tryScanIndexed(0) { index, acc, element ->
+                Ok(acc + (element * index))
+            }
+
+            assertEquals(
+                expected = Ok(listOf(0, 0, 2, 8)),
+                actual = result,
+            )
+        }
+
+        @Test
+        fun returnsFirstErrIfOperationFails() {
+            val result = listOf(1, 2, 3).tryScanIndexed(0) { index, acc, element ->
+                if (index == 2) {
+                    Err("bad")
+                } else {
+                    Ok(acc + element)
+                }
+            }
+
+            assertEquals(
+                expected = Err("bad"),
+                actual = result,
+            )
+        }
+    }
+
     class TryPartition {
 
         @Test

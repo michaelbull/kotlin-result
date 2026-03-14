@@ -10,6 +10,8 @@ internal fun <T> Iterable<T>.collectionSizeOrDefault(default: Int): Int {
  * early with the first [Err] if the [predicate] fails. Returns `null` if no matching element is
  * found.
  *
+ * This is the fallible equivalent of [Iterable.find].
+ *
  * - Rust: [Iterator::try_find](https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.try_find)
  */
 public inline fun <T, E> Iterable<T>.tryFind(
@@ -31,6 +33,8 @@ public inline fun <T, E> Iterable<T>.tryFind(
  * Returns the last element for which the fallible [predicate] returns [Ok]`(true)`, returning
  * early with the first [Err] if the [predicate] fails. Returns `null` if no matching element is
  * found.
+ *
+ * This is the fallible equivalent of [Iterable.findLast].
  *
  * - Rust: [Iterator::try_find](https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.try_find)
  */
@@ -64,6 +68,8 @@ public inline fun <T, E> Iterable<T>.tryFindLast(
  * Returns a [Result] containing a list of elements for which the fallible [predicate] returns
  * [Ok]`(true)`, returning early with the first [Err] if the [predicate] fails.
  *
+ * This is the fallible equivalent of [Iterable.filter].
+ *
  * - Haskell: [Control.Monad.filterM](https://hackage.haskell.org/package/base/docs/Control-Monad.html#v:filterM)
  */
 public inline fun <T, E> Iterable<T>.tryFilter(
@@ -75,6 +81,8 @@ public inline fun <T, E> Iterable<T>.tryFilter(
 /**
  * Appends elements for which the fallible [predicate] returns [Ok]`(true)` to the given
  * [destination], returning early with the first [Err] if the [predicate] fails.
+ *
+ * This is the fallible equivalent of [Iterable.filterTo].
  *
  * - Haskell: [Control.Monad.filterM](https://hackage.haskell.org/package/base/docs/Control-Monad.html#v:filterM)
  */
@@ -98,6 +106,8 @@ public inline fun <T, E, C : MutableCollection<in T>> Iterable<T>.tryFilterTo(
  * Returns a [Result] containing a list of elements for which the fallible [predicate] returns
  * [Ok]`(false)`, returning early with the first [Err] if the [predicate] fails.
  *
+ * This is the fallible equivalent of [Iterable.filterNot].
+ *
  * - Haskell: [Control.Monad.filterM](https://hackage.haskell.org/package/base/docs/Control-Monad.html#v:filterM)
  */
 public inline fun <T, E> Iterable<T>.tryFilterNot(
@@ -109,6 +119,8 @@ public inline fun <T, E> Iterable<T>.tryFilterNot(
 /**
  * Appends elements for which the fallible [predicate] returns [Ok]`(false)` to the given
  * [destination], returning early with the first [Err] if the [predicate] fails.
+ *
+ * This is the fallible equivalent of [Iterable.filterNotTo].
  *
  * - Haskell: [Control.Monad.filterM](https://hackage.haskell.org/package/base/docs/Control-Monad.html#v:filterM)
  */
@@ -133,6 +145,8 @@ public inline fun <T, E, C : MutableCollection<in T>> Iterable<T>.tryFilterNotTo
  * [Ok]`(true)`, returning early with the first [Err] if the [predicate] fails. The [predicate]
  * receives the index of the element being processed.
  *
+ * This is the fallible equivalent of [Iterable.filterIndexed].
+ *
  * - Haskell: [Control.Monad.filterM](https://hackage.haskell.org/package/base/docs/Control-Monad.html#v:filterM)
  */
 public inline fun <T, E> Iterable<T>.tryFilterIndexed(
@@ -145,6 +159,8 @@ public inline fun <T, E> Iterable<T>.tryFilterIndexed(
  * Appends elements for which the fallible [predicate] returns [Ok]`(true)` to the given
  * [destination], returning early with the first [Err] if the [predicate] fails. The [predicate]
  * receives the index of the element being processed.
+ *
+ * This is the fallible equivalent of [Iterable.filterIndexedTo].
  *
  * - Haskell: [Control.Monad.filterM](https://hackage.haskell.org/package/base/docs/Control-Monad.html#v:filterM)
  */
@@ -170,6 +186,8 @@ public inline fun <T, E, C : MutableCollection<in T>> Iterable<T>.tryFilterIndex
  * Returns a [Result] containing a [Map] of key-value pairs provided by the fallible [transform]
  * function applied to elements of [this], returning early with the first [Err] if the [transform]
  * fails.
+ *
+ * This is the fallible equivalent of [Iterable.associate].
  */
 public inline fun <T, K, V, E> Iterable<T>.tryAssociate(
     transform: (T) -> Result<Pair<K, V>, E>,
@@ -181,6 +199,8 @@ public inline fun <T, K, V, E> Iterable<T>.tryAssociate(
  * Populates and returns the [destination] mutable map with key-value pairs provided by the
  * fallible [transform] function applied to each element of [this], returning early with the
  * first [Err] if the [transform] fails.
+ *
+ * This is the fallible equivalent of [Iterable.associateTo].
  */
 public inline fun <T, K, V, E, M : MutableMap<in K, in V>> Iterable<T>.tryAssociateTo(
     destination: M,
@@ -204,6 +224,8 @@ public inline fun <T, K, V, E, M : MutableMap<in K, in V>> Iterable<T>.tryAssoci
  * Returns a [Result] containing a [Map] where keys are provided by the fallible [keySelector]
  * function applied to each element of [this], and values are the elements themselves, returning
  * early with the first [Err] if the [keySelector] fails.
+ *
+ * This is the fallible equivalent of [Iterable.associateBy].
  */
 public inline fun <T, K, E> Iterable<T>.tryAssociateBy(
     keySelector: (T) -> Result<K, E>,
@@ -215,6 +237,8 @@ public inline fun <T, K, E> Iterable<T>.tryAssociateBy(
  * Returns a [Result] containing a [Map] where keys are provided by the fallible [keySelector]
  * function and values are provided by the fallible [valueTransform] function, both applied to
  * each element of [this], returning early with the first [Err] if either function fails.
+ *
+ * This is the fallible equivalent of [Iterable.associateBy].
  */
 public inline fun <T, K, V, E> Iterable<T>.tryAssociateBy(
     keySelector: (T) -> Result<K, E>,
@@ -227,6 +251,8 @@ public inline fun <T, K, V, E> Iterable<T>.tryAssociateBy(
  * Populates and returns the [destination] mutable map with key-value pairs, where keys are
  * provided by the fallible [keySelector] function applied to each element of [this], and values
  * are the elements themselves, returning early with the first [Err] if the [keySelector] fails.
+ *
+ * This is the fallible equivalent of [Iterable.associateByTo].
  */
 public inline fun <T, K, E, M : MutableMap<in K, in T>> Iterable<T>.tryAssociateByTo(
     destination: M,
@@ -250,6 +276,8 @@ public inline fun <T, K, E, M : MutableMap<in K, in T>> Iterable<T>.tryAssociate
  * provided by the fallible [keySelector] function and values are provided by the fallible
  * [valueTransform] function, both applied to each element of [this], returning early with the
  * first [Err] if either function fails.
+ *
+ * This is the fallible equivalent of [Iterable.associateByTo].
  */
 public inline fun <T, K, V, E, M : MutableMap<in K, in V>> Iterable<T>.tryAssociateByTo(
     destination: M,
@@ -279,6 +307,8 @@ public inline fun <T, K, V, E, M : MutableMap<in K, in V>> Iterable<T>.tryAssoci
  * Returns a [Result] containing a [Map] where keys are elements of [this] and values are
  * provided by the fallible [valueSelector] function applied to each element, returning early
  * with the first [Err] if the [valueSelector] fails.
+ *
+ * This is the fallible equivalent of [Iterable.associateWith].
  */
 public inline fun <K, V, E> Iterable<K>.tryAssociateWith(
     valueSelector: (K) -> Result<V, E>,
@@ -290,6 +320,8 @@ public inline fun <K, V, E> Iterable<K>.tryAssociateWith(
  * Populates and returns the [destination] mutable map with key-value pairs for each element of
  * [this], where the key is the element itself and the value is provided by the fallible
  * [valueSelector] function, returning early with the first [Err] if the [valueSelector] fails.
+ *
+ * This is the fallible equivalent of [Iterable.associateWithTo].
  */
 public inline fun <K, V, E, M : MutableMap<in K, in V>> Iterable<K>.tryAssociateWithTo(
     destination: M,
@@ -312,6 +344,8 @@ public inline fun <K, V, E, M : MutableMap<in K, in V>> Iterable<K>.tryAssociate
  * Returns a [Result] containing a single list of all elements yielded from the fallible
  * [transform] function being invoked on each element of [this], returning early with the first
  * [Err] if the [transform] fails.
+ *
+ * This is the fallible equivalent of [Iterable.flatMap].
  */
 public inline fun <T, U, E> Iterable<T>.tryFlatMap(
     transform: (T) -> Result<Iterable<U>, E>,
@@ -323,6 +357,8 @@ public inline fun <T, U, E> Iterable<T>.tryFlatMap(
  * Appends all elements yielded from the fallible [transform] function being invoked on each
  * element of [this] to the given [destination], returning early with the first [Err] if the
  * [transform] fails.
+ *
+ * This is the fallible equivalent of [Iterable.flatMapTo].
  */
 public inline fun <T, U, E, C : MutableCollection<in U>> Iterable<T>.tryFlatMapTo(
     destination: C,
@@ -345,6 +381,8 @@ public inline fun <T, U, E, C : MutableCollection<in U>> Iterable<T>.tryFlatMapT
  * Returns a [Result] containing a single list of all elements yielded from the fallible
  * [transform] function being invoked on each element and its index of [this], returning early
  * with the first [Err] if the [transform] fails.
+ *
+ * This is the fallible equivalent of [Iterable.flatMapIndexed].
  */
 public inline fun <T, U, E> Iterable<T>.tryFlatMapIndexed(
     transform: (index: Int, T) -> Result<Iterable<U>, E>,
@@ -356,6 +394,8 @@ public inline fun <T, U, E> Iterable<T>.tryFlatMapIndexed(
  * Appends all elements yielded from the fallible [transform] function being invoked on each
  * element and its index of [this] to the given [destination], returning early with the first
  * [Err] if the [transform] fails.
+ *
+ * This is the fallible equivalent of [Iterable.flatMapIndexedTo].
  */
 public inline fun <T, U, E, C : MutableCollection<in U>> Iterable<T>.tryFlatMapIndexedTo(
     destination: C,
@@ -380,6 +420,8 @@ public inline fun <T, U, E, C : MutableCollection<in U>> Iterable<T>.tryFlatMapI
  * Returns a [Result] containing a [Map] where keys are provided by the fallible [keySelector]
  * function applied to each element of [this], and values are lists of elements corresponding to
  * each key, returning early with the first [Err] if the [keySelector] fails.
+ *
+ * This is the fallible equivalent of [Iterable.groupBy].
  */
 public inline fun <T, K, E> Iterable<T>.tryGroupBy(
     keySelector: (T) -> Result<K, E>,
@@ -392,6 +434,8 @@ public inline fun <T, K, E> Iterable<T>.tryGroupBy(
  * function and values are lists of results of the fallible [valueTransform] function, both
  * applied to each element of [this], returning early with the first [Err] if either function
  * fails.
+ *
+ * This is the fallible equivalent of [Iterable.groupBy].
  */
 public inline fun <T, K, V, E> Iterable<T>.tryGroupBy(
     keySelector: (T) -> Result<K, E>,
@@ -404,6 +448,8 @@ public inline fun <T, K, V, E> Iterable<T>.tryGroupBy(
  * Populates the [destination] map by grouping elements of [this] by the key returned from the
  * fallible [keySelector] function applied to each element, returning early with the first [Err]
  * if the [keySelector] fails.
+ *
+ * This is the fallible equivalent of [Iterable.groupByTo].
  */
 public inline fun <T, K, E, M : MutableMap<in K, MutableList<T>>> Iterable<T>.tryGroupByTo(
     destination: M,
@@ -427,6 +473,8 @@ public inline fun <T, K, E, M : MutableMap<in K, MutableList<T>>> Iterable<T>.tr
  * Populates the [destination] map by grouping elements of [this] by the key returned from the
  * fallible [keySelector] function and transforming values with the fallible [valueTransform]
  * function, returning early with the first [Err] if either function fails.
+ *
+ * This is the fallible equivalent of [Iterable.groupByTo].
  */
 public inline fun <T, K, V, E, M : MutableMap<in K, MutableList<V>>> Iterable<T>.tryGroupByTo(
     destination: M,
@@ -458,6 +506,8 @@ public inline fun <T, K, V, E, M : MutableMap<in K, MutableList<V>>> Iterable<T>
  * function to each element in the original collection, returning early with the first [Err] if a
  * transformation fails. Elements in the returned list are in the same order as [this].
  *
+ * This is the fallible equivalent of [Iterable.map].
+ *
  * - Gleam: [list.try_map](https://hexdocs.pm/gleam_stdlib/gleam/list.html#try_map)
  * - Haskell: [Data.Traversable.traverse](https://hackage.haskell.org/package/base/docs/Data-Traversable.html#v:traverse)
  */
@@ -480,6 +530,8 @@ public inline fun <V, E, U> Iterable<V>.tryMap(
  * Applies the given [transform] function to each element of the original collection and appends
  * the results to the given [destination], returning early with the first [Err] if a
  * transformation fails. Elements in the returned list are in the same order as [this].
+ *
+ * This is the fallible equivalent of [Iterable.mapTo].
  *
  * - Gleam: [list.try_map](https://hexdocs.pm/gleam_stdlib/gleam/list.html#try_map)
  * - Haskell: [Data.Traversable.traverse](https://hackage.haskell.org/package/base/docs/Data-Traversable.html#v:traverse)
@@ -506,6 +558,8 @@ public inline fun <V, E, U, C : MutableCollection<in U>> Iterable<V>.tryMapTo(
  * first [Err] if a transformation fails. Elements in the returned list are in the same order as
  * [this].
  *
+ * This is the fallible equivalent of [Iterable.mapNotNull].
+ *
  * - Gleam: [list.try_map](https://hexdocs.pm/gleam_stdlib/gleam/list.html#try_map)
  * - Haskell: [Data.Traversable.traverse](https://hackage.haskell.org/package/base/docs/Data-Traversable.html#v:traverse)
  */
@@ -529,6 +583,8 @@ public inline fun <V, E, U : Any> Iterable<V>.tryMapNotNull(
  * Applies the given [transform] function to each element in the original collection and appends
  * only the non-null results to the given [destination], returning early with the first [Err] if a
  * transformation fails.
+ *
+ * This is the fallible equivalent of [Iterable.mapNotNullTo].
  *
  * - Gleam: [list.try_map](https://hexdocs.pm/gleam_stdlib/gleam/list.html#try_map)
  * - Haskell: [Data.Traversable.traverse](https://hackage.haskell.org/package/base/docs/Data-Traversable.html#v:traverse)
@@ -556,6 +612,8 @@ public inline fun <V, E, U : Any, C : MutableCollection<in U>> Iterable<V>.tryMa
  * first [Err] if a transformation fails. Elements in the returned list are in same order as
  * [this].
  *
+ * This is the fallible equivalent of [Iterable.mapIndexed].
+ *
  * - Gleam: [list.try_map](https://hexdocs.pm/gleam_stdlib/gleam/list.html#try_map)
  * - Haskell: [Data.Traversable.traverse](https://hackage.haskell.org/package/base/docs/Data-Traversable.html#v:traverse)
  */
@@ -578,6 +636,8 @@ public inline fun <V, E, U> Iterable<V>.tryMapIndexed(
  * Applies the given [transform] function to each element and its index in the original collection
  * and appends the results to the given [destination], returning early with the first [Err] if a
  * transformation fails.
+ *
+ * This is the fallible equivalent of [Iterable.mapIndexedTo].
  *
  * - Gleam: [list.try_map](https://hexdocs.pm/gleam_stdlib/gleam/list.html#try_map)
  * - Haskell: [Data.Traversable.traverse](https://hackage.haskell.org/package/base/docs/Data-Traversable.html#v:traverse)
@@ -604,6 +664,8 @@ public inline fun <V, E, U, C : MutableCollection<in U>> Iterable<V>.tryMapIndex
  * early with the first [Err] if a transformation fails. Elements in the returned list are in
  * the same order as [this].
  *
+ * This is the fallible equivalent of [Iterable.mapIndexedNotNull].
+ *
  * - Gleam: [list.try_map](https://hexdocs.pm/gleam_stdlib/gleam/list.html#try_map)
  * - Haskell: [Data.Traversable.traverse](https://hackage.haskell.org/package/base/docs/Data-Traversable.html#v:traverse)
  */
@@ -628,6 +690,8 @@ public inline fun <V, E, U : Any> Iterable<V>.tryMapIndexedNotNull(
  * and appends only the non-null results to the given [destination], returning early with the first
  * [Err] if a transformation fails.
  *
+ * This is the fallible equivalent of [Iterable.mapIndexedNotNullTo].
+ *
  * - Gleam: [list.try_map](https://hexdocs.pm/gleam_stdlib/gleam/list.html#try_map)
  * - Haskell: [Data.Traversable.traverse](https://hackage.haskell.org/package/base/docs/Data-Traversable.html#v:traverse)
  */
@@ -651,6 +715,8 @@ public inline fun <V, E, U : Any, C : MutableCollection<in U>> Iterable<V>.tryMa
 /**
  * Accumulates value starting with [initial] value and applying [operation] from left to right to
  * current accumulator value and each element.
+ *
+ * This is the fallible equivalent of [Iterable.fold].
  *
  * - Gleam: [list.try_fold](https://hexdocs.pm/gleam_stdlib/gleam/list.html#try_fold)
  * - Haskell: [Control.Monad.foldM](https://hackage.haskell.org/package/base/docs/Control-Monad.html#v:foldM)
@@ -677,6 +743,8 @@ public inline fun <T, R, E> Iterable<T>.tryFold(
 /**
  * Accumulates value starting with [initial] value and applying [operation] from right to left to
  * each element and current accumulator value.
+ *
+ * This is the fallible equivalent of [List.foldRight].
  *
  * - Gleam: [list.try_fold](https://hexdocs.pm/gleam_stdlib/gleam/list.html#try_fold)
  * - Haskell: [Control.Monad.foldM](https://hackage.haskell.org/package/base/docs/Control-Monad.html#v:foldM)
@@ -708,6 +776,8 @@ public inline fun <T, R, E> List<T>.tryFoldRight(
  * Performs the given fallible [action] on each element, returning early with the first [Err] if
  * an [action] fails.
  *
+ * This is the fallible equivalent of [Iterable.forEach].
+ *
  * - Gleam: [list.try_each](https://hexdocs.pm/gleam_stdlib/gleam/list.html#try_each)
  * - Rust: [Iterator::try_for_each](https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.try_for_each)
  */
@@ -728,6 +798,8 @@ public inline fun <V, E> Iterable<V>.tryForEach(
 /**
  * Performs the given fallible [action] on each element and its index, returning early with the
  * first [Err] if an [action] fails.
+ *
+ * This is the fallible equivalent of [Iterable.forEachIndexed].
  *
  * - Gleam: [list.try_each](https://hexdocs.pm/gleam_stdlib/gleam/list.html#try_each)
  * - Rust: [Iterator::try_for_each](https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.try_for_each)
@@ -752,6 +824,8 @@ public inline fun <V, E> Iterable<V>.tryForEachIndexed(
  * Accumulates value starting with the first element and applying [operation] from left to right to
  * current accumulator value and each element, returning early with the first [Err] if an
  * [operation] fails. Returns `null` if the iterable is empty.
+ *
+ * This is the fallible equivalent of [Iterable.reduce].
  *
  * - Rust: [Iterator::try_reduce](https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.try_reduce)
  */
@@ -782,6 +856,8 @@ public inline fun <S, T : S, E> Iterable<T>.tryReduce(
  * Accumulates value starting with the first element and applying [operation] from left to right to
  * current accumulator value, each element, and its index, returning early with the first [Err] if
  * an [operation] fails. Returns `null` if the iterable is empty.
+ *
+ * This is the fallible equivalent of [Iterable.reduceIndexed].
  *
  * The [operation] receives the index of the current element being processed, starting at 1 (the
  * first element at index 0 is used as the initial accumulator).
@@ -816,6 +892,8 @@ public inline fun <S, T : S, E> Iterable<T>.tryReduceIndexed(
  * Returns a [Result] containing a list of successive accumulation values generated by applying
  * the fallible [operation] from left to right to each element and current accumulator value that
  * starts with [initial] value, returning early with the first [Err] if an [operation] fails.
+ *
+ * This is the fallible equivalent of [Iterable.runningFold].
  */
 public inline fun <T, R, E> Iterable<T>.tryRunningFold(
     initial: R,
@@ -849,6 +927,8 @@ public inline fun <T, R, E> Iterable<T>.tryRunningFold(
  * the fallible [operation] from left to right to each element, its index in the original
  * collection, and current accumulator value that starts with [initial] value, returning early
  * with the first [Err] if an [operation] fails.
+ *
+ * This is the fallible equivalent of [Iterable.runningFoldIndexed].
  */
 public inline fun <T, R, E> Iterable<T>.tryRunningFoldIndexed(
     initial: R,
@@ -883,6 +963,8 @@ public inline fun <T, R, E> Iterable<T>.tryRunningFoldIndexed(
  * the fallible [operation] from left to right to each element and current accumulator value that
  * starts with the first element of this collection, returning early with the first [Err] if an
  * [operation] fails.
+ *
+ * This is the fallible equivalent of [Iterable.runningReduce].
  */
 public inline fun <S, T : S, E> Iterable<T>.tryRunningReduce(
     operation: (acc: S, T) -> Result<S, E>,
@@ -915,6 +997,8 @@ public inline fun <S, T : S, E> Iterable<T>.tryRunningReduce(
  * the fallible [operation] from left to right to each element, its index in the original
  * collection, and current accumulator value that starts with the first element of this
  * collection, returning early with the first [Err] if an [operation] fails.
+ *
+ * This is the fallible equivalent of [Iterable.runningReduceIndexed].
  *
  * The [operation] receives the index of the current element being processed, starting at 1 (the
  * first element at index 0 is used as the initial accumulator).
@@ -951,6 +1035,8 @@ public inline fun <S, T : S, E> Iterable<T>.tryRunningReduceIndexed(
  * the fallible [operation] from left to right to each element and current accumulator value that
  * starts with [initial] value, returning early with the first [Err] if an [operation] fails.
  *
+ * This is the fallible equivalent of [Iterable.scan].
+ *
  * This function is an alias of [tryRunningFold].
  */
 public inline fun <T, R, E> Iterable<T>.tryScan(
@@ -966,6 +1052,8 @@ public inline fun <T, R, E> Iterable<T>.tryScan(
  * collection, and current accumulator value that starts with [initial] value, returning early
  * with the first [Err] if an [operation] fails.
  *
+ * This is the fallible equivalent of [Iterable.scanIndexed].
+ *
  * This function is an alias of [tryRunningFoldIndexed].
  */
 public inline fun <T, R, E> Iterable<T>.tryScanIndexed(
@@ -980,6 +1068,8 @@ public inline fun <T, R, E> Iterable<T>.tryScanIndexed(
  * elements for which the fallible [predicate] returns [Ok]`(true)`, and the [second][Pair.second]
  * list contains elements for which the fallible [predicate] returns [Ok]`(false)`, returning
  * early with the first [Err] if the [predicate] fails.
+ *
+ * This is the fallible equivalent of [Iterable.partition].
  */
 public inline fun <T, E> Iterable<T>.tryPartition(
     predicate: (T) -> Result<Boolean, E>,

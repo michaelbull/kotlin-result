@@ -12,7 +12,8 @@ import kotlinx.coroutines.flow.transform
  * Returns a [Result] containing a list of elements for which the fallible [predicate] returns
  * [Ok]`(true)`, returning early with the first [Err] if the [predicate] fails.
  *
- * This is the [Flow] equivalent of [Iterable.tryFilter][com.github.michaelbull.result.tryFilter].
+ * This is the fallible equivalent of [Flow.filter][kotlinx.coroutines.flow.filter] and the [Flow]
+ * equivalent of [Iterable.tryFilter][com.github.michaelbull.result.tryFilter].
  *
  * - Haskell: [Control.Monad.filterM](https://hackage.haskell.org/package/base/docs/Control-Monad.html#v:filterM)
  */
@@ -40,8 +41,8 @@ public suspend inline fun <T, E> Flow<T>.tryFilter(
  * Returns a [Result] containing a list of elements for which the fallible [predicate] returns
  * [Ok]`(false)`, returning early with the first [Err] if the [predicate] fails.
  *
- * This is the [Flow] equivalent of
- * [Iterable.tryFilterNot][com.github.michaelbull.result.tryFilterNot].
+ * This is the fallible equivalent of [Flow.filterNot][kotlinx.coroutines.flow.filterNot] and the
+ * [Flow] equivalent of [Iterable.tryFilterNot][com.github.michaelbull.result.tryFilterNot].
  *
  * - Haskell: [Control.Monad.filterM](https://hackage.haskell.org/package/base/docs/Control-Monad.html#v:filterM)
  */
@@ -70,7 +71,8 @@ public suspend inline fun <T, E> Flow<T>.tryFilterNot(
  * function to each value of the original flow, returning early with the first [Err] if a
  * transformation fails.
  *
- * This is the [Flow] equivalent of [Iterable.tryMap][com.github.michaelbull.result.tryMap].
+ * This is the fallible equivalent of [Flow.map][kotlinx.coroutines.flow.map] and the [Flow]
+ * equivalent of [Iterable.tryMap][com.github.michaelbull.result.tryMap].
  *
  * - Gleam: [list.try_map](https://hexdocs.pm/gleam_stdlib/gleam/list.html#try_map)
  * - Haskell: [Data.Traversable.traverse](https://hackage.haskell.org/package/base/docs/Data-Traversable.html#v:traverse)
@@ -101,7 +103,8 @@ public suspend inline fun <V, E, U> Flow<V>.tryMap(
  * given [transform] function to each value of the original flow, returning early with the first
  * [Err] if a transformation fails.
  *
- * This is the [Flow] equivalent of
+ * This is the fallible equivalent of [Flow.mapNotNull][kotlinx.coroutines.flow.mapNotNull] and
+ * the [Flow] equivalent of
  * [Iterable.tryMapNotNull][com.github.michaelbull.result.tryMapNotNull].
  *
  * - Gleam: [list.try_map](https://hexdocs.pm/gleam_stdlib/gleam/list.html#try_map)
@@ -135,7 +138,8 @@ public suspend inline fun <V, E, U : Any> Flow<V>.tryMapNotNull(
  * [transform] function being invoked on each value of the original flow, returning early with
  * the first [Err] if the [transform] fails.
  *
- * This is the [Flow] equivalent of [Iterable.tryFlatMap][com.github.michaelbull.result.tryFlatMap].
+ * This is the [Flow] equivalent of
+ * [Iterable.tryFlatMap][com.github.michaelbull.result.tryFlatMap].
  */
 public suspend inline fun <T, U, E> Flow<T>.tryFlatMap(
     crossinline transform: suspend (T) -> Result<Iterable<U>, E>,
@@ -162,7 +166,8 @@ public suspend inline fun <T, U, E> Flow<T>.tryFlatMap(
  * Performs the given fallible [action] on each value of the flow, returning early with the first
  * [Err] if an [action] fails.
  *
- * This is the [Flow] equivalent of [Iterable.tryForEach][com.github.michaelbull.result.tryForEach].
+ * This is the fallible equivalent of [Flow.collect][kotlinx.coroutines.flow.collect] and the
+ * [Flow] equivalent of [Iterable.tryForEach][com.github.michaelbull.result.tryForEach].
  *
  * - Gleam: [list.try_each](https://hexdocs.pm/gleam_stdlib/gleam/list.html#try_each)
  * - Rust: [Iterator::try_for_each](https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.try_for_each)
@@ -189,7 +194,8 @@ public suspend inline fun <V, E> Flow<V>.tryForEach(
  * current accumulator value and each element, returning early with the first [Err] if an
  * [operation] fails. Returns `null` if the flow is empty.
  *
- * This is the [Flow] equivalent of [Iterable.tryReduce][com.github.michaelbull.result.tryReduce].
+ * This is the fallible equivalent of [Flow.reduce][kotlinx.coroutines.flow.reduce] and the [Flow]
+ * equivalent of [Iterable.tryReduce][com.github.michaelbull.result.tryReduce].
  *
  * - Rust: [Iterator::try_reduce](https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.try_reduce)
  */
@@ -230,7 +236,8 @@ public suspend inline fun <S, T : S, E> Flow<T>.tryReduce(
  * Accumulates value starting with [initial] value and applying [operation] from left to right to
  * current accumulator value and each element.
  *
- * This is the [Flow] equivalent of [Iterable.tryFold][com.github.michaelbull.result.tryFold].
+ * This is the fallible equivalent of [Flow.fold][kotlinx.coroutines.flow.fold] and the [Flow]
+ * equivalent of [Iterable.tryFold][com.github.michaelbull.result.tryFold].
  *
  * - Gleam: [list.try_fold](https://hexdocs.pm/gleam_stdlib/gleam/list.html#try_fold)
  * - Haskell: [Control.Monad.foldM](https://hackage.haskell.org/package/base/docs/Control-Monad.html#v:foldM)
@@ -263,7 +270,8 @@ public suspend inline fun <T, R, E> Flow<T>.tryFold(
  * early with the first [Err] if the [predicate] fails. Returns `null` if no matching element is
  * found.
  *
- * This is the [Flow] equivalent of [Iterable.tryFind][com.github.michaelbull.result.tryFind].
+ * This is the fallible equivalent of [Flow.firstOrNull][kotlinx.coroutines.flow.firstOrNull] and
+ * the [Flow] equivalent of [Iterable.tryFind][com.github.michaelbull.result.tryFind].
  *
  * - Rust: [Iterator::try_find](https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.try_find)
  */
@@ -285,8 +293,8 @@ public suspend inline fun <T, E> Flow<T>.tryFind(
  * early with the first [Err] if the [predicate] fails. Returns `null` if no matching element is
  * found.
  *
- * This is the [Flow] equivalent of
- * [Iterable.tryFindLast][com.github.michaelbull.result.tryFindLast].
+ * This is the fallible equivalent of [Flow.lastOrNull][kotlinx.coroutines.flow.lastOrNull] and
+ * the [Flow] equivalent of [Iterable.tryFindLast][com.github.michaelbull.result.tryFindLast].
  *
  * - Rust: [Iterator::try_find](https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.try_find)
  */

@@ -473,7 +473,7 @@ information and licensing terms.
 [result-coroutineBinding]: https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result-coroutines/src/commonMain/kotlin/com/github/michaelbull/result/coroutines/CoroutineBinding.kt#L42
 [kotlin-coroutineScope]: https://kotlinlang.org/api/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines/coroutine-scope.html
 [result-runSuspendCatching]: https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result-coroutines/src/commonMain/kotlin/com/github/michaelbull/result/coroutines/RunSuspendCatching.kt#L16
-[result-flow]: https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result-coroutines/src/commonMain/kotlin/com/github/michaelbull/result/coroutines/Flow.kt
+[result-flow]: https://github.com/michaelbull/kotlin-result/blob/master/kotlin-result-coroutines/src/commonMain/kotlin/com/github/michaelbull/result/coroutines/flow/Flow.kt
 [kotlin-inline-classes]: https://kotlinlang.org/docs/inline-classes.html
 [wiki-Overhead]: https://github.com/michaelbull/kotlin-result/wiki/Overhead
 [stdlib-result-half-baked]: https://discuss.kotlinlang.org/t/state-of-kotlin-result-vs-kotlin-result/21103/4

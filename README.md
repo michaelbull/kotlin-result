@@ -30,7 +30,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.michael-bull.kotlin-result:kotlin-result:2.3.0")
+    implementation("com.michael-bull.kotlin-result:kotlin-result:2.3.1")
 }
 ```
 
@@ -238,8 +238,8 @@ The `kotlin-result-coroutines` module provides coroutine-aware extensions:
 
 ```groovy
 dependencies {
-    implementation("com.michael-bull.kotlin-result:kotlin-result:2.3.0")
-    implementation("com.michael-bull.kotlin-result:kotlin-result-coroutines:2.3.0")
+    implementation("com.michael-bull.kotlin-result:kotlin-result:2.3.1")
+    implementation("com.michael-bull.kotlin-result:kotlin-result-coroutines:2.3.1")
 }
 ```
 

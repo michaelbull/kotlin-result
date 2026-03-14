@@ -174,13 +174,13 @@ class TryTest {
         }
     }
 
-    class TryForEach {
+    class TryCollect {
 
         @Test
         fun returnsOkIfAllActionsSucceed() = runTest {
             val collected = mutableListOf<Int>()
 
-            val result = flowOf(1, 2, 3).tryForEach { element ->
+            val result = flowOf(1, 2, 3).tryCollect { element ->
                 collected.add(element)
                 Ok(Unit)
             }
@@ -200,7 +200,7 @@ class TryTest {
         fun returnsFirstErrIfActionFails() = runTest {
             val collected = mutableListOf<Int>()
 
-            val result: Result<Unit, String> = flowOf(1, 2, 3).tryForEach { element ->
+            val result: Result<Unit, String> = flowOf(1, 2, 3).tryCollect { element ->
                 if (element == 2) {
                     Err("bad")
                 } else {
@@ -295,11 +295,11 @@ class TryTest {
         }
     }
 
-    class TryFind {
+    class TryFirstOrNull {
 
         @Test
         fun returnsMatchingElement() = runTest {
-            val result = flowOf(1, 2, 3, 4).tryFind { element ->
+            val result = flowOf(1, 2, 3, 4).tryFirstOrNull { element ->
                 Ok(element == 3)
             }
 
@@ -311,7 +311,7 @@ class TryTest {
 
         @Test
         fun returnsFirstErrIfPredicateFails() = runTest {
-            val result = flowOf(1, 2, 3, 4).tryFind { element ->
+            val result = flowOf(1, 2, 3, 4).tryFirstOrNull { element ->
                 if (element == 2) {
                     Err("bad")
                 } else {
@@ -327,7 +327,7 @@ class TryTest {
 
         @Test
         fun returnsNullIfNoMatch() = runTest {
-            val result = flowOf(1, 2, 3).tryFind { element ->
+            val result = flowOf(1, 2, 3).tryFirstOrNull { element ->
                 Ok(element == 99)
             }
 
@@ -338,11 +338,11 @@ class TryTest {
         }
     }
 
-    class TryFindLast {
+    class TryLastOrNull {
 
         @Test
         fun returnsLastMatchingElement() = runTest {
-            val result = flowOf(1, 2, 3, 4).tryFindLast { element ->
+            val result = flowOf(1, 2, 3, 4).tryLastOrNull { element ->
                 Ok(element % 2 == 0)
             }
 
@@ -354,7 +354,7 @@ class TryTest {
 
         @Test
         fun returnsFirstErrIfPredicateFails() = runTest {
-            val result = flowOf(1, 2, 3, 4).tryFindLast { element ->
+            val result = flowOf(1, 2, 3, 4).tryLastOrNull { element ->
                 if (element == 3) {
                     Err("bad")
                 } else {
@@ -370,7 +370,7 @@ class TryTest {
 
         @Test
         fun returnsNullIfNoMatch() = runTest {
-            val result = flowOf(1, 2, 3).tryFindLast { element ->
+            val result = flowOf(1, 2, 3).tryLastOrNull { element ->
                 Ok(element == 99)
             }
 

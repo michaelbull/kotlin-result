@@ -172,7 +172,7 @@ public suspend inline fun <T, U, E> Flow<T>.tryFlatMap(
  * - Gleam: [list.try_each](https://hexdocs.pm/gleam_stdlib/gleam/list.html#try_each)
  * - Rust: [Iterator::try_for_each](https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.try_for_each)
  */
-public suspend inline fun <V, E> Flow<V>.tryForEach(
+public suspend inline fun <V, E> Flow<V>.tryCollect(
     crossinline action: suspend (V) -> Result<*, E>,
 ): Result<Unit, E> {
     val firstError = transform { element ->
@@ -275,7 +275,7 @@ public suspend inline fun <T, R, E> Flow<T>.tryFold(
  *
  * - Rust: [Iterator::try_find](https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.try_find)
  */
-public suspend inline fun <T, E> Flow<T>.tryFind(
+public suspend inline fun <T, E> Flow<T>.tryFirstOrNull(
     crossinline predicate: suspend (T) -> Result<Boolean, E>,
 ): Result<T, E>? {
     return transform { element ->
@@ -298,7 +298,7 @@ public suspend inline fun <T, E> Flow<T>.tryFind(
  *
  * - Rust: [Iterator::try_find](https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.try_find)
  */
-public suspend inline fun <T, E> Flow<T>.tryFindLast(
+public suspend inline fun <T, E> Flow<T>.tryLastOrNull(
     crossinline predicate: suspend (T) -> Result<Boolean, E>,
 ): Result<T, E>? {
     var last: T? = null

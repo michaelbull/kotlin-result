@@ -755,16 +755,16 @@ public inline fun <V, E> Iterable<V>.tryForEachIndexed(
  *
  * - Rust: [Iterator::try_reduce](https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.try_reduce)
  */
-public inline fun <T, E> Iterable<T>.tryReduce(
-    operation: (acc: T, T) -> Result<T, E>,
-): Result<T, E>? {
+public inline fun <S, T : S, E> Iterable<T>.tryReduce(
+    operation: (acc: S, T) -> Result<S, E>,
+): Result<S, E>? {
     val iterator = iterator()
 
     if (!iterator.hasNext()) {
         return null
     }
 
-    var accumulator = iterator.next()
+    var accumulator: S = iterator.next()
 
     while (iterator.hasNext()) {
         val result = operation(accumulator, iterator.next())
@@ -788,9 +788,9 @@ public inline fun <T, E> Iterable<T>.tryReduce(
  *
  * - Rust: [Iterator::try_reduce](https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.try_reduce)
  */
-public inline fun <T, E> Iterable<T>.tryReduceIndexed(
-    operation: (index: Int, acc: T, T) -> Result<T, E>,
-): Result<T, E>? {
+public inline fun <S, T : S, E> Iterable<T>.tryReduceIndexed(
+    operation: (index: Int, acc: S, T) -> Result<S, E>,
+): Result<S, E>? {
     val iterator = iterator()
 
     if (!iterator.hasNext()) {
@@ -798,7 +798,7 @@ public inline fun <T, E> Iterable<T>.tryReduceIndexed(
     }
 
     var index = 1
-    var accumulator = iterator.next()
+    var accumulator: S = iterator.next()
 
     while (iterator.hasNext()) {
         val result = operation(index++, accumulator, iterator.next())

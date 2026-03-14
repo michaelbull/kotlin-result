@@ -193,10 +193,10 @@ public suspend inline fun <V, E> Flow<V>.tryForEach(
  *
  * - Rust: [Iterator::try_reduce](https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.try_reduce)
  */
-public suspend inline fun <T, E> Flow<T>.tryReduce(
-    crossinline operation: suspend (acc: T, T) -> Result<T, E>,
-): Result<T, E>? {
-    var accumulator: T? = null
+public suspend inline fun <S, T : S, E> Flow<T>.tryReduce(
+    crossinline operation: suspend (acc: S, T) -> Result<S, E>,
+): Result<S, E>? {
+    var accumulator: S? = null
     var hasValue = false
 
     val firstError = transform { element ->
@@ -205,7 +205,7 @@ public suspend inline fun <T, E> Flow<T>.tryReduce(
             hasValue = true
         } else {
             @Suppress("UNCHECKED_CAST")
-            val result = operation(accumulator as T, element)
+            val result = operation(accumulator as S, element)
 
             if (result.isOk) {
                 accumulator = result.value
@@ -219,7 +219,7 @@ public suspend inline fun <T, E> Flow<T>.tryReduce(
         firstError != null -> firstError.asErr()
         hasValue -> {
             @Suppress("UNCHECKED_CAST")
-            Ok(accumulator as T)
+            Ok(accumulator as S)
         }
 
         else -> null

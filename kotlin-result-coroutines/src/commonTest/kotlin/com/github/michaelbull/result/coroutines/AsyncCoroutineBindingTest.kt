@@ -142,17 +142,23 @@ class AsyncCoroutineBindingTest {
         val dispatcherC = StandardTestDispatcher(testScheduler)
 
         val result: Result<Unit, BindingError> = coroutineBinding {
-            launch(dispatcherA) { provideX().bind() }
+            launch(dispatcherA) {
+                val _ = provideX().bind()
+            }
 
             testScheduler.advanceTimeBy(20.milliseconds)
             testScheduler.runCurrent()
 
-            launch(dispatcherB) { provideY().bind() }
+            launch(dispatcherB) {
+                val _ = provideY().bind()
+            }
 
             testScheduler.advanceTimeBy(20.milliseconds)
             testScheduler.runCurrent()
 
-            launch(dispatcherC) { provideZ().bind() }
+            launch(dispatcherC) {
+                val _ = provideZ().bind()
+            }
         }
 
         assertEquals(

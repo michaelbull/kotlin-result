@@ -28,7 +28,7 @@ class ResultIteratorTest {
         fun returnsFalseIfYielded() {
             val iterator = Ok("hello").iterator()
 
-            iterator.next()
+            val _ = iterator.next()
 
             assertFalse(iterator.hasNext())
         }
@@ -57,7 +57,7 @@ class ResultIteratorTest {
         fun throwsExceptionIfYieldedAndOk() {
             val iterator = Ok("hello").iterator()
 
-            iterator.next()
+            val _ = iterator.next()
 
             assertFailsWith<NoSuchElementException> {
                 iterator.next()

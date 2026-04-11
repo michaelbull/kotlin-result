@@ -22,10 +22,10 @@ jobs:
 
           - os: macos-latest
             tasks: >
-              iosX64Test
-              macosX64Test
-              tvosX64Test
-              watchosX64Test
+              macosArm64Test
+              iosSimulatorArm64Test
+              tvosSimulatorArm64Test
+              watchosSimulatorArm64Test
 
           - os: windows-latest
             tasks: mingwX64Test
@@ -80,15 +80,12 @@ jobs:
               publishIosSimulatorArm64PublicationToMavenCentralRepository
               publishIosX64PublicationToMavenCentralRepository
               publishMacosArm64PublicationToMavenCentralRepository
-              publishMacosX64PublicationToMavenCentralRepository
               publishTvosArm64PublicationToMavenCentralRepository
               publishTvosSimulatorArm64PublicationToMavenCentralRepository
-              publishTvosX64PublicationToMavenCentralRepository
               publishWatchosArm32PublicationToMavenCentralRepository
               publishWatchosArm64PublicationToMavenCentralRepository
               publishWatchosDeviceArm64PublicationToMavenCentralRepository
               publishWatchosSimulatorArm64PublicationToMavenCentralRepository
-              publishWatchosX64PublicationToMavenCentralRepository
 
     steps:
       - name: Checkout Project

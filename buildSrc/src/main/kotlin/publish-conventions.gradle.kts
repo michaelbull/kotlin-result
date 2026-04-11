@@ -14,7 +14,7 @@ mavenPublishing {
         KotlinMultiplatform(
             javadocJar = JavadocJar.Empty(),
             sourcesJar = SourcesJar.Sources(),
-        )
+        ),
     )
 
     pom {

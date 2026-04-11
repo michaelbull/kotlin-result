@@ -191,7 +191,7 @@ public inline fun <T1, T2, T3, E, V> zipOrAccumulate(
         val transformed = transform(
             result1.value,
             result2.value,
-            result3.value
+            result3.value,
         )
 
         Ok(transformed)
@@ -277,7 +277,7 @@ public inline fun <T1, T2, T3, T4, T5, E, V> zipOrAccumulate(
         result2,
         result3,
         result4,
-        result5
+        result5,
     )
 
     return if (results.allOk()) {

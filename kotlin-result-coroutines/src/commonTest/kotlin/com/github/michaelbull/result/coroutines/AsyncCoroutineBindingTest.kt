@@ -40,7 +40,7 @@ class AsyncCoroutineBindingTest {
 
         assertEquals(
             expected = Ok(3),
-            actual = result
+            actual = result,
         )
     }
 
@@ -70,7 +70,7 @@ class AsyncCoroutineBindingTest {
 
         assertEquals(
             expected = Err(BindingError.BindingErrorB),
-            actual = result
+            actual = result,
         )
     }
 
@@ -106,7 +106,7 @@ class AsyncCoroutineBindingTest {
 
         assertEquals(
             expected = Err(BindingError.BindingErrorA),
-            actual = result
+            actual = result,
         )
 
         assertTrue(xStateChange)
@@ -163,7 +163,7 @@ class AsyncCoroutineBindingTest {
 
         assertEquals(
             expected = Err(BindingError.BindingErrorA),
-            actual = result
+            actual = result,
         )
 
         assertTrue(xStateChange)
@@ -225,7 +225,7 @@ class AsyncCoroutineBindingTest {
 
         assertEquals(
             expected = Ok(3),
-            actual = result
+            actual = result,
         )
 
         assertTrue(xStateChange)
@@ -287,7 +287,7 @@ class AsyncCoroutineBindingTest {
 
         assertEquals(
             expected = Err(BindingError.BindingErrorA),
-            actual = result
+            actual = result,
         )
 
         assertTrue(xStateChange)

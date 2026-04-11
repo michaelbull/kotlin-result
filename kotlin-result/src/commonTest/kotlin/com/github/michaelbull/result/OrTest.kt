@@ -13,7 +13,7 @@ class OrTest {
         fun returnsValueIfOk() {
             assertEquals(
                 expected = Ok(500),
-                actual = Ok(500).or(Ok(1000))
+                actual = Ok(500).or(Ok(1000)),
             )
         }
 
@@ -21,7 +21,7 @@ class OrTest {
         fun returnsDefaultValueIfErr() {
             assertEquals(
                 expected = Ok(5000),
-                actual = Err(OrError).or(Ok(5000))
+                actual = Err(OrError).or(Ok(5000)),
             )
         }
     }
@@ -32,7 +32,7 @@ class OrTest {
         fun returnsValueIfOk() {
             assertEquals(
                 expected = Ok(3000),
-                actual = Ok(3000).orElse { Ok(4000) }
+                actual = Ok(3000).orElse { Ok(4000) },
             )
         }
 
@@ -40,7 +40,7 @@ class OrTest {
         fun returnsTransformedValueIfErr() {
             assertEquals(
                 expected = Ok(2000),
-                actual = Err(4000).orElse { Ok(2000) }
+                actual = Err(4000).orElse { Ok(2000) },
             )
         }
     }
@@ -51,7 +51,7 @@ class OrTest {
         fun returnsValueIfOk() {
             assertEquals(
                 expected = Ok(5000),
-                actual = Ok(5000).orElseThrow()
+                actual = Ok(5000).orElseThrow(),
             )
         }
 
@@ -68,7 +68,7 @@ class OrTest {
         fun returnsValueIfOk() {
             assertEquals(
                 expected = Ok(200),
-                actual = Ok(200).throwIf { true }
+                actual = Ok(200).throwIf { true },
             )
         }
 
@@ -78,7 +78,7 @@ class OrTest {
 
             assertEquals(
                 expected = result,
-                actual = result.throwIf { false }
+                actual = result.throwIf { false },
             )
         }
 
@@ -98,7 +98,7 @@ class OrTest {
         fun returnsValueIfOk() {
             assertEquals(
                 expected = Ok(500),
-                actual = Ok(500).throwUnless { false }
+                actual = Ok(500).throwUnless { false },
             )
         }
 
@@ -108,7 +108,7 @@ class OrTest {
 
             assertEquals(
                 expected = result,
-                actual = result.throwUnless { true }
+                actual = result.throwUnless { true },
             )
         }
 

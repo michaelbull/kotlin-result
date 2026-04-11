@@ -40,7 +40,7 @@ class ResultIteratorTest {
         fun returnsValueIfUnyieldedAndOk() {
             assertEquals(
                 expected = "hello",
-                actual = Ok("hello").iterator().next()
+                actual = Ok("hello").iterator().next(),
             )
         }
 

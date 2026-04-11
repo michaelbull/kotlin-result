@@ -17,7 +17,7 @@ class OnTest {
 
             assertEquals(
                 expected = 100,
-                actual = counter.count
+                actual = counter.count,
             )
         }
 
@@ -29,7 +29,7 @@ class OnTest {
 
             assertEquals(
                 expected = 200,
-                actual = counter.count
+                actual = counter.count,
             )
         }
     }
@@ -44,7 +44,7 @@ class OnTest {
 
             assertEquals(
                 expected = 655,
-                actual = counter.count
+                actual = counter.count,
             )
         }
 
@@ -56,7 +56,7 @@ class OnTest {
 
             assertEquals(
                 expected = 1020,
-                actual = counter.count
+                actual = counter.count,
             )
         }
     }

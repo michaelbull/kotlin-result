@@ -92,7 +92,7 @@ class MapTest {
 
             assertEquals(
                 expected = Ok("non null"),
-                actual = result.transpose()
+                actual = result.transpose(),
             )
         }
 
@@ -102,7 +102,7 @@ class MapTest {
 
             assertEquals(
                 expected = Err("non null error"),
-                actual = result.transpose()
+                actual = result.transpose(),
             )
         }
     }

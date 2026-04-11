@@ -14,7 +14,7 @@ class GetTest {
         fun returnsValueIfOk() {
             assertEquals(
                 expected = 12,
-                actual = Ok(12).get()
+                actual = Ok(12).get(),
             )
         }
 
@@ -35,7 +35,7 @@ class GetTest {
         fun returnsErrorIfErr() {
             assertEquals(
                 expected = "example",
-                actual = Err("example").getError()
+                actual = Err("example").getError(),
             )
         }
     }
@@ -46,7 +46,7 @@ class GetTest {
         fun returnsValueIfOk() {
             assertEquals(
                 expected = "hello",
-                actual = Ok("hello").getOr("world")
+                actual = Ok("hello").getOr("world"),
             )
         }
 
@@ -54,7 +54,7 @@ class GetTest {
         fun returnsDefaultValueIfErr() {
             assertEquals(
                 expected = "default",
-                actual = Err("error").getOr("default")
+                actual = Err("error").getOr("default"),
             )
         }
     }
@@ -65,7 +65,7 @@ class GetTest {
         fun returnsValueIfOk() {
             assertEquals(
                 expected = "hello",
-                actual = Ok("hello").getOrThrow()
+                actual = Ok("hello").getOrThrow(),
             )
         }
 
@@ -85,7 +85,7 @@ class GetTest {
         fun returnsValueIfOk() {
             assertEquals(
                 expected = "hello",
-                actual = Ok("hello").getOrThrow { CustomException("Failed") }
+                actual = Ok("hello").getOrThrow { CustomException("Failed") },
             )
         }
 
@@ -105,7 +105,7 @@ class GetTest {
         fun returnsDefaultValueIfOk() {
             assertEquals(
                 expected = "world",
-                actual = Ok("hello").getErrorOr("world")
+                actual = Ok("hello").getErrorOr("world"),
             )
         }
 
@@ -113,7 +113,7 @@ class GetTest {
         fun returnsErrorIfErr() {
             assertEquals(
                 expected = "hello",
-                actual = Err("hello").getErrorOr("world")
+                actual = Err("hello").getErrorOr("world"),
             )
         }
     }
@@ -124,7 +124,7 @@ class GetTest {
         fun returnsValueIfOk() {
             assertEquals(
                 expected = "hello",
-                actual = Ok("hello").getOrElse { "world" }
+                actual = Ok("hello").getOrElse { "world" },
             )
         }
 
@@ -132,7 +132,7 @@ class GetTest {
         fun returnsTransformedErrorIfErr() {
             assertEquals(
                 expected = "world",
-                actual = Err("hello").getOrElse { "world" }
+                actual = Err("hello").getOrElse { "world" },
             )
         }
     }
@@ -143,7 +143,7 @@ class GetTest {
         fun returnsTransformedValueIfOk() {
             assertEquals(
                 expected = "world",
-                actual = Ok("hello").getErrorOrElse { "world" }
+                actual = Ok("hello").getErrorOrElse { "world" },
             )
         }
 
@@ -151,7 +151,7 @@ class GetTest {
         fun returnsErrorIfErr() {
             assertEquals(
                 expected = "hello",
-                actual = Err("hello").getErrorOrElse { "world" }
+                actual = Err("hello").getErrorOrElse { "world" },
             )
         }
     }
@@ -175,7 +175,7 @@ class GetTest {
 
             assertEquals(
                 expected = Left,
-                actual = direction
+                actual = direction,
             )
         }
 
@@ -193,7 +193,7 @@ class GetTest {
 
             assertEquals(
                 expected = Right,
-                actual = direction
+                actual = direction,
             )
         }
     }

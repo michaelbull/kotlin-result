@@ -278,13 +278,14 @@ class TryTest {
         fun returnsFirstErrIfPredicateFails() {
             val destination = mutableListOf(0)
 
-            val result: Result<MutableList<Int>, String> = listOf(10, 20, 30).tryFilterIndexedTo(destination) { index, _ ->
-                if (index == 1) {
-                    Err("bad")
-                } else {
-                    Ok(true)
+            val result: Result<MutableList<Int>, String> =
+                listOf(10, 20, 30).tryFilterIndexedTo(destination) { index, _ ->
+                    if (index == 1) {
+                        Err("bad")
+                    } else {
+                        Ok(true)
+                    }
                 }
-            }
 
             assertEquals(
                 expected = Err("bad"),
@@ -344,13 +345,14 @@ class TryTest {
         fun returnsFirstErrIfTransformFails() {
             val destination = mutableMapOf("0" to 0)
 
-            val result: Result<MutableMap<String, Int>, String> = listOf(1, 2, 3).tryAssociateTo(destination) { element ->
-                if (element == 2) {
-                    Err("bad")
-                } else {
-                    Ok(element.toString() to element * 10)
+            val result: Result<MutableMap<String, Int>, String> =
+                listOf(1, 2, 3).tryAssociateTo(destination) { element ->
+                    if (element == 2) {
+                        Err("bad")
+                    } else {
+                        Ok(element.toString() to element * 10)
+                    }
                 }
-            }
 
             assertEquals(
                 expected = Err("bad"),
@@ -464,13 +466,14 @@ class TryTest {
         fun returnsFirstErrIfKeySelectorFails() {
             val destination = mutableMapOf("0" to 0)
 
-            val result: Result<MutableMap<String, Int>, String> = listOf(1, 2, 3).tryAssociateByTo(destination) { element ->
-                if (element == 2) {
-                    Err("bad")
-                } else {
-                    Ok(element.toString())
+            val result: Result<MutableMap<String, Int>, String> =
+                listOf(1, 2, 3).tryAssociateByTo(destination) { element ->
+                    if (element == 2) {
+                        Err("bad")
+                    } else {
+                        Ok(element.toString())
+                    }
                 }
-            }
 
             assertEquals(
                 expected = Err("bad"),
@@ -571,13 +574,14 @@ class TryTest {
         fun returnsFirstErrIfValueSelectorFails() {
             val destination = mutableMapOf(0 to 0)
 
-            val result: Result<MutableMap<Int, Int>, String> = listOf(1, 2, 3).tryAssociateWithTo(destination) { element ->
-                if (element == 2) {
-                    Err("bad")
-                } else {
-                    Ok(element * 10)
+            val result: Result<MutableMap<Int, Int>, String> =
+                listOf(1, 2, 3).tryAssociateWithTo(destination) { element ->
+                    if (element == 2) {
+                        Err("bad")
+                    } else {
+                        Ok(element * 10)
+                    }
                 }
-            }
 
             assertEquals(
                 expected = Err("bad"),
@@ -703,13 +707,14 @@ class TryTest {
         fun returnsFirstErrIfTransformFails() {
             val destination = mutableListOf(-1)
 
-            val result: Result<MutableList<Int>, String> = listOf(10, 20, 30).tryFlatMapIndexedTo(destination) { index, value ->
-                if (index == 1) {
-                    Err("bad")
-                } else {
-                    Ok(listOf(index, value))
+            val result: Result<MutableList<Int>, String> =
+                listOf(10, 20, 30).tryFlatMapIndexedTo(destination) { index, value ->
+                    if (index == 1) {
+                        Err("bad")
+                    } else {
+                        Ok(listOf(index, value))
+                    }
                 }
-            }
 
             assertEquals(
                 expected = Err("bad"),
@@ -823,13 +828,14 @@ class TryTest {
         fun returnsFirstErrIfKeySelectorFails() {
             val destination = LinkedHashMap<Boolean, MutableList<Int>>()
 
-            val result: Result<LinkedHashMap<Boolean, MutableList<Int>>, String> = listOf(1, 2, 3).tryGroupByTo(destination) { element ->
-                if (element == 2) {
-                    Err("bad")
-                } else {
-                    Ok(element % 2 == 0)
+            val result: Result<LinkedHashMap<Boolean, MutableList<Int>>, String> =
+                listOf(1, 2, 3).tryGroupByTo(destination) { element ->
+                    if (element == 2) {
+                        Err("bad")
+                    } else {
+                        Ok(element % 2 == 0)
+                    }
                 }
-            }
 
             assertEquals(
                 expected = Err("bad"),
@@ -1062,13 +1068,14 @@ class TryTest {
         fun returnsFirstErrIfTransformFails() {
             val destination = mutableListOf(-1 to -1)
 
-            val result: Result<MutableList<Pair<Int, Int>>, String> = listOf(10, 20, 30).tryMapIndexedTo(destination) { index, _ ->
-                if (index == 1) {
-                    Err("bad")
-                } else {
-                    Ok(index to index)
+            val result: Result<MutableList<Pair<Int, Int>>, String> =
+                listOf(10, 20, 30).tryMapIndexedTo(destination) { index, _ ->
+                    if (index == 1) {
+                        Err("bad")
+                    } else {
+                        Ok(index to index)
+                    }
                 }
-            }
 
             assertEquals(
                 expected = Err("bad"),
@@ -1136,13 +1143,14 @@ class TryTest {
         fun returnsFirstErrIfTransformFails() {
             val destination = mutableListOf(-1 to -1)
 
-            val result: Result<MutableList<Pair<Int, Int>>, String> = listOf(10, 20, 30).tryMapIndexedNotNullTo(destination) { index, _ ->
-                if (index == 1) {
-                    Err("bad")
-                } else {
-                    Ok(index to index)
+            val result: Result<MutableList<Pair<Int, Int>>, String> =
+                listOf(10, 20, 30).tryMapIndexedNotNullTo(destination) { index, _ ->
+                    if (index == 1) {
+                        Err("bad")
+                    } else {
+                        Ok(index to index)
+                    }
                 }
-            }
 
             assertEquals(
                 expected = Err("bad"),

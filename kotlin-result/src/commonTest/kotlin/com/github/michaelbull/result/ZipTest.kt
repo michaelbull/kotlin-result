@@ -129,7 +129,7 @@ class ZipTest {
 
             assertEquals(
                 expected = Ok(ZipData4("hello", 2, false, 1.5)),
-                actual = result
+                actual = result,
             )
         }
 

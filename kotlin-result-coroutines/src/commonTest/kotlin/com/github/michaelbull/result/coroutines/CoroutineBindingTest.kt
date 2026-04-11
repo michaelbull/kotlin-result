@@ -188,7 +188,7 @@ class CoroutineBindingTest {
 
         assertEquals(
             expected = Err(BindingError.BindingErrorB),
-            actual = result
+            actual = result,
         )
     }
 }

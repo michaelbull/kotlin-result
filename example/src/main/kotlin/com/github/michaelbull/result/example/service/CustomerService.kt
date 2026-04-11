@@ -53,7 +53,7 @@ class CustomerService(
         return CustomerDto(
             firstName = entity.firstName,
             lastName = entity.lastName,
-            email = entity.email
+            email = entity.email,
         )
     }
 
@@ -78,7 +78,7 @@ class CustomerService(
         val updated = entity.copy(
             firstName = validated.name.first,
             lastName = validated.name.last,
-            email = validated.email.address
+            email = validated.email.address,
         )
 
         return runCatching { repository.save(updated) }
@@ -98,7 +98,7 @@ class CustomerService(
         return zip(
             { PersonalNameParser.parse(dto.firstName, dto.lastName) },
             { EmailAddressParser.parse(dto.email) },
-            ::Customer
+            ::Customer,
         )
     }
 
@@ -106,7 +106,7 @@ class CustomerService(
         return zip(
             { PersonalNameParser.parse(dto.firstName, dto.lastName) },
             { EmailAddressParser.parse(dto.email) },
-            { (first, last), (address) -> CustomerEntity(id, first, last, address) }
+            { (first, last), (address) -> CustomerEntity(id, first, last, address) },
         )
     }
 

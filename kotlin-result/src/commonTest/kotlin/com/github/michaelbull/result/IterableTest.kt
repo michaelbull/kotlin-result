@@ -455,7 +455,7 @@ class IterableTest {
                 expected = listOf(
                     IterableError.IterableError2,
                     IterableError.IterableError1,
-                    IterableError.IterableError2
+                    IterableError.IterableError2,
                 ),
                 actual = second,
             )
@@ -651,7 +651,7 @@ class IterableTest {
 
             assertEquals(
                 expected = listOf("hello", "big", "wide", "world"),
-                actual = result
+                actual = result,
             )
         }
     }
@@ -680,7 +680,7 @@ class IterableTest {
                     IterableError.IterableError1,
                     IterableError.IterableError2,
                 ),
-                actual = result
+                actual = result,
             )
         }
     }

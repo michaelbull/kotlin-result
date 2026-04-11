@@ -33,7 +33,7 @@ class FactoryTest {
         fun returnsOkfIfNonNull() {
             assertEquals(
                 expected = "ok",
-                actual = "ok".toResultOr { "err" }.get()
+                actual = "ok".toResultOr { "err" }.get(),
             )
         }
 
@@ -41,7 +41,7 @@ class FactoryTest {
         fun returnsErrIfNull() {
             assertEquals(
                 expected = Err("err"),
-                actual = "ok".toLongOrNull().toResultOr { "err" }
+                actual = "ok".toLongOrNull().toResultOr { "err" },
             )
         }
     }

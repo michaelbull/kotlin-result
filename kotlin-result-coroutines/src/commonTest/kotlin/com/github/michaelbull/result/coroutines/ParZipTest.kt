@@ -36,7 +36,7 @@ class ParZipTest {
             { v1, v2 ->
                 delay(100.milliseconds)
                 v1 to v2
-            }
+            },
         )
 
         assertEquals(
@@ -63,7 +63,7 @@ class ParZipTest {
             { v1, v2 ->
                 delay(100.milliseconds)
                 v1 to v2
-            }
+            },
         )
 
         assertEquals(
@@ -90,7 +90,7 @@ class ParZipTest {
             { v1, v2, v3 ->
                 delay(100.milliseconds)
                 ZipData3(v1, v2, v3)
-            }
+            },
         )
 
         assertEquals(
@@ -117,7 +117,7 @@ class ParZipTest {
             { v1, v2, v3 ->
                 delay(100.milliseconds)
                 ZipData3(v1, v2, v3)
-            }
+            },
         )
 
         assertEquals(
@@ -148,7 +148,7 @@ class ParZipTest {
             { v1, v2, v3, v4 ->
                 delay(100.milliseconds)
                 ZipData4(v1, v2, v3, v4)
-            }
+            },
         )
 
         assertEquals(
@@ -179,7 +179,7 @@ class ParZipTest {
             { v1, v2, v3, v4 ->
                 delay(100.milliseconds)
                 ZipData4(v1, v2, v3, v4)
-            }
+            },
         )
 
 
@@ -215,7 +215,7 @@ class ParZipTest {
             { v1, v2, v3, v4, v5 ->
                 delay(100.milliseconds)
                 ZipData5(v1, v2, v3, v4, v5)
-            }
+            },
         )
 
         assertEquals(
@@ -250,7 +250,7 @@ class ParZipTest {
             { v1, v2, v3, v4, v5 ->
                 delay(100.milliseconds)
                 ZipData5(v1, v2, v3, v4, v5)
-            }
+            },
         )
 
         assertEquals(
@@ -293,7 +293,7 @@ class ParZipTest {
                 { v1, v2, v3, v4, v5 ->
                     delay(3000.milliseconds)
                     ZipData5(v1, v2, v3, v4, v5)
-                }
+                },
             )
 
             assertEquals(

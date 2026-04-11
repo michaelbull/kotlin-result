@@ -33,7 +33,6 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.Parameters
 import io.ktor.serialization.jackson.jackson
 import io.ktor.server.application.Application
-import io.ktor.server.application.call
 import io.ktor.server.application.install
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
@@ -49,7 +48,7 @@ fun main() {
         factory = Netty,
         port = 8080,
         host = "0.0.0.0",
-        module = Application::exampleModule
+        module = Application::exampleModule,
     ).start(wait = true)
 }
 
@@ -119,19 +118,17 @@ private fun messageToResponse(message: DomainMessage) = when (message) {
     EmailRequired,
     EmailTooLong,
     EmailInvalid,
-    ->
-        HttpStatusCode.BadRequest to "There is an error in your request"
+        -> HttpStatusCode.BadRequest to "There is an error in your request"
 
 // exposed errors
-    CustomerNotFound ->
-        HttpStatusCode.NotFound to "Unknown customer"
+    CustomerNotFound,
+        -> HttpStatusCode.NotFound to "Unknown customer"
 
 // internal errors
     SqlCustomerInvalid,
     DatabaseTimeout,
     is DatabaseError,
-    ->
-        HttpStatusCode.InternalServerError to "Internal server error occurred"
+        -> HttpStatusCode.InternalServerError to "Internal server error occurred"
 }
 
 private fun eventToResponse(event: Event?) = when (event) {

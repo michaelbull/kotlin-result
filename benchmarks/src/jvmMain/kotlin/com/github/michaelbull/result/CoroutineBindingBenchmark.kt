@@ -16,6 +16,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
+import kotlin.time.Duration.Companion.milliseconds
 
 @State(Scope.Benchmark)
 @BenchmarkMode(Mode.AverageTime)
@@ -54,7 +55,7 @@ class CoroutineBindingBenchmark {
 
     private object Error
 
-    private val time = 100L
+    private val millis = 100L
 
     private fun nonSuspend(): Result<Int, Error> = binding {
         val x = provideXBlocking().bind()
@@ -75,22 +76,22 @@ class CoroutineBindingBenchmark {
     }
 
     private fun provideXBlocking(): Result<Int, Error> {
-        Thread.sleep(time)
+        Thread.sleep(millis)
         return Ok(1)
     }
 
     private fun provideYBlocking(): Result<Int, Error> {
-        Thread.sleep(time)
+        Thread.sleep(millis)
         return Ok(2)
     }
 
     private suspend fun provideX(): Result<Int, Error> {
-        delay(time)
+        delay(millis.milliseconds)
         return Ok(1)
     }
 
     private suspend fun provideY(): Result<Int, Error> {
-        delay(time)
+        delay(millis.milliseconds)
         return Ok(2)
     }
 
@@ -115,22 +116,22 @@ class CoroutineBindingBenchmark {
     }
 
     private fun arrowProvideXBlocking(): Either<Error, Int> {
-        Thread.sleep(time)
+        Thread.sleep(millis)
         return 1.right()
     }
 
     private fun arrowProvideYBlocking(): Either<Error, Int> {
-        Thread.sleep(time)
+        Thread.sleep(millis)
         return 2.right()
     }
 
     private suspend fun arrowProvideX(): Either<Error, Int> {
-        delay(time)
+        delay(millis.milliseconds)
         return 1.right()
     }
 
     private suspend fun arrowProvideY(): Either<Error, Int> {
-        delay(time)
+        delay(millis.milliseconds)
         return 2.right()
     }
 }

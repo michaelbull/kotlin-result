@@ -12,6 +12,8 @@ import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 
 class RunSuspendCatchingTest {
 
@@ -22,7 +24,7 @@ class RunSuspendCatchingTest {
         launch(CoroutineName("outer scope")) {
             launch(CoroutineName("inner scope")) {
                 val result = runSuspendCatching {
-                    delay(4_000)
+                    delay(4.seconds)
                     "value"
                 }
 
@@ -30,7 +32,7 @@ class RunSuspendCatchingTest {
                 result.onOk { value = it }
             }
 
-            testScheduler.advanceTimeBy(2_000)
+            testScheduler.advanceTimeBy(2.seconds)
             testScheduler.runCurrent()
 
             // Cancel outer scope, which should cancel inner scope

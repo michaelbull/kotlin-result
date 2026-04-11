@@ -9,6 +9,8 @@ import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 
 class ParZipTest {
 
@@ -23,16 +25,16 @@ class ParZipTest {
         val result = parZip(
             {
                 modifyGate.await()
-                delay(100)
+                delay(100.milliseconds)
                 Ok(value = "producer1")
             },
             {
                 modifyGate.complete(Unit)
-                delay(100)
+                delay(100.milliseconds)
                 Ok(value = "producer2")
             },
             { v1, v2 ->
-                delay(100)
+                delay(100.milliseconds)
                 v1 to v2
             }
         )
@@ -50,16 +52,16 @@ class ParZipTest {
         val result = parZip(
             {
                 modifyGate.await()
-                delay(100)
+                delay(100.milliseconds)
                 Ok(value = "producer1")
             },
             {
                 modifyGate.complete(Unit)
-                delay(100)
+                delay(100.milliseconds)
                 Err(error = "failed")
             },
             { v1, v2 ->
-                delay(100)
+                delay(100.milliseconds)
                 v1 to v2
             }
         )
@@ -74,19 +76,19 @@ class ParZipTest {
     fun parZip3ReturnsTransformedValueIfAllOk() = runTest {
         val result = parZip(
             {
-                delay(100)
+                delay(100.milliseconds)
                 Ok(value = "producer1")
             },
             {
-                delay(100)
+                delay(100.milliseconds)
                 Ok(value = 42)
             },
             {
-                delay(100)
+                delay(100.milliseconds)
                 Ok(value = true)
             },
             { v1, v2, v3 ->
-                delay(100)
+                delay(100.milliseconds)
                 ZipData3(v1, v2, v3)
             }
         )
@@ -101,19 +103,19 @@ class ParZipTest {
     fun parZip3ReturnsErrIfOneOfThreeErr() = runTest {
         val result = parZip(
             {
-                delay(100)
+                delay(100.milliseconds)
                 Ok(value = "producer1")
             },
             {
-                delay(100)
+                delay(100.milliseconds)
                 Err(error = "failed")
             },
             {
-                delay(100)
+                delay(100.milliseconds)
                 Ok(value = true)
             },
             { v1, v2, v3 ->
-                delay(100)
+                delay(100.milliseconds)
                 ZipData3(v1, v2, v3)
             }
         )
@@ -128,23 +130,23 @@ class ParZipTest {
     fun parZip4ReturnsTransformedValueIfAllOk() = runTest {
         val result = parZip(
             {
-                delay(100)
+                delay(100.milliseconds)
                 Ok(value = "producer1")
             },
             {
-                delay(100)
+                delay(100.milliseconds)
                 Ok(value = 42)
             },
             {
-                delay(100)
+                delay(100.milliseconds)
                 Ok(value = true)
             },
             {
-                delay(100)
+                delay(100.milliseconds)
                 Ok(value = 3.14)
             },
             { v1, v2, v3, v4 ->
-                delay(100)
+                delay(100.milliseconds)
                 ZipData4(v1, v2, v3, v4)
             }
         )
@@ -159,23 +161,23 @@ class ParZipTest {
     fun parZip4ReturnsErrIfOneOfFourErr() = runTest {
         val result = parZip(
             {
-                delay(100)
+                delay(100.milliseconds)
                 Ok(value = "producer1")
             },
             {
-                delay(100)
+                delay(100.milliseconds)
                 Err(error = "failed")
             },
             {
-                delay(100)
+                delay(100.milliseconds)
                 Ok(value = true)
             },
             {
-                delay(100)
+                delay(100.milliseconds)
                 Ok(value = 3.14)
             },
             { v1, v2, v3, v4 ->
-                delay(100)
+                delay(100.milliseconds)
                 ZipData4(v1, v2, v3, v4)
             }
         )
@@ -191,27 +193,27 @@ class ParZipTest {
     fun parZip5ReturnsTransformedValueIfAllOk() = runTest {
         val result = parZip(
             {
-                delay(100)
+                delay(100.milliseconds)
                 Ok(value = "producer1")
             },
             {
-                delay(100)
+                delay(100.milliseconds)
                 Ok(value = 42)
             },
             {
-                delay(100)
+                delay(100.milliseconds)
                 Ok(value = true)
             },
             {
-                delay(100)
+                delay(100.milliseconds)
                 Ok(value = 3.14)
             },
             {
-                delay(100)
+                delay(100.milliseconds)
                 Ok(value = 'X')
             },
             { v1, v2, v3, v4, v5 ->
-                delay(100)
+                delay(100.milliseconds)
                 ZipData5(v1, v2, v3, v4, v5)
             }
         )
@@ -226,27 +228,27 @@ class ParZipTest {
     fun parZip5ReturnsErrIfOneOfFiveErr() = runTest {
         val result = parZip(
             {
-                delay(100)
+                delay(100.milliseconds)
                 Ok(value = "producer1")
             },
             {
-                delay(100)
+                delay(100.milliseconds)
                 Err(error = "failed")
             },
             {
-                delay(100)
+                delay(100.milliseconds)
                 Ok(value = true)
             },
             {
-                delay(100)
+                delay(100.milliseconds)
                 Ok(value = 3.14)
             },
             {
-                delay(100)
+                delay(100.milliseconds)
                 Ok(value = 'X')
             },
             { v1, v2, v3, v4, v5 ->
-                delay(100)
+                delay(100.milliseconds)
                 ZipData5(v1, v2, v3, v4, v5)
             }
         )
@@ -264,32 +266,32 @@ class ParZipTest {
         val job = launch {
             val result = parZip(
                 {
-                    delay(500)
+                    delay(500.milliseconds)
                     mutable = "one"
                     Ok(value = "producer1")
                 },
                 {
-                    delay(1000)
+                    delay(1000.milliseconds)
                     mutable = "two"
                     Err(error = "failed")
                 },
                 {
-                    delay(1500)
+                    delay(1500.milliseconds)
                     mutable = "three"
                     Ok(value = true)
                 },
                 {
-                    delay(2000)
+                    delay(2000.milliseconds)
                     mutable = "four"
                     Ok(value = 3.14)
                 },
                 {
-                    delay(2500)
+                    delay(2500.milliseconds)
                     mutable = "five"
                     Ok(value = 'X')
                 },
                 { v1, v2, v3, v4, v5 ->
-                    delay(3000)
+                    delay(3000.milliseconds)
                     ZipData5(v1, v2, v3, v4, v5)
                 }
             )
@@ -300,7 +302,7 @@ class ParZipTest {
             )
         }
 
-        advanceTimeBy(5000)
+        advanceTimeBy(5.seconds)
         job.cancel()
 
         assertEquals(

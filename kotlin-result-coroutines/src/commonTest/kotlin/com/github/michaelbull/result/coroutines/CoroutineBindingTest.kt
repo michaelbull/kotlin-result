@@ -9,6 +9,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
+import kotlin.time.Duration.Companion.milliseconds
 
 class CoroutineBindingTest {
 
@@ -21,12 +22,12 @@ class CoroutineBindingTest {
     @Test
     fun returnsOkIfAllBindsSuccessful() = runTest {
         suspend fun provideX(): Result<Int, BindingError> {
-            delay(1)
+            delay(1.milliseconds)
             return Ok(1)
         }
 
         suspend fun provideY(): Result<Int, BindingError> {
-            delay(1)
+            delay(1.milliseconds)
             return Ok(2)
         }
 
@@ -45,12 +46,12 @@ class CoroutineBindingTest {
     @Test
     fun returnsOkIfAllBindsOfDifferentTypeAreSuccessful() = runTest {
         suspend fun provideX(): Result<String, BindingError> {
-            delay(1)
+            delay(1.milliseconds)
             return Ok("1")
         }
 
         suspend fun provideY(x: Int): Result<Int, BindingError> {
-            delay(1)
+            delay(1.milliseconds)
             return Ok(x + 2)
         }
 
@@ -69,17 +70,17 @@ class CoroutineBindingTest {
     @Test
     fun returnsFirstErrIfBindingFailed() = runTest {
         suspend fun provideX(): Result<Int, BindingError> {
-            delay(1)
+            delay(1.milliseconds)
             return Ok(1)
         }
 
         suspend fun provideY(): Result<Int, BindingError> {
-            delay(1)
+            delay(1.milliseconds)
             return Err(BindingError.BindingErrorA)
         }
 
         suspend fun provideZ(): Result<Int, BindingError> {
-            delay(1)
+            delay(1.milliseconds)
             return Ok(2)
         }
 
@@ -103,19 +104,19 @@ class CoroutineBindingTest {
         var zStateChange = false
 
         suspend fun provideX(): Result<Int, BindingError> {
-            delay(1)
+            delay(1.milliseconds)
             xStateChange = true
             return Ok(1)
         }
 
         suspend fun provideY(): Result<Int, BindingError> {
-            delay(10)
+            delay(10.milliseconds)
             yStateChange = true
             return Err(BindingError.BindingErrorA)
         }
 
         suspend fun provideZ(): Result<Int, BindingError> {
-            delay(1)
+            delay(1.milliseconds)
             zStateChange = true
             return Err(BindingError.BindingErrorA)
         }
@@ -140,17 +141,17 @@ class CoroutineBindingTest {
     @Test
     fun returnsFirstErrIfBindingsOfDifferentTypesFailed() = runTest {
         suspend fun provideX(): Result<Int, BindingError> {
-            delay(1)
+            delay(1.milliseconds)
             return Ok(1)
         }
 
         suspend fun provideY(): Result<String, BindingError> {
-            delay(1)
+            delay(1.milliseconds)
             return Err(BindingError.BindingErrorA)
         }
 
         suspend fun provideZ(): Result<Int, BindingError> {
-            delay(1)
+            delay(1.milliseconds)
             return Ok(2)
         }
 

@@ -11,6 +11,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
+import kotlin.time.Duration.Companion.milliseconds
 
 class AsyncCoroutineBindingTest {
 
@@ -22,12 +23,12 @@ class AsyncCoroutineBindingTest {
     @Test
     fun returnsOkIfAllBindsSuccessful() = runTest {
         suspend fun provideX(): Result<Int, BindingError> {
-            delay(100)
+            delay(100.milliseconds)
             return Ok(1)
         }
 
         suspend fun provideY(): Result<Int, BindingError> {
-            delay(100)
+            delay(100.milliseconds)
             return Ok(2)
         }
 
@@ -46,17 +47,17 @@ class AsyncCoroutineBindingTest {
     @Test
     fun returnsFirstErrIfBindingFailed() = runTest {
         suspend fun provideX(): Result<Int, BindingError> {
-            delay(3)
+            delay(3.milliseconds)
             return Ok(1)
         }
 
         suspend fun provideY(): Result<Int, BindingError.BindingErrorA> {
-            delay(3)
+            delay(3.milliseconds)
             return Err(BindingError.BindingErrorA)
         }
 
         suspend fun provideZ(): Result<Int, BindingError.BindingErrorB> {
-            delay(2)
+            delay(2.milliseconds)
             return Err(BindingError.BindingErrorB)
         }
 
@@ -79,13 +80,13 @@ class AsyncCoroutineBindingTest {
         var yStateChange = false
 
         suspend fun provideX(): Result<Int, BindingError> {
-            delay(2)
+            delay(2.milliseconds)
             xStateChange = true
             return Err(BindingError.BindingErrorA)
         }
 
         suspend fun provideY(): Result<Int, BindingError.BindingErrorB> {
-            delay(3)
+            delay(3.milliseconds)
             yStateChange = true
             return Err(BindingError.BindingErrorB)
         }
@@ -97,7 +98,7 @@ class AsyncCoroutineBindingTest {
             val x = async(dispatcherA) { provideX() }
             val y = async(dispatcherB) { provideY() }
 
-            testScheduler.advanceTimeBy(2)
+            testScheduler.advanceTimeBy(2.milliseconds)
             testScheduler.runCurrent()
 
             x.await() + y.await()
@@ -119,19 +120,19 @@ class AsyncCoroutineBindingTest {
         var zStateChange = false
 
         suspend fun provideX(): Result<Int, BindingError> {
-            delay(1)
+            delay(1.milliseconds)
             xStateChange = true
             return Ok(1)
         }
 
         suspend fun provideY(): Result<Int, BindingError.BindingErrorA> {
-            delay(20)
+            delay(20.milliseconds)
             yStateChange = true
             return Err(BindingError.BindingErrorA)
         }
 
         suspend fun provideZ(): Result<Int, BindingError.BindingErrorB> {
-            delay(100)
+            delay(100.milliseconds)
             zStateChange = true
             return Err(BindingError.BindingErrorB)
         }
@@ -143,12 +144,12 @@ class AsyncCoroutineBindingTest {
         val result: Result<Unit, BindingError> = coroutineBinding {
             launch(dispatcherA) { provideX().bind() }
 
-            testScheduler.advanceTimeBy(20)
+            testScheduler.advanceTimeBy(20.milliseconds)
             testScheduler.runCurrent()
 
             launch(dispatcherB) { provideY().bind() }
 
-            testScheduler.advanceTimeBy(20)
+            testScheduler.advanceTimeBy(20.milliseconds)
             testScheduler.runCurrent()
 
             launch(dispatcherC) { provideZ().bind() }
@@ -171,7 +172,7 @@ class AsyncCoroutineBindingTest {
         var zStateChange = false
 
         suspend fun provideX(): Result<Int, BindingError> {
-            delay(1)
+            delay(1.milliseconds)
             xStateChange = true
             return Ok(1)
         }
@@ -181,7 +182,7 @@ class AsyncCoroutineBindingTest {
         }
 
         suspend fun provideY(): Result<Int, BindingError.BindingErrorA> {
-            delay(20)
+            delay(20.milliseconds)
             yStateChange = true
             return Ok(1)
         }
@@ -191,7 +192,7 @@ class AsyncCoroutineBindingTest {
         }
 
         suspend fun provideZ(): Result<Int, BindingError.BindingErrorB> {
-            delay(100)
+            delay(100.milliseconds)
             zStateChange = true
             return Ok(1)
         }
@@ -208,7 +209,7 @@ class AsyncCoroutineBindingTest {
             val x = async(dispatcherA) { provideXWrapped() }
             val y = async(dispatcherB) { provideYWrapped() }
 
-            testScheduler.advanceTimeBy(2)
+            testScheduler.advanceTimeBy(2.milliseconds)
             testScheduler.runCurrent()
 
             val z = async(dispatcherC) { provideZWrapped() }
@@ -233,7 +234,7 @@ class AsyncCoroutineBindingTest {
         var zStateChange = false
 
         suspend fun provideX(): Result<Int, BindingError> {
-            delay(1)
+            delay(1.milliseconds)
             xStateChange = true
             return Ok(1)
         }
@@ -243,7 +244,7 @@ class AsyncCoroutineBindingTest {
         }
 
         suspend fun provideY(): Result<Int, BindingError.BindingErrorA> {
-            delay(20)
+            delay(20.milliseconds)
             yStateChange = true
             return Err(BindingError.BindingErrorA)
         }
@@ -253,7 +254,7 @@ class AsyncCoroutineBindingTest {
         }
 
         suspend fun provideZ(): Result<Int, BindingError.BindingErrorB> {
-            delay(100)
+            delay(100.milliseconds)
             zStateChange = true
             return Ok(1)
         }
@@ -270,7 +271,7 @@ class AsyncCoroutineBindingTest {
             val x = async(dispatcherA) { provideXWrapped() }
             val y = async(dispatcherB) { provideYWrapped() }
 
-            testScheduler.advanceTimeBy(2)
+            testScheduler.advanceTimeBy(2.milliseconds)
             testScheduler.runCurrent()
 
             val z = async(dispatcherC) { provideZWrapped() }

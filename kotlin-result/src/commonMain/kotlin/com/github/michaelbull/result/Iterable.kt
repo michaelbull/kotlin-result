@@ -62,6 +62,7 @@ public fun <V, E> Iterable<Result<V, E>>.filterErr(): List<E> {
  * Appends the [values][Result.value] of each element that [is ok][Result.isOk] to the given
  * [destination].
  */
+@IgnorableReturnValue
 public fun <V, E, C : MutableCollection<in V>> Iterable<Result<V, E>>.filterOkTo(destination: C): C {
     for (element in this) {
         if (element.isOk) {
@@ -76,6 +77,7 @@ public fun <V, E, C : MutableCollection<in V>> Iterable<Result<V, E>>.filterOkTo
  * Appends the [errors][Result.error] of each element that [is an error][Result.isErr] to the given
  * [destination].
  */
+@IgnorableReturnValue
 public fun <V, E, C : MutableCollection<in E>> Iterable<Result<V, E>>.filterErrTo(destination: C): C {
     for (element in this) {
         if (element.isErr) {
@@ -166,6 +168,7 @@ public fun <V, E> Iterable<Result<V, E>>.partition(): Pair<List<V>, List<E>> {
  * - Gleam: [result.partition](https://hexdocs.pm/gleam_stdlib/gleam/result.html#partition)
  * - Haskell: [Data.Either.partitionEithers](https://hackage.haskell.org/package/base/docs/Data-Either.html#v:partitionEithers)
  */
+@IgnorableReturnValue
 public fun <V, E, CV : MutableCollection<in V>, CE : MutableCollection<in E>> Iterable<Result<V, E>>.partitionTo(
     first: CV,
     second: CE,
@@ -228,6 +231,7 @@ public fun <V, E> Iterable<Result<V, E>>.combine(): Result<List<V>, E> {
  * - If any result [is an error][Result.isErr], returns the first [Err] encountered.
  * - If the iterable is empty, returns [Ok] with the (empty) [destination].
  */
+@IgnorableReturnValue
 public fun <V, E, C : MutableCollection<in V>> Iterable<Result<V, E>>.combineTo(
     destination: C,
 ): Result<C, E> {
@@ -280,6 +284,7 @@ public fun <V, E> Iterable<Result<V, E>>.combineErr(): Result<V, List<E>> {
  * - If any result [is ok][Result.isOk], returns the first [Ok] encountered.
  * - If the iterable is empty, returns [Err] with the (empty) [destination].
  */
+@IgnorableReturnValue
 public fun <V, E, C : MutableCollection<in E>> Iterable<Result<V, E>>.combineErrTo(
     destination: C,
 ): Result<V, C> {

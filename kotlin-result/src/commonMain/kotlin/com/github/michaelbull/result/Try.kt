@@ -86,6 +86,7 @@ public inline fun <T, E> Iterable<T>.tryFilter(
  *
  * - Haskell: [Control.Monad.filterM](https://hackage.haskell.org/package/base/docs/Control-Monad.html#v:filterM)
  */
+@IgnorableReturnValue
 public inline fun <T, E, C : MutableCollection<in T>> Iterable<T>.tryFilterTo(
     destination: C,
     predicate: (T) -> Result<Boolean, E>,
@@ -124,6 +125,7 @@ public inline fun <T, E> Iterable<T>.tryFilterNot(
  *
  * - Haskell: [Control.Monad.filterM](https://hackage.haskell.org/package/base/docs/Control-Monad.html#v:filterM)
  */
+@IgnorableReturnValue
 public inline fun <T, E, C : MutableCollection<in T>> Iterable<T>.tryFilterNotTo(
     destination: C,
     predicate: (T) -> Result<Boolean, E>,
@@ -164,6 +166,7 @@ public inline fun <T, E> Iterable<T>.tryFilterIndexed(
  *
  * - Haskell: [Control.Monad.filterM](https://hackage.haskell.org/package/base/docs/Control-Monad.html#v:filterM)
  */
+@IgnorableReturnValue
 public inline fun <T, E, C : MutableCollection<in T>> Iterable<T>.tryFilterIndexedTo(
     destination: C,
     predicate: (index: Int, T) -> Result<Boolean, E>,
@@ -202,6 +205,7 @@ public inline fun <T, K, V, E> Iterable<T>.tryAssociate(
  *
  * This is the fallible equivalent of [Iterable.associateTo].
  */
+@IgnorableReturnValue
 public inline fun <T, K, V, E, M : MutableMap<in K, in V>> Iterable<T>.tryAssociateTo(
     destination: M,
     transform: (T) -> Result<Pair<K, V>, E>,
@@ -254,6 +258,7 @@ public inline fun <T, K, V, E> Iterable<T>.tryAssociateBy(
  *
  * This is the fallible equivalent of [Iterable.associateByTo].
  */
+@IgnorableReturnValue
 public inline fun <T, K, E, M : MutableMap<in K, in T>> Iterable<T>.tryAssociateByTo(
     destination: M,
     keySelector: (T) -> Result<K, E>,
@@ -279,6 +284,7 @@ public inline fun <T, K, E, M : MutableMap<in K, in T>> Iterable<T>.tryAssociate
  *
  * This is the fallible equivalent of [Iterable.associateByTo].
  */
+@IgnorableReturnValue
 public inline fun <T, K, V, E, M : MutableMap<in K, in V>> Iterable<T>.tryAssociateByTo(
     destination: M,
     keySelector: (T) -> Result<K, E>,
@@ -323,6 +329,7 @@ public inline fun <K, V, E> Iterable<K>.tryAssociateWith(
  *
  * This is the fallible equivalent of [Iterable.associateWithTo].
  */
+@IgnorableReturnValue
 public inline fun <K, V, E, M : MutableMap<in K, in V>> Iterable<K>.tryAssociateWithTo(
     destination: M,
     valueSelector: (K) -> Result<V, E>,
@@ -360,6 +367,7 @@ public inline fun <T, U, E> Iterable<T>.tryFlatMap(
  *
  * This is the fallible equivalent of [Iterable.flatMapTo].
  */
+@IgnorableReturnValue
 public inline fun <T, U, E, C : MutableCollection<in U>> Iterable<T>.tryFlatMapTo(
     destination: C,
     transform: (T) -> Result<Iterable<U>, E>,
@@ -397,6 +405,7 @@ public inline fun <T, U, E> Iterable<T>.tryFlatMapIndexed(
  *
  * This is the fallible equivalent of [Iterable.flatMapIndexedTo].
  */
+@IgnorableReturnValue
 public inline fun <T, U, E, C : MutableCollection<in U>> Iterable<T>.tryFlatMapIndexedTo(
     destination: C,
     transform: (index: Int, T) -> Result<Iterable<U>, E>,
@@ -451,6 +460,7 @@ public inline fun <T, K, V, E> Iterable<T>.tryGroupBy(
  *
  * This is the fallible equivalent of [Iterable.groupByTo].
  */
+@IgnorableReturnValue
 public inline fun <T, K, E, M : MutableMap<in K, MutableList<T>>> Iterable<T>.tryGroupByTo(
     destination: M,
     keySelector: (T) -> Result<K, E>,
@@ -476,6 +486,7 @@ public inline fun <T, K, E, M : MutableMap<in K, MutableList<T>>> Iterable<T>.tr
  *
  * This is the fallible equivalent of [Iterable.groupByTo].
  */
+@IgnorableReturnValue
 public inline fun <T, K, V, E, M : MutableMap<in K, MutableList<V>>> Iterable<T>.tryGroupByTo(
     destination: M,
     keySelector: (T) -> Result<K, E>,
@@ -536,6 +547,7 @@ public inline fun <V, E, U> Iterable<V>.tryMap(
  * - Gleam: [list.try_map](https://hexdocs.pm/gleam_stdlib/gleam/list.html#try_map)
  * - Haskell: [Data.Traversable.traverse](https://hackage.haskell.org/package/base/docs/Data-Traversable.html#v:traverse)
  */
+@IgnorableReturnValue
 public inline fun <V, E, U, C : MutableCollection<in U>> Iterable<V>.tryMapTo(
     destination: C,
     transform: (V) -> Result<U, E>,
@@ -589,6 +601,7 @@ public inline fun <V, E, U : Any> Iterable<V>.tryMapNotNull(
  * - Gleam: [list.try_map](https://hexdocs.pm/gleam_stdlib/gleam/list.html#try_map)
  * - Haskell: [Data.Traversable.traverse](https://hackage.haskell.org/package/base/docs/Data-Traversable.html#v:traverse)
  */
+@IgnorableReturnValue
 public inline fun <V, E, U : Any, C : MutableCollection<in U>> Iterable<V>.tryMapNotNullTo(
     destination: C,
     transform: (V) -> Result<U, E>?,
@@ -642,6 +655,7 @@ public inline fun <V, E, U> Iterable<V>.tryMapIndexed(
  * - Gleam: [list.try_map](https://hexdocs.pm/gleam_stdlib/gleam/list.html#try_map)
  * - Haskell: [Data.Traversable.traverse](https://hackage.haskell.org/package/base/docs/Data-Traversable.html#v:traverse)
  */
+@IgnorableReturnValue
 public inline fun <V, E, U, C : MutableCollection<in U>> Iterable<V>.tryMapIndexedTo(
     destination: C,
     transform: (index: Int, V) -> Result<U, E>,
@@ -695,6 +709,7 @@ public inline fun <V, E, U : Any> Iterable<V>.tryMapIndexedNotNull(
  * - Gleam: [list.try_map](https://hexdocs.pm/gleam_stdlib/gleam/list.html#try_map)
  * - Haskell: [Data.Traversable.traverse](https://hackage.haskell.org/package/base/docs/Data-Traversable.html#v:traverse)
  */
+@IgnorableReturnValue
 public inline fun <V, E, U : Any, C : MutableCollection<in U>> Iterable<V>.tryMapIndexedNotNullTo(
     destination: C,
     transform: (index: Int, V) -> Result<U, E>?,
@@ -1082,6 +1097,7 @@ public inline fun <T, E> Iterable<T>.tryPartition(
  * destination, and elements for which it returns [Ok]`(false)` to the [second] destination,
  * returning early with the first [Err] if the [predicate] fails.
  */
+@IgnorableReturnValue
 public inline fun <T, E, C1 : MutableCollection<in T>, C2 : MutableCollection<in T>> Iterable<T>.tryPartitionTo(
     first: C1,
     second: C2,

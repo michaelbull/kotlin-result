@@ -688,11 +688,11 @@ These are `suspend` functions on `Flow<T>` where each operation's callback is `s
 `suspend inline fun <T, E> Flow<T>.tryFilter(crossinline predicate: suspend (T) -> Result<Boolean, E>): Result<List<T>, E>`
 `suspend inline fun <T, E> Flow<T>.tryFilterNot(crossinline predicate: suspend (T) -> Result<Boolean, E>): Result<List<T>, E>`
 `suspend inline fun <T, U, E> Flow<T>.tryFlatMap(crossinline transform: suspend (T) -> Result<Iterable<U>, E>): Result<List<U>, E>`
-`suspend inline fun <V, E> Flow<V>.tryForEach(crossinline action: suspend (V) -> Result<*, E>): Result<Unit, E>`
+`suspend inline fun <V, E> Flow<V>.tryCollect(crossinline action: suspend (V) -> Result<*, E>): Result<Unit, E>`
 `suspend inline fun <T, R, E> Flow<T>.tryFold(initial: R, crossinline operation: suspend (acc: R, T) -> Result<R, E>): Result<R, E>`
 `suspend inline fun <T, E> Flow<T>.tryReduce(crossinline operation: suspend (acc: T, T) -> Result<T, E>): Result<T, E>?`
-`suspend inline fun <T, E> Flow<T>.tryFind(crossinline predicate: suspend (T) -> Result<Boolean, E>): Result<T, E>?`
-`suspend inline fun <T, E> Flow<T>.tryFindLast(crossinline predicate: suspend (T) -> Result<Boolean, E>): Result<T, E>?`
+`suspend inline fun <T, E> Flow<T>.tryFirstOrNull(crossinline predicate: suspend (T) -> Result<Boolean, E>): Result<T, E>?`
+`suspend inline fun <T, E> Flow<T>.tryLastOrNull(crossinline predicate: suspend (T) -> Result<Boolean, E>): Result<T, E>?`
 `suspend inline fun <T, K, V, E> Flow<T>.tryAssociate(crossinline transform: suspend (T) -> Result<Pair<K, V>, E>): Result<Map<K, V>, E>`
 `suspend inline fun <T, K, E> Flow<T>.tryAssociateBy(crossinline keySelector: suspend (T) -> Result<K, E>): Result<Map<K, T>, E>`
 `suspend inline fun <T, K, V, E> Flow<T>.tryAssociateBy(crossinline keySelector: suspend (T) -> Result<K, E>, crossinline valueTransform: suspend (T) -> Result<V, E>): Result<Map<K, V>, E>`
@@ -789,6 +789,22 @@ suspend fun fetchData(url: String): Result<Data, Throwable> {
 }
 ```
 
+`runCatching` catches *every* `Throwable` and fixes the error type to `Throwable`. Reserve it for opaque boundaries whose failure modes you can't enumerate (third-party clients, platform calls). When you know the specific exception a call throws, prefer a narrow `try`/`catch` that returns a typed error — it can't accidentally swallow an unrelated bug, and it hands callers a meaningful error to `when` on instead of a bare `Throwable`:
+
+```kotlin
+sealed interface UriError {
+    data class Malformed(val input: String) : UriError
+}
+
+fun parseUri(input: String): Result<URI, UriError> {
+    return try {
+        Ok(URI(input))
+    } catch (e: URISyntaxException) {
+        Err(UriError.Malformed(input))
+    }
+}
+```
+
 ### 7. Fallible Collections
 
 Use `tryMap`, `tryFilter`, etc. when processing collections with operations that can fail.
@@ -826,6 +842,8 @@ suspend fun loadDashboard(userId: Long): Result<Dashboard, AppError> = coroutine
 8. **Prefer `getOrElse` over `unwrap`** — `unwrap` throws on Err; `getOrElse` provides a safe fallback.
 9. **Use `toResultOr` to convert nullables** — `nullableValue.toResultOr { MyError.NotFound }` is idiomatic.
 10. **Keep error types narrow** — each function should return the most specific error type it can produce.
+11. **Catch the specific exception, not `Throwable`** — when a call throws a known exception, wrap it in a narrow `try`/`catch` that returns a typed `Err`. Reserve `runCatching` (which catches every `Throwable` and yields `Throwable` as the error) for opaque boundaries whose failures you can't enumerate.
+12. **Return `Result`, not a nullable, when a failure has a reason** — a `null` says *that* something failed, never *why*. If a function can fail for several distinct reasons, model them as a sealed error and return `Result<T, E>` so callers can explain or recover per cause. (A plain lookup that's merely absent, with nothing to explain, can still return a nullable — see anti-pattern 4.)
 
 ## Anti-patterns
 
@@ -834,6 +852,8 @@ suspend fun loadDashboard(userId: Long): Result<Dashboard, AppError> = coroutine
 3. **Don't nest Results** (`Result<Result<V, E>, E>`) — use `flatMap`/`andThen` or `flatten()` instead.
 4. **Don't ignore the error type** — avoid `Result<V, Unit>` or `Result<V, Nothing>`; use `Boolean` or nullable return types if there's no meaningful error.
 5. **Don't pass `Result::isOk` as a property reference to Flow suspend predicates** — Flow's `firstOrNull` predicate is `suspend (T) -> Boolean`, which is incompatible with property references. Use a lambda instead: `{ it.isOk }`.
+6. **Don't reach for `runCatching` when you know the exception** — catching `Throwable` swallows unrelated bugs (`NullPointerException`, `OutOfMemoryError`) and discards the failure's identity. Catch the specific exception and return a typed error.
+7. **Don't collapse multiple failure causes into a `null`** — a chain of `?: return null` across distinct failure points (e.g. "no account", "malformed URL", "no token") throws away *why* it failed and forces every caller to guess. Return `Result<T, SealedError>` so each cause is nameable.
 
 ## Differences from kotlin.Result
 

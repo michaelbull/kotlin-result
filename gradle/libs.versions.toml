@@ -1,16 +1,16 @@
 [versions]
-kotlin = "2.3.20"
-kotlin-coroutines = "1.10.2"
-versions-plugin = "0.53.0"
-maven-publish-plugin = "0.36.0"
+kotlin = "2.4.0"
+kotlin-coroutines = "1.11.0"
+versions-plugin = "0.54.0"
+maven-publish-plugin = "0.37.0"
 
 # benchmarks subproject
-kotlin-benchmark = "0.4.16"
-arrow = "2.2.2.1"
+kotlin-benchmark = "0.4.17"
+arrow = "2.2.3"
 
 # example subproject
-ktor = "3.4.2"
-logback = "1.5.32"
+ktor = "3.5.1"
+logback = "1.5.37"
 
 
 [libraries]
